@@ -1,28 +1,27 @@
-import 'package:alphaflow/data/models/today_task.dart'; // Added
-import 'package:alphaflow/providers/today_tasks_provider.dart'; // Added
-import 'package:alphaflow/providers/selected_track_provider.dart'; // Still needed for trackId in toggle
+import 'package:alphaflow/data/models/today_task.dart';
+import 'package:alphaflow/providers/today_tasks_provider.dart';
+import 'package:alphaflow/providers/selected_track_provider.dart';
 import 'package:alphaflow/providers/task_completions_provider.dart';
+import 'package:alphaflow/providers/xp_provider.dart';
+import 'package:alphaflow/providers/guided_level_provider.dart'; // Added import
+import 'package:alphaflow/data/models/level_definition.dart'; // Added import
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// Removed GuidedTask, GuidedTrack, guidedTracksProvider imports as they are now handled by todayTasksProvider
 
 class GuidedHomePage extends ConsumerWidget {
   const GuidedHomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // todayTasksProvider will return only guided tasks when in guided mode.
     final List<TodayTask> tasksForDisplay = ref.watch(todayTasksProvider);
-    // Watch completionsProvider to ensure UI rebuilds when completion status changes.
     ref.watch(completionsProvider);
-    // We need selectedTrackId for the toggleTaskCompletion's trackId argument.
-    // Watching it here also ensures that if the track changes (e.g. via drawer),
-    // todayTasksProvider (which also watches it) causes a rebuild correctly.
     final selectedTrackId = ref.watch(selectedTrackProvider);
+    final int currentXp = ref.watch(xpProvider);
+    final LevelDefinition? currentLevel = ref.watch(currentGuidedLevelProvider); // Watch current level
 
+    final double totalPossibleXpToday = tasksForDisplay.fold(0.0, (sum, task) => sum + task.xp);
+    final double progress = (totalPossibleXpToday > 0) ? (currentXp / totalPossibleXpToday) : 0.0;
 
-    // Fallback if, for some reason, HomePage didn't redirect and selectedTrackId is null here.
-    // todayTasksProvider would likely return an empty list in this scenario for guided mode.
     if (selectedTrackId == null) {
          return const Center(child: Text("No guided track selected. Please select one from the drawer or main menu.", textAlign: TextAlign.center,));
     }
@@ -30,13 +29,63 @@ class GuidedHomePage extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Level and XP Info Section
         Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0), // Adjusted vertical padding
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (currentLevel != null)
+                Text(
+                  "Level ${currentLevel.levelNumber}: ${currentLevel.title} ${currentLevel.icon}", // Added icon to level display
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                )
+              else
+                Text(
+                  "Current Level: N/A",
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+              const SizedBox(height: 10), // Adjusted space
+
+              Text(
+                // Display total track XP relative to next level's threshold, if available
+                // For now, stick to Today's XP as per previous implementation.
+                // Total XP for level progress could be: "Total XP: ${ref.watch(totalTrackXpProvider)}"
+                "Today's XP: $currentXp / ${totalPossibleXpToday.toInt()}",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600), // Slightly less bold than level title
+              ),
+              const SizedBox(height: 6),
+              if (tasksForDisplay.isNotEmpty)
+                LinearProgressIndicator(
+                  value: progress > 1.0 ? 1.0 : progress,
+                  minHeight: 12,
+                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+                  borderRadius: BorderRadius.circular(6),
+                )
+              else
+                Text("No tasks to earn XP from today.", style: Theme.of(context).textTheme.bodyMedium),
+              // const SizedBox(height: 8), // Removed to bring divider closer
+            ],
+          ),
+        ),
+
+        const Divider(height: 1, indent: 16, endIndent: 16, thickness: 1),
+
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0), // Adjusted padding
           child: Text(
-            "Today's Tasks", // Changed header
+            "Today's Tasks",
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
+
         if (tasksForDisplay.isEmpty)
           const Expanded(
             child: Center(child: Text("No tasks for today, or the selected track has no tasks for the current level.")),
@@ -44,20 +93,19 @@ class GuidedHomePage extends ConsumerWidget {
         else
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+              padding: const EdgeInsets.only(top: 0, bottom: 16.0),
               itemCount: tasksForDisplay.length,
               itemBuilder: (context, index) {
                 final todayTask = tasksForDisplay[index];
-                // todayTask.isCompleted is now directly available
 
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
-                  elevation: todayTask.isCompleted ? 1.0 : 3.0,
+                  margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
+                  elevation: todayTask.isCompleted ? 1.0 : 2.5,
                   color: todayTask.isCompleted ? Colors.green.withOpacity(0.05) : Theme.of(context).cardColor,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(10.0),
                       side: todayTask.isCompleted
-                          ? BorderSide(color: Colors.green.withOpacity(0.3), width: 1)
+                          ? BorderSide(color: Colors.green.withOpacity(0.4), width: 1.5)
                           : BorderSide.none,
                   ),
                   child: ListTile(
@@ -67,9 +115,8 @@ class GuidedHomePage extends ConsumerWidget {
                       activeColor: Colors.green,
                       onChanged: (bool? newValue) {
                         if (newValue != null) {
-                          // Ensure selectedTrackId is not null before using (already checked above)
                           ref.read(completionsProvider.notifier).toggleTaskCompletion(
-                            todayTask.id, // This is guidedTask.id from TodayTask
+                            todayTask.id,
                             DateTime.now(),
                             trackId: selectedTrackId,
                           );
@@ -94,7 +141,7 @@ class GuidedHomePage extends ConsumerWidget {
                       ),
                     ),
                     trailing: Text(
-                      "XP: ${todayTask.xp}", // Using getter from TodayTask
+                      "XP: ${todayTask.xp}",
                       style: TextStyle(
                         color: todayTask.isCompleted ? Colors.green : Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.bold,

@@ -6,17 +6,17 @@ import 'package:alphaflow/data/models/guided_track.dart';
 import 'package:alphaflow/data/models/task_completion.dart';
 import 'package:alphaflow/data/models/today_task.dart';
 import 'package:alphaflow/data/models/frequency.dart';
+import 'package:alphaflow/data/models/level_definition.dart'; // Added import
 import 'package:alphaflow/providers/app_mode_provider.dart';
 import 'package:alphaflow/providers/selected_track_provider.dart';
 import 'package:alphaflow/features/guided/providers/guided_tracks_provider.dart';
 import 'package:alphaflow/providers/custom_tasks_provider.dart';
 import 'package:alphaflow/providers/task_completions_provider.dart';
+import 'package:alphaflow/providers/guided_level_provider.dart'; // Added import
 
 // Helper to get the start of the week (Monday UTC) for a given DateTime
 DateTime _startOfWeek(DateTime date) {
   final utcDate = DateTime.utc(date.year, date.month, date.day);
-  // DateTime.weekday returns 1 for Monday and 7 for Sunday.
-  // To get Monday, subtract (weekday - 1) days.
   return utcDate.subtract(Duration(days: utcDate.weekday - 1));
 }
 
@@ -46,43 +46,46 @@ final todayTasksProvider = Provider<List<TodayTask>>((ref) {
 
   if (appMode == AppMode.guided) {
     final selectedTrackId = ref.watch(selectedTrackProvider);
-    // guidedTracksProvider provides List<GuidedTrack>, not nullable
-    final allGuidedTracks = ref.watch(guidedTracksProvider);
+    // guidedTracksProvider is watched by currentGuidedLevelProvider indirectly.
+    // We only need currentGuidedLevelProvider here.
 
-    if (selectedTrackId != null) {
-      GuidedTrack? track;
-      try {
-        track = allGuidedTracks.firstWhere((t) => t.id == selectedTrackId);
-      } catch (e) {
-        track = null; // Not found
-      }
+    if (selectedTrackId != null) { // Ensure a track is selected
+        final LevelDefinition? currentLevel = ref.watch(currentGuidedLevelProvider);
 
-      if (track != null) {
-        // For now, assume Level 1 tasks. Level progression is a future feature.
-        final List<GuidedTask> levelTasks = track.levels.isNotEmpty ? track.levels[0].unlockTasks : [];
+        if (currentLevel != null) {
+            final List<GuidedTask> levelTasks = currentLevel.unlockTasks;
 
-        for (final guidedTask in levelTasks) {
-          bool shouldDisplay = false;
-          bool isCompleted = false;
+            for (final guidedTask in levelTasks) {
+                bool shouldDisplay = false;
+                bool isCompleted = false;
 
-          if (guidedTask.frequency == Frequency.daily) {
-            shouldDisplay = true;
-            isCompleted = isTaskCompletedToday(guidedTask.id);
-          } else if (guidedTask.frequency == Frequency.weekly) {
-            shouldDisplay = true;
-            isCompleted = isTaskCompletedThisWeek(guidedTask.id);
-          }
-          // 'oneTime' guided tasks are not explicitly handled for display here yet.
-          // They would typically be part of level unlocks or specific conditions.
+                if (guidedTask.frequency == Frequency.daily) {
+                    shouldDisplay = true;
+                    isCompleted = isTaskCompletedToday(guidedTask.id);
+                } else if (guidedTask.frequency == Frequency.weekly) {
+                    shouldDisplay = true;
+                    isCompleted = isTaskCompletedThisWeek(guidedTask.id);
+                } else if (guidedTask.frequency == Frequency.oneTime) {
+                    // Check completion specifically for this trackId, as task ID might not be globally unique for one-time tasks
+                    // if they are defined per level but could have same ID if not careful in data definition.
+                    // TaskCompletion for guided tasks should have trackId set.
+                    isCompleted = completions.any((c) => c.taskId == guidedTask.id && c.trackId == selectedTrackId);
+                    shouldDisplay = !isCompleted;
+                }
 
-          if (shouldDisplay) {
-            tasksForToday.add(TodayTask.fromGuidedTask(guidedTask, isCompleted));
-          }
+                if (shouldDisplay) {
+                    tasksForToday.add(TodayTask.fromGuidedTask(guidedTask, isCompleted));
+                }
+            }
+        } else {
+            // No current level determined (e.g., track has no levels, or error in level provider)
+            // tasksForToday remains empty for guided mode.
+            print("todayTasksProvider: No current level determined for track $selectedTrackId.");
         }
-      }
+    } else {
+        print("todayTasksProvider: No track selected for guided mode.");
     }
   } else if (appMode == AppMode.custom) {
-    // customTasksProvider provides List<CustomTask>, not nullable
     final allCustomTasks = ref.watch(customTasksProvider);
     for (final customTask in allCustomTasks) {
       bool shouldDisplay = false;
@@ -96,7 +99,7 @@ final todayTasksProvider = Provider<List<TodayTask>>((ref) {
         isCompleted = isTaskCompletedThisWeek(customTask.id);
       } else if (customTask.frequency == Frequency.oneTime) {
         isCompleted = completions.any((c) => c.taskId == customTask.id);
-        shouldDisplay = !isCompleted; // Only show one-time tasks if they are not yet completed
+        shouldDisplay = !isCompleted;
       }
 
       if (shouldDisplay) {
@@ -109,8 +112,6 @@ final todayTasksProvider = Provider<List<TodayTask>>((ref) {
     if (a.isCompleted != b.isCompleted) {
       return a.isCompleted ? 1 : -1; // Incomplete tasks first
     }
-    // Optional: Add secondary sort criteria, e.g., by title
-    // return a.title.toLowerCase().compareTo(b.title.toLowerCase());
     return 0;
   });
 
