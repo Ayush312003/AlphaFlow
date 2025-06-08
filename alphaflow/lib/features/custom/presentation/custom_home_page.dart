@@ -1,8 +1,10 @@
 import 'package:alphaflow/data/models/custom_task.dart';
 import 'package:alphaflow/data/models/frequency.dart';
-import 'package:alphaflow/providers/custom_tasks_provider.dart';
+import 'package:alphaflow/providers/custom_tasks_provider.dart'; // Still needed for _showDeleteConfirmationDialog and edit arguments
 import 'package:alphaflow/providers/task_completions_provider.dart';
-import 'package:alphaflow/providers/custom_task_streaks_provider.dart'; // Added import
+import 'package:alphaflow/providers/custom_task_streaks_provider.dart';
+import 'package:alphaflow/providers/today_tasks_provider.dart'; // Added import
+import 'package:alphaflow/data/models/today_task.dart'; // Added import
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,6 +23,7 @@ final Map<String, IconData> _customTaskIcons = {
 class CustomHomePage extends ConsumerWidget {
   const CustomHomePage({super.key});
 
+  // _showDeleteConfirmationDialog still needs a CustomTask object
   Future<void> _showDeleteConfirmationDialog(BuildContext context, WidgetRef ref, CustomTask task) async {
     return showDialog<void>(
       context: context,
@@ -47,6 +50,7 @@ class CustomHomePage extends ConsumerWidget {
               style: TextButton.styleFrom(foregroundColor: Colors.red.shade700),
               child: const Text('Delete'),
               onPressed: () {
+                // Use the original task's ID for deletion
                 ref.read(customTasksProvider.notifier).deleteTask(task.id);
                 Navigator.of(dialogContext).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -62,9 +66,10 @@ class CustomHomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final customTasks = ref.watch(customTasksProvider);
+    // Use todayTasksProvider for the list of tasks to display
+    final List<TodayTask> tasksForDisplay = ref.watch(todayTasksProvider);
     ref.watch(completionsProvider);
-    final streaksMap = ref.watch(customTaskStreaksProvider); // Watch streaks provider
+    final streaksMap = ref.watch(customTaskStreaksProvider);
 
     final fab = FloatingActionButton(
         onPressed: () {
@@ -74,8 +79,8 @@ class CustomHomePage extends ConsumerWidget {
         tooltip: 'Add Task',
       );
 
-    if (customTasks.isEmpty) {
-      return Scaffold( // No AppBar here
+    if (tasksForDisplay.isEmpty) { // Updated to check tasksForDisplay
+      return Scaffold(
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
@@ -103,21 +108,31 @@ class CustomHomePage extends ConsumerWidget {
       );
     }
 
-    return Scaffold( // No AppBar here
+    return Scaffold(
       body: ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
-              itemCount: customTasks.length,
+              itemCount: tasksForDisplay.length, // Updated to tasksForDisplay
               itemBuilder: (context, index) {
-                final task = customTasks[index];
-                final isCompleted = ref.read(completionsProvider.notifier).isTaskCompletedOnDate(task.id, DateTime.now());
+                final todayTask = tasksForDisplay[index];
+                // Access the original CustomTask for actions requiring it (edit, delete)
+                // and for properties not directly on TodayTask if any were missed (shouldn't be for display)
+                final originalCustomTask = todayTask.customTask;
 
-                final IconData? taskIconData = task.iconName == null ? null : _customTaskIcons[task.iconName!];
-                final Color? taskColor = task.colorValue == null ? null : Color(task.colorValue!);
+                if (originalCustomTask == null) {
+                  // This should not happen if todayTask.type is custom and factories are correct
+                  return const SizedBox.shrink();
+                }
+
+                // Use todayTask.isCompleted for styling and checkbox state
+                final isCompleted = todayTask.isCompleted;
+
+                final IconData? taskIconData = todayTask.iconName == null ? null : _customTaskIcons[todayTask.iconName!];
+                final Color? taskColor = todayTask.colorValue == null ? null : Color(todayTask.colorValue!);
 
                 final Color activeColor = taskColor ?? Theme.of(context).colorScheme.primary;
                 final Color iconDisplayColor = taskColor ?? Theme.of(context).iconTheme.color ?? Colors.grey.shade700;
 
-                final TaskStreakInfo? streakInfo = streaksMap[task.id];
+                final TaskStreakInfo? streakInfo = streaksMap[todayTask.id]; // Use todayTask.id for streaks
                 Widget? streakDisplayWidget;
                 if (streakInfo != null && streakInfo.streakCount > 0) {
                   String frequencyText = streakInfo.frequency == Frequency.daily ? "day" : "week";
@@ -126,7 +141,7 @@ class CustomHomePage extends ConsumerWidget {
                   streakDisplayWidget = Text(
                     "🔥 ${streakInfo.streakCount} $frequencyText streak!",
                     style: TextStyle(
-                      color: Colors.orange.shade800, // Darker orange for better contrast
+                      color: Colors.orange.shade800,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -150,27 +165,27 @@ class CustomHomePage extends ConsumerWidget {
                         ? Icon(taskIconData, color: isCompleted ? iconDisplayColor.withOpacity(0.5) : iconDisplayColor, size: 28)
                         : const SizedBox(width: 28, height: 28),
                     title: Text(
-                      task.title,
+                      todayTask.title, // Use todayTask for display
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         decoration: isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
                         color: isCompleted ? Theme.of(context).textTheme.bodySmall?.color : Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
-                    subtitle: (task.description.isEmpty && streakDisplayWidget == null)
+                    subtitle: (todayTask.description.isEmpty && streakDisplayWidget == null)
                         ? null
                         : Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              if (task.description.isNotEmpty)
+                              if (todayTask.description.isNotEmpty) // Use todayTask for display
                                 Text(
-                                  task.description,
+                                  todayTask.description,
                                   style: TextStyle(
                                     color: isCompleted ? Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7) : Theme.of(context).textTheme.bodyMedium?.color,
                                   ),
                                 ),
-                              if (task.description.isNotEmpty && streakDisplayWidget != null)
+                              if (todayTask.description.isNotEmpty && streakDisplayWidget != null)
                                 const SizedBox(height: 4),
                               if (streakDisplayWidget != null)
                                 streakDisplayWidget,
@@ -180,7 +195,7 @@ class CustomHomePage extends ConsumerWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          task.frequency.toShortString(),
+                          todayTask.frequency.toShortString(), // Use todayTask for display
                           style: TextStyle(
                             fontStyle: FontStyle.italic,
                             fontSize: 12,
@@ -189,13 +204,13 @@ class CustomHomePage extends ConsumerWidget {
                         ),
                         const SizedBox(width: 0),
                         Checkbox(
-                          value: isCompleted,
+                          value: isCompleted, // Use isCompleted from todayTask
                           activeColor: activeColor,
                           visualDensity: VisualDensity.compact,
                           onChanged: (bool? newValue) {
                              if (newValue != null) {
                                 ref.read(completionsProvider.notifier).toggleTaskCompletion(
-                                      task.id,
+                                      todayTask.id, // Use todayTask.id
                                       DateTime.now(),
                                       trackId: null,
                                     );
@@ -212,7 +227,7 @@ class CustomHomePage extends ConsumerWidget {
                             Navigator.pushNamed(
                               context,
                               '/task_editor',
-                              arguments: task,
+                              arguments: originalCustomTask, // Pass original CustomTask for editing
                             );
                           },
                         ),
@@ -223,20 +238,20 @@ class CustomHomePage extends ConsumerWidget {
                           color: Colors.red.shade700,
                           tooltip: 'Delete Task',
                           onPressed: () {
-                            _showDeleteConfirmationDialog(context, ref, task);
+                            _showDeleteConfirmationDialog(context, ref, originalCustomTask); // Pass original CustomTask
                           },
                         ),
                       ],
                     ),
                     onTap: () {
                         ref.read(completionsProvider.notifier).toggleTaskCompletion(
-                            task.id,
+                            todayTask.id, // Use todayTask.id
                             DateTime.now(),
                             trackId: null,
                         );
                     },
                     onLongPress: () {
-                         Navigator.pushNamed(context, '/task_editor', arguments: task);
+                         Navigator.pushNamed(context, '/task_editor', arguments: originalCustomTask); // Pass original CustomTask
                     },
                   ),
                 );
