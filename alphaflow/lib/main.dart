@@ -1,4 +1,6 @@
 import 'package:alphaflow/data/models/app_mode.dart';
+import 'package:alphaflow/data/models/custom_task.dart'; // Import CustomTask
+import 'package:alphaflow/features/custom/presentation/task_editor_page.dart';
 import 'package:alphaflow/features/guided/presentation/select_track_page.dart';
 import 'package:alphaflow/features/home/presentation/home_page.dart';
 import 'package:alphaflow/features/onboarding/presentation/select_mode_page.dart';
@@ -47,6 +49,13 @@ class MyApp extends ConsumerWidget {
         '/home': (context) => const HomePage(),
         '/select_mode': (context) => const SelectModePage(),
         '/select_track': (context) => const SelectTrackPage(),
+        '/task_editor': (context) {
+          final args = ModalRoute.of(context)?.settings.arguments;
+          if (args is CustomTask) {
+            return TaskEditorPage(taskToEdit: args); // For editing an existing task
+          }
+          return const TaskEditorPage(); // For creating a new task (taskToEdit will be null)
+        },
       },
     );
   }
