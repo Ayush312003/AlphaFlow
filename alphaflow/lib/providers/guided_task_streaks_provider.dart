@@ -1,10 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alphaflow/data/models/streak_info.dart';
-import 'package:alphaflow/data/models/custom_task.dart';
 import 'package:alphaflow/data/models/task_completion.dart';
 import 'package:alphaflow/data/models/frequency.dart';
-import 'package:alphaflow/providers/custom_tasks_provider.dart';
+import 'package:alphaflow/data/models/guided_task.dart';
+import 'package:alphaflow/data/models/level_definition.dart'; // Required for currentGuidedLevelProvider's return type
 import 'package:alphaflow/providers/task_completions_provider.dart';
+import 'package:alphaflow/providers/guided_level_provider.dart';
+import 'package:alphaflow/providers/selected_track_provider.dart'; // To ensure provider rebuilds if track changes
+
+// Copied from custom_task_streaks_provider.dart and made public for potential reuse or testing
+// OR keep them private (_calculateDailyStreak, _calculateWeeklyStreak) if only used here.
+// For now, keeping them private to this file.
 
 int _calculateDailyStreak(String taskId, List<TaskCompletion> allCompletions) {
   final taskCompletions =
@@ -28,21 +34,18 @@ int _calculateDailyStreak(String taskId, List<TaskCompletion> allCompletions) {
   if (taskCompletions.contains(today)) {
     currentStreak = 1;
     DateTime dayToCheck = yesterday;
-    // Start looking from the completion *after* today in the sorted list
     int todayIndex = taskCompletions.indexOf(today);
     for (int i = todayIndex + 1; i < taskCompletions.length; i++) {
       if (taskCompletions[i] == dayToCheck) {
         currentStreak++;
         dayToCheck = dayToCheck.subtract(const Duration(days: 1));
       } else if (taskCompletions[i].isBefore(dayToCheck)) {
-        // Gap in completions, streak broken earlier than dayToCheck
         break;
       }
     }
   } else if (taskCompletions.contains(yesterday)) {
     currentStreak = 1;
     DateTime dayToCheck = yesterday.subtract(const Duration(days: 1));
-    // Start looking from the completion *after* yesterday in the sorted list
     int yesterdayIndex = taskCompletions.indexOf(yesterday);
     for (int i = yesterdayIndex + 1; i < taskCompletions.length; i++) {
       if (taskCompletions[i] == dayToCheck) {
@@ -60,7 +63,7 @@ int _calculateWeeklyStreak(String taskId, List<TaskCompletion> allCompletions) {
   final taskCompletionsOnFirstDayOfWeek =
       allCompletions
           .where((c) => c.taskId == taskId)
-          .map((c) => startOfWeek(c.date))
+          .map((c) => startOfWeek(c.date)) // Uses imported startOfWeek
           .toSet()
           .toList()
         ..sort((a, b) => b.compareTo(a)); // Descending
@@ -113,13 +116,23 @@ int _calculateWeeklyStreak(String taskId, List<TaskCompletion> allCompletions) {
   return currentStreak;
 }
 
-final customTaskStreaksProvider = Provider<Map<String, TaskStreakInfo>>((ref) {
-  final allCustomTasks = ref.watch(customTasksProvider);
+final guidedTaskStreaksProvider = Provider<Map<String, TaskStreakInfo>>((ref) {
   final allCompletions = ref.watch(completionsProvider);
+  final LevelDefinition? currentLevel = ref.watch(currentGuidedLevelProvider);
+
+  // Watch selectedTrackProvider to ensure this provider rebuilds when the track changes.
+  // The actual task list is derived from currentLevel, which itself depends on selectedTrackProvider.
+  ref.watch(selectedTrackProvider);
 
   final streaksMap = <String, TaskStreakInfo>{};
 
-  for (final task in allCustomTasks) {
+  if (currentLevel == null) {
+    return streaksMap; // Return empty map if no current level
+  }
+
+  final List<GuidedTask> currentLevelTasks = currentLevel.unlockTasks;
+
+  for (final task in currentLevelTasks) {
     if (task.frequency == Frequency.daily) {
       streaksMap[task.id] = TaskStreakInfo(
         streakCount: _calculateDailyStreak(task.id, allCompletions),
@@ -131,7 +144,8 @@ final customTaskStreaksProvider = Provider<Map<String, TaskStreakInfo>>((ref) {
         frequency: Frequency.weekly,
       );
     }
-    // 'oneTime' tasks don't have streaks and are not added to the map
+    // 'oneTime' tasks do not have streaks and are not added to the map
   }
+
   return streaksMap;
 });

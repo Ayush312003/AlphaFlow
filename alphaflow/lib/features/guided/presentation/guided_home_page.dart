@@ -7,6 +7,9 @@ import 'package:alphaflow/providers/guided_level_provider.dart'; // Added import
 import 'package:alphaflow/data/models/level_definition.dart'; // Added import
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:alphaflow/providers/guided_task_streaks_provider.dart';
+import 'package:alphaflow/data/models/streak_info.dart';
+import 'package:alphaflow/data/models/frequency.dart';
 
 class GuidedHomePage extends ConsumerWidget {
   const GuidedHomePage({super.key});
@@ -17,13 +20,26 @@ class GuidedHomePage extends ConsumerWidget {
     ref.watch(completionsProvider);
     final selectedTrackId = ref.watch(selectedTrackProvider);
     final int currentXp = ref.watch(xpProvider);
-    final LevelDefinition? currentLevel = ref.watch(currentGuidedLevelProvider); // Watch current level
+    final LevelDefinition? currentLevel = ref.watch(
+      currentGuidedLevelProvider,
+    ); // Watch current level
+    final streakData = ref.watch(guidedTaskStreaksProvider);
 
-    final double totalPossibleXpToday = tasksForDisplay.fold(0.0, (sum, task) => sum + task.xp);
-    final double progress = (totalPossibleXpToday > 0) ? (currentXp / totalPossibleXpToday) : 0.0;
+    final double totalPossibleXpToday = tasksForDisplay.fold(
+      0.0,
+      (sum, task) => sum + task.xp,
+    );
+    final double progress = (totalPossibleXpToday > 0)
+        ? (currentXp / totalPossibleXpToday)
+        : 0.0;
 
     if (selectedTrackId == null) {
-         return const Center(child: Text("No guided track selected. Please select one from the drawer or main menu.", textAlign: TextAlign.center,));
+      return const Center(
+        child: Text(
+          "No guided track selected. Please select one from the drawer or main menu.",
+          textAlign: TextAlign.center,
+        ),
+      );
     }
 
     return Column(
@@ -31,7 +47,10 @@ class GuidedHomePage extends ConsumerWidget {
       children: [
         // Level and XP Info Section
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0), // Adjusted vertical padding
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 12.0,
+          ), // Adjusted vertical padding
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -58,19 +77,28 @@ class GuidedHomePage extends ConsumerWidget {
                 // For now, stick to Today's XP as per previous implementation.
                 // Total XP for level progress could be: "Total XP: ${ref.watch(totalTrackXpProvider)}"
                 "Today's XP: $currentXp / ${totalPossibleXpToday.toInt()}",
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600), // Slightly less bold than level title
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ), // Slightly less bold than level title
               ),
               const SizedBox(height: 6),
               if (tasksForDisplay.isNotEmpty)
                 LinearProgressIndicator(
                   value: progress > 1.0 ? 1.0 : progress,
                   minHeight: 12,
-                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).colorScheme.primary,
+                  ),
                   borderRadius: BorderRadius.circular(6),
                 )
               else
-                Text("No tasks to earn XP from today.", style: Theme.of(context).textTheme.bodyMedium),
+                Text(
+                  "No tasks to earn XP from today.",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
               // const SizedBox(height: 8), // Removed to bring divider closer
             ],
           ),
@@ -79,16 +107,27 @@ class GuidedHomePage extends ConsumerWidget {
         const Divider(height: 1, indent: 16, endIndent: 16, thickness: 1),
 
         Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0), // Adjusted padding
+          padding: const EdgeInsets.fromLTRB(
+            16.0,
+            12.0,
+            16.0,
+            8.0,
+          ), // Adjusted padding
           child: Text(
             "Today's Tasks",
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
 
         if (tasksForDisplay.isEmpty)
           const Expanded(
-            child: Center(child: Text("No tasks for today, or the selected track has no tasks for the current level.")),
+            child: Center(
+              child: Text(
+                "No tasks for today, or the selected track has no tasks for the current level.",
+              ),
+            ),
           )
         else
           Expanded(
@@ -99,27 +138,40 @@ class GuidedHomePage extends ConsumerWidget {
                 final todayTask = tasksForDisplay[index];
 
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 5.0,
+                  ),
                   elevation: todayTask.isCompleted ? 1.0 : 2.5,
-                  color: todayTask.isCompleted ? Colors.green.withOpacity(0.05) : Theme.of(context).cardColor,
+                  color: todayTask.isCompleted
+                      ? Colors.green.withOpacity(0.05)
+                      : Theme.of(context).cardColor,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      side: todayTask.isCompleted
-                          ? BorderSide(color: Colors.green.withOpacity(0.4), width: 1.5)
-                          : BorderSide.none,
+                    borderRadius: BorderRadius.circular(10.0),
+                    side: todayTask.isCompleted
+                        ? BorderSide(
+                            color: Colors.green.withOpacity(0.4),
+                            width: 1.5,
+                          )
+                        : BorderSide.none,
                   ),
                   child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 8.0,
+                      horizontal: 16.0,
+                    ),
                     leading: Checkbox(
                       value: todayTask.isCompleted,
                       activeColor: Colors.green,
                       onChanged: (bool? newValue) {
                         if (newValue != null) {
-                          ref.read(completionsProvider.notifier).toggleTaskCompletion(
-                            todayTask.id,
-                            DateTime.now(),
-                            trackId: selectedTrackId,
-                          );
+                          ref
+                              .read(completionsProvider.notifier)
+                              .toggleTaskCompletion(
+                                todayTask.id,
+                                DateTime.now(),
+                                trackId: selectedTrackId,
+                              );
                         }
                       },
                     ),
@@ -127,23 +179,73 @@ class GuidedHomePage extends ConsumerWidget {
                       todayTask.title,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        decoration: todayTask.isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
-                        color: todayTask.isCompleted ? Theme.of(context).textTheme.bodySmall?.color : Theme.of(context).textTheme.bodyLarge?.color,
+                        decoration: todayTask.isCompleted
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
+                        color: todayTask.isCompleted
+                            ? Theme.of(context).textTheme.bodySmall?.color
+                            : Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 4.0),
-                      child: Text(
-                        todayTask.description,
-                         style: TextStyle(
-                           color: todayTask.isCompleted ? Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7) : Theme.of(context).textTheme.bodyMedium?.color,
-                         ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            // The original description Text widget
+                            todayTask.description,
+                            style: TextStyle(
+                              color: todayTask.isCompleted
+                                  ? Theme.of(context).textTheme.bodySmall?.color
+                                        ?.withOpacity(0.7)
+                                  : Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium?.color,
+                            ),
+                          ),
+                          Builder(
+                            // New widget to display streak information
+                            builder: (context) {
+                              final streakInfo =
+                                  streakData[todayTask
+                                      .id]; // streakData and todayTask must be in scope
+                              if (streakInfo != null &&
+                                  streakInfo.streakCount > 0) {
+                                final frequencyText =
+                                    streakInfo.frequency == Frequency.daily
+                                    ? "day"
+                                    : "week";
+                                final pluralS = streakInfo.streakCount > 1
+                                    ? "s"
+                                    : "";
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 6.0),
+                                  child: Text(
+                                    "🔥 ${streakInfo.streakCount} ${frequencyText}${pluralS} streak!",
+                                    style: TextStyle(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return const SizedBox.shrink(); // If no streak, display nothing
+                            },
+                          ),
+                        ],
                       ),
                     ),
                     trailing: Text(
                       "XP: ${todayTask.xp}",
                       style: TextStyle(
-                        color: todayTask.isCompleted ? Colors.green : Theme.of(context).colorScheme.primary,
+                        color: todayTask.isCompleted
+                            ? Colors.green
+                            : Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),
