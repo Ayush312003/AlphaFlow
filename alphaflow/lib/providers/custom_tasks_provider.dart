@@ -22,12 +22,16 @@ class CustomTaskListNotifier extends StateNotifier<List<CustomTask>> {
     required String title,
     required String description,
     required Frequency frequency,
+    String? iconName, // New
+    int? colorValue, // New
   }) async {
     final newTask = CustomTask(
       id: _uuid.v4(), // Generate a unique ID
       title: title,
       description: description,
       frequency: frequency,
+      iconName: iconName, // Pass to constructor
+      colorValue: colorValue, // Pass to constructor
     );
     state = [...state, newTask];
     await _prefsService.saveCustomTasks(state);

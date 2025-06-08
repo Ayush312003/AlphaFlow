@@ -4,6 +4,30 @@ import 'package:alphaflow/providers/custom_tasks_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+// Example predefined icons
+final Map<String, IconData> _predefinedIcons = {
+  'task_alt': Icons.task_alt,
+  'star': Icons.star_border_purple500_outlined,
+  'flag': Icons.flag_outlined,
+  'fitness': Icons.fitness_center_outlined,
+  'book': Icons.book_outlined,
+  'work': Icons.work_outline,
+  'home': Icons.home_outlined,
+  'palette': Icons.palette_outlined,
+};
+
+// Example predefined colors
+final List<Color> _predefinedColors = [
+  Colors.grey.shade300, // A 'none' or default option
+  Colors.blue.shade200,
+  Colors.green.shade200,
+  Colors.orange.shade200,
+  Colors.purple.shade200,
+  Colors.red.shade200,
+  Colors.teal.shade200,
+  Colors.pink.shade200,
+];
+
 class TaskEditorPage extends ConsumerStatefulWidget {
   final CustomTask? taskToEdit;
 
@@ -18,6 +42,8 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
   Frequency _selectedFrequency = Frequency.daily;
+  String? _selectedIconName;
+  int? _selectedColorValue;
 
   @override
   void initState() {
@@ -29,6 +55,8 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
       _titleController.text = widget.taskToEdit!.title;
       _descriptionController.text = widget.taskToEdit!.description;
       _selectedFrequency = widget.taskToEdit!.frequency;
+      _selectedIconName = widget.taskToEdit!.iconName;
+      _selectedColorValue = widget.taskToEdit!.colorValue;
     }
   }
 
@@ -53,16 +81,21 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
           title: title,
           description: description,
           frequency: _selectedFrequency,
+          iconName: _selectedIconName,
+          colorValue: _selectedColorValue,
         );
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Task "$title" created.')),
         );
       } else {
-        final updatedTask = CustomTask(
-          id: widget.taskToEdit!.id,
+        final updatedTask = widget.taskToEdit!.copyWith( // Use copyWith for easier updates
           title: title,
           description: description,
           frequency: _selectedFrequency,
+          iconName: _selectedIconName,
+          colorValue: _selectedColorValue,
+          clearIconName: _selectedIconName == null,
+          clearColorValue: _selectedColorValue == null,
         );
         customTasksNotifier.updateTask(updatedTask);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -145,21 +178,97 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
                   return null;
                 },
               ),
-              const SizedBox(height: 32), // Increased spacing before save button
-              SizedBox( // Wrap ElevatedButton with SizedBox to control its width
-                width: double.infinity, // Make button full width
+              const SizedBox(height: 24),
+              Text('Select Icon (Optional)', style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: _predefinedIcons.entries.map((entry) {
+                  final iconName = entry.key;
+                  final iconData = entry.value;
+                  final isSelected = _selectedIconName == iconName;
+                  return InkWell(
+                    onTap: () {
+                      setState(() {
+                        if (isSelected) {
+                          _selectedIconName = null;
+                        } else {
+                          _selectedIconName = iconName;
+                        }
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: isSelected ? Theme.of(context).colorScheme.primary : Colors.grey.shade400,
+                          width: isSelected ? 2.0 : 1.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                        color: isSelected ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : null,
+                      ),
+                      child: Icon(iconData, color: isSelected ? Theme.of(context).colorScheme.primary : Colors.grey.shade700, size: 28),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 24),
+              Text('Select Color (Optional)', style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 10.0, // Increased spacing for colors
+                runSpacing: 10.0,
+                children: _predefinedColors.map((color) {
+                  final isSelected = _selectedColorValue == color.value;
+                  return InkWell(
+                    onTap: () {
+                      setState(() {
+                        if (isSelected) {
+                          _selectedColorValue = null;
+                        } else {
+                          _selectedColorValue = color.value;
+                        }
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(22),
+                    child: Container(
+                      width: 44, // Slightly larger tap target
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: color,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isSelected ? Theme.of(context).colorScheme.primary : Colors.grey.shade500, // Darker border for unselected
+                          width: isSelected ? 3.0 : 1.5,
+                        ),
+                        boxShadow: [ // Add subtle shadow for depth
+                           BoxShadow(
+                               color: Colors.black.withOpacity(0.1),
+                               blurRadius: 2,
+                               offset: const Offset(0,1),
+                           )
+                        ]
+                      ),
+                      child: isSelected ? Icon(Icons.check, color: ThemeData.estimateBrightnessForColor(color) == Brightness.dark ? Colors.white : Colors.black, size: 24) : null,
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    // backgroundColor: Theme.of(context).colorScheme.primary, // Optional: theming
-                    // foregroundColor: Theme.of(context).colorScheme.onPrimary, // Optional: theming
                   ),
                   child: const Text('Save Task'),
                 ),
               ),
-              const SizedBox(height: 16), // Add some padding at the bottom of the scroll view
+              const SizedBox(height: 16),
             ],
           ),
         ),
