@@ -48,6 +48,10 @@ class PreferencesService {
     return _prefs.getString(_keySelectedTrack);
   }
 
+  Future<void> clearSelectedTrack() async {
+    await _prefs.remove(_keySelectedTrack);
+  }
+
   // ──────────────────────────────────────────────────────────────────────────────
   // CustomTask List
   // ──────────────────────────────────────────────────────────────────────────────
@@ -99,11 +103,15 @@ class PreferencesService {
   // Helpers / Reset
   // ──────────────────────────────────────────────────────────────────────────────
 
+  Future<void> clearAppMode() async {
+    await _prefs.remove(_keyAppMode);
+  }
+
   /// Clears all stored preferences (for debugging or logout)
   Future<void> clearAll() async {
-    await _prefs.remove(_keyAppMode);
-    await _prefs.remove(_keySelectedTrack);
-    await _prefs.remove(_keyCustomTasks);
-    await _prefs.remove(_keyCompletions);
+    await clearAppMode();
+    await clearSelectedTrack();
+    await _prefs.remove(_keyCustomTasks); // Assuming these will have their own clear methods later
+    await _prefs.remove(_keyCompletions);  // Assuming these will have their own clear methods later
   }
 }
