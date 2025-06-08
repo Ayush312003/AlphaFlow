@@ -75,8 +75,7 @@ class CustomHomePage extends ConsumerWidget {
       );
 
     if (customTasks.isEmpty) {
-      return Scaffold(
-        appBar: AppBar(title: const Text("Custom Tasks")),
+      return Scaffold( // No AppBar here
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
@@ -104,10 +103,7 @@ class CustomHomePage extends ConsumerWidget {
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Custom Tasks"),
-      ),
+    return Scaffold( // No AppBar here
       body: ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               itemCount: customTasks.length,

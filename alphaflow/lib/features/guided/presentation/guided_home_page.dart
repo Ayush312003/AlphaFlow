@@ -11,113 +11,102 @@ class GuidedHomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HomePage is now responsible for ensuring selectedTrackId and track are valid.
+    // If we reach this widget, we can assume they are non-null.
     final selectedTrackId = ref.watch(selectedTrackProvider);
-
-    // Watch completionsProvider to ensure UI rebuilds when completion status changes.
-    ref.watch(completionsProvider);
-
+    // It's good practice to still have a fallback, though HomePage should prevent this state.
     if (selectedTrackId == null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text("Guided Mode")),
-        body: const Center(child: Text("No track selected. Please select a track first.")),
-      );
+        return const Center(child: Text("Error: No track selected. Please report this issue."));
     }
-
     final track = ref.watch(guidedTrackByIdProvider(selectedTrackId));
-
     if (track == null) {
-      return Scaffold(
-        appBar: AppBar(title: Text(selectedTrackId)),
-        body: const Center(child: Text("Track not found. It might have been removed or the ID is invalid.")),
-      );
+        return const Center(child: Text("Error: Track data not found. Please report this issue."));
     }
+
+    ref.watch(completionsProvider); // Watch for task completion changes
 
     final List<GuidedTask> currentTasks = track.levels.isNotEmpty ? track.levels[0].unlockTasks : [];
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(track.title),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
-            child: Text(
-              "Level 1 Tasks", // This will be dynamic later
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+    // Return only the body content, not a full Scaffold
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
+          child: Text(
+            "Level 1 Tasks", // This will be dynamic later
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          ),
+        ),
+        if (currentTasks.isEmpty)
+          const Expanded(
+            child: Center(child: Text("No tasks available for this level.")),
+          )
+        else
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+              itemCount: currentTasks.length,
+              itemBuilder: (context, index) {
+                final task = currentTasks[index];
+                final isCompleted = ref.read(completionsProvider.notifier).isTaskCompletedOnDate(task.id, DateTime.now());
+
+                return Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                  elevation: isCompleted ? 1.0 : 3.0,
+                  color: isCompleted ? Colors.green.withOpacity(0.05) : Theme.of(context).cardColor,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      side: isCompleted
+                          ? BorderSide(color: Colors.green.withOpacity(0.3), width: 1)
+                          : BorderSide.none,
+                  ),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    leading: Checkbox(
+                      value: isCompleted,
+                      activeColor: Colors.green,
+                      onChanged: (bool? newValue) {
+                        if (newValue != null) {
+                          ref.read(completionsProvider.notifier).toggleTaskCompletion(
+                            task.id,
+                            DateTime.now(),
+                            trackId: selectedTrackId, // selectedTrackId is available here
+                          );
+                        }
+                      },
+                    ),
+                    title: Text(
+                      task.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        decoration: isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+                        color: isCompleted ? Theme.of(context).textTheme.bodySmall?.color : Theme.of(context).textTheme.bodyLarge?.color,
+                      ),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        task.description,
+                         style: TextStyle(
+                           color: isCompleted ? Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7) : Theme.of(context).textTheme.bodyMedium?.color,
+                         ),
+                      ),
+                    ),
+                    trailing: Text(
+                      "XP: ${task.xp}",
+                      style: TextStyle(
+                        color: isCompleted ? Colors.green : Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
-          if (currentTasks.isEmpty)
-            const Expanded(
-              child: Center(child: Text("No tasks available for this level.")),
-            )
-          else
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
-                itemCount: currentTasks.length,
-                itemBuilder: (context, index) {
-                  final task = currentTasks[index];
-                  final isCompleted = ref.read(completionsProvider.notifier).isTaskCompletedOnDate(task.id, DateTime.now());
-
-                  return Card(
-                    margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
-                    elevation: isCompleted ? 1.0 : 3.0, // Change elevation based on completion
-                    color: isCompleted ? Colors.green.withOpacity(0.05) : Theme.of(context).cardColor, // Subtle green tint or default card color
-                    shape: RoundedRectangleBorder( // Optional: add a border or change shape
-                        borderRadius: BorderRadius.circular(8.0),
-                        side: isCompleted
-                            ? BorderSide(color: Colors.green.withOpacity(0.3), width: 1)
-                            : BorderSide.none,
-                    ),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                      leading: Checkbox(
-                        value: isCompleted,
-                        activeColor: Colors.green, // Emphasize active color
-                        onChanged: (bool? newValue) {
-                          if (newValue != null) {
-                            ref.read(completionsProvider.notifier).toggleTaskCompletion(
-                              task.id,
-                              DateTime.now(),
-                              trackId: selectedTrackId,
-                            );
-                          }
-                        },
-                      ),
-                      title: Text(
-                        task.title,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          decoration: isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
-                          color: isCompleted ? Theme.of(context).textTheme.bodySmall?.color : Theme.of(context).textTheme.bodyLarge?.color,
-                        ),
-                      ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: Text(
-                          task.description,
-                           style: TextStyle(
-                             color: isCompleted ? Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7) : Theme.of(context).textTheme.bodyMedium?.color,
-                           ),
-                        ),
-                      ),
-                      trailing: Text(
-                        "XP: ${task.xp}",
-                        style: TextStyle(
-                          color: isCompleted ? Colors.green : Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-        ],
-      ),
+      ],
     );
   }
 }

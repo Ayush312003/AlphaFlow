@@ -1,9 +1,11 @@
 import 'package:alphaflow/data/models/app_mode.dart';
-import 'package:alphaflow/data/models/custom_task.dart'; // Import CustomTask
+import 'package:alphaflow/data/models/app_mode.dart';
+import 'package:alphaflow/data/models/custom_task.dart';
 import 'package:alphaflow/features/custom/presentation/task_editor_page.dart';
 import 'package:alphaflow/features/guided/presentation/select_track_page.dart';
 import 'package:alphaflow/features/home/presentation/home_page.dart';
 import 'package:alphaflow/features/onboarding/presentation/select_mode_page.dart';
+import 'package:alphaflow/features/settings/presentation/settings_page.dart'; // Added import
 import 'package:alphaflow/providers/app_mode_provider.dart';
 import 'package:alphaflow/providers/selected_track_provider.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +58,7 @@ class MyApp extends ConsumerWidget {
           }
           return const TaskEditorPage(); // For creating a new task (taskToEdit will be null)
         },
+        '/settings': (context) => const SettingsPage(), // Added route
       },
     );
   }
