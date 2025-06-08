@@ -1,4 +1,4 @@
-import 'package:alphaflow/features/guided/data/guided_tracks_data.dart';
+import 'package:alphaflow/features/guided/data/guided_tracks.dart';
 import 'package:alphaflow/features/guided/providers/guided_tracks_provider.dart';
 import 'package:alphaflow/providers/selected_track_provider.dart';
 import 'package:flutter/material.dart';
