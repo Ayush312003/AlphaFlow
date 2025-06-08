@@ -3,6 +3,7 @@ import 'package:alphaflow/data/models/frequency.dart';
 import 'package:alphaflow/providers/custom_tasks_provider.dart'; // Still needed for _showDeleteConfirmationDialog and edit arguments
 import 'package:alphaflow/providers/task_completions_provider.dart';
 import 'package:alphaflow/providers/custom_task_streaks_provider.dart';
+import 'package:alphaflow/data/models/streak_info.dart'; // Added import for TaskStreakInfo
 import 'package:alphaflow/providers/today_tasks_provider.dart'; // Added import
 import 'package:alphaflow/data/models/today_task.dart'; // Added import
 import 'package:flutter/material.dart';

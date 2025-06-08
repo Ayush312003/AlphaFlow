@@ -29,9 +29,8 @@ class GuidedHomePage extends ConsumerWidget {
       0.0,
       (sum, task) => sum + task.xp,
     );
-    final double progress = (totalPossibleXpToday > 0)
-        ? (currentXp / totalPossibleXpToday)
-        : 0.0;
+    final double progress =
+        (totalPossibleXpToday > 0) ? (currentXp / totalPossibleXpToday) : 0.0;
 
     if (selectedTrackId == null) {
       return const Center(
@@ -86,9 +85,8 @@ class GuidedHomePage extends ConsumerWidget {
                 LinearProgressIndicator(
                   value: progress > 1.0 ? 1.0 : progress,
                   minHeight: 12,
-                  backgroundColor: Theme.of(
-                    context,
-                  ).colorScheme.surfaceContainerHighest,
+                  backgroundColor:
+                      Theme.of(context).colorScheme.surfaceContainerHighest,
                   valueColor: AlwaysStoppedAnimation<Color>(
                     Theme.of(context).colorScheme.primary,
                   ),
@@ -143,17 +141,19 @@ class GuidedHomePage extends ConsumerWidget {
                     vertical: 5.0,
                   ),
                   elevation: todayTask.isCompleted ? 1.0 : 2.5,
-                  color: todayTask.isCompleted
-                      ? Colors.green.withOpacity(0.05)
-                      : Theme.of(context).cardColor,
+                  color:
+                      todayTask.isCompleted
+                          ? Colors.green.withOpacity(0.05)
+                          : Theme.of(context).cardColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
-                    side: todayTask.isCompleted
-                        ? BorderSide(
-                            color: Colors.green.withOpacity(0.4),
-                            width: 1.5,
-                          )
-                        : BorderSide.none,
+                    side:
+                        todayTask.isCompleted
+                            ? BorderSide(
+                              color: Colors.green.withOpacity(0.4),
+                              width: 1.5,
+                            )
+                            : BorderSide.none,
                   ),
                   child: ListTile(
                     contentPadding: const EdgeInsets.symmetric(
@@ -179,12 +179,14 @@ class GuidedHomePage extends ConsumerWidget {
                       todayTask.title,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        decoration: todayTask.isCompleted
-                            ? TextDecoration.lineThrough
-                            : TextDecoration.none,
-                        color: todayTask.isCompleted
-                            ? Theme.of(context).textTheme.bodySmall?.color
-                            : Theme.of(context).textTheme.bodyLarge?.color,
+                        decoration:
+                            todayTask.isCompleted
+                                ? TextDecoration.lineThrough
+                                : TextDecoration.none,
+                        color:
+                            todayTask.isCompleted
+                                ? Theme.of(context).textTheme.bodySmall?.color
+                                : Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
                     subtitle: Padding(
@@ -197,12 +199,16 @@ class GuidedHomePage extends ConsumerWidget {
                             // The original description Text widget
                             todayTask.description,
                             style: TextStyle(
-                              color: todayTask.isCompleted
-                                  ? Theme.of(context).textTheme.bodySmall?.color
-                                        ?.withOpacity(0.7)
-                                  : Theme.of(
-                                      context,
-                                    ).textTheme.bodyMedium?.color,
+                              color:
+                                  todayTask.isCompleted
+                                      ? Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.color
+                                          ?.withOpacity(0.7)
+                                      : Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium?.color,
                             ),
                           ),
                           Builder(
@@ -215,19 +221,24 @@ class GuidedHomePage extends ConsumerWidget {
                                   streakInfo.streakCount > 0) {
                                 final frequencyText =
                                     streakInfo.frequency == Frequency.daily
-                                    ? "day"
-                                    : "week";
-                                final pluralS = streakInfo.streakCount > 1
-                                    ? "s"
-                                    : "";
+                                        ? "day"
+                                        : "week";
+                                final pluralS =
+                                    streakInfo.streakCount > 1 ? "s" : "";
                                 return Padding(
                                   padding: const EdgeInsets.only(top: 6.0),
                                   child: Text(
                                     "🔥 ${streakInfo.streakCount} ${frequencyText}${pluralS} streak!",
                                     style: TextStyle(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.primary,
+                                      color:
+                                          todayTask.isCompleted
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                                  .withOpacity(0.7)
+                                              : Theme.of(
+                                                context,
+                                              ).colorScheme.primary,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 13,
                                     ),
@@ -243,9 +254,10 @@ class GuidedHomePage extends ConsumerWidget {
                     trailing: Text(
                       "XP: ${todayTask.xp}",
                       style: TextStyle(
-                        color: todayTask.isCompleted
-                            ? Colors.green
-                            : Theme.of(context).colorScheme.primary,
+                        color:
+                            todayTask.isCompleted
+                                ? Colors.green
+                                : Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),
