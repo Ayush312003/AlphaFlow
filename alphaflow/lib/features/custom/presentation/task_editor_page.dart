@@ -171,6 +171,11 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
                   labelText: 'Title',
                   hintText: 'Enter task title',
                   border: OutlineInputBorder(),
+                  isDense: true, // Added
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12.0,
+                    vertical: 14.0,
+                  ), // Added/Adjusted
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {

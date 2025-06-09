@@ -74,6 +74,33 @@ class CustomHomePage extends ConsumerWidget {
     );
   }
 
+  void _showNotesDialog(
+    BuildContext context,
+    String taskTitle,
+    String notesContent,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(taskTitle), // Using task title for context
+          content: SingleChildScrollView(child: Text(notesContent)),
+          contentPadding: const EdgeInsets.all(
+            24.0,
+          ), // Ensure good padding for content
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Use todayTasksProvider for the list of tasks to display
@@ -260,9 +287,10 @@ class CustomHomePage extends ConsumerWidget {
             );
           }
 
-          Widget? notesIndicatorWidget;
+          Widget? notesIndicatorWidget; // Keep it nullable
           if (task.notes != null && task.notes!.isNotEmpty) {
-            notesIndicatorWidget = Row(
+            // Original visual part of the indicator
+            Widget notesVisualRow = Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
@@ -284,6 +312,28 @@ class CustomHomePage extends ConsumerWidget {
                   ),
                 ),
               ],
+            );
+
+            notesIndicatorWidget = InkWell(
+              onTap: () {
+                // task, context are from itemBuilder's scope
+                _showNotesDialog(context, task.title, task.notes!);
+              },
+              borderRadius: BorderRadius.circular(
+                4.0,
+              ), // Optional: for ink splash shape
+              child: Padding(
+                // This padding controls spacing from elements above it
+                padding: EdgeInsets.only(
+                  top:
+                      (todayTask.description.isNotEmpty ||
+                              streakDisplayWidget != null ||
+                              dueDateWidget != null)
+                          ? 4.0
+                          : 0.0,
+                ),
+                child: notesVisualRow, // The actual Row with Icon and Text
+              ),
             );
           }
 
@@ -374,17 +424,8 @@ class CustomHomePage extends ConsumerWidget {
                               child: dueDateWidget,
                             ),
                           if (notesIndicatorWidget != null)
-                            Padding(
-                              padding: EdgeInsets.only(
-                                top:
-                                    (todayTask.description.isNotEmpty ||
-                                            streakDisplayWidget != null ||
-                                            dueDateWidget != null)
-                                        ? 4.0
-                                        : 0.0,
-                              ),
-                              child: notesIndicatorWidget,
-                            ),
+                            // Padding is now part of the InkWell's child if notesIndicatorWidget is built
+                            notesIndicatorWidget,
                         ],
                       ),
               trailing: Row(
