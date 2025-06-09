@@ -62,6 +62,30 @@ class CustomTaskListNotifier extends StateNotifier<List<CustomTask>> {
     await _prefsService.saveCustomTasks(state);
   }
 
+  Future<void> toggleSubTaskCompletion(
+    String parentTaskId,
+    String subTaskId,
+    bool newCompletionStatus,
+  ) async {
+    state =
+        state.map((task) {
+          // Using map to create a new list for state update
+          if (task.id == parentTaskId) {
+            return task.copyWith(
+              subTasks:
+                  task.subTasks.map((st) {
+                    if (st.id == subTaskId) {
+                      return st.copyWith(isCompleted: newCompletionStatus);
+                    }
+                    return st;
+                  }).toList(),
+            );
+          }
+          return task;
+        }).toList();
+    await _prefsService.saveCustomTasks(state);
+  }
+
   // Optional: Method to reorder tasks if needed in the future
   // Future<void> reorderTask(int oldIndex, int newIndex) async {
   //   if (oldIndex < newIndex) {

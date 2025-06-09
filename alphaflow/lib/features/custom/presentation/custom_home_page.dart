@@ -133,12 +133,21 @@ class CustomHomePage extends ConsumerWidget {
                           dense: true,
                           leading: Checkbox(
                             value: subTask.isCompleted,
-                            onChanged: null, // Makes it read-only
+                            onChanged: (bool? newValue) {
+                              if (newValue != null) {
+                                // 'ref' and 'parentTaskId' are parameters passed to _showSubTasksDialog
+                                // 'subTask.id' is from the current subTask in the list
+                                ref
+                                    .read(customTasksProvider.notifier)
+                                    .toggleSubTaskCompletion(
+                                      parentTaskId,
+                                      subTask.id,
+                                      newValue,
+                                    );
+                              }
+                            },
                             visualDensity: VisualDensity.compact,
-                            activeColor:
-                                Theme.of(
-                                  context,
-                                ).disabledColor, // Visual cue for read-only
+                            // activeColor: Theme.of(context).colorScheme.primary, // Using default active color
                           ),
                           title: Text(
                             subTask.title,
