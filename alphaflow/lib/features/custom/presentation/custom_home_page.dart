@@ -302,13 +302,11 @@ class CustomHomePage extends ConsumerWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  "Notes",
+                  "View Notes",
                   style: TextStyle(
                     fontSize: 12,
-                    fontStyle: FontStyle.italic,
-                    color: Theme.of(
-                      context,
-                    ).textTheme.bodySmall?.color?.withOpacity(0.9),
+                    color: Theme.of(context).colorScheme.primary,
+                    // fontWeight: FontWeight.w500, // Optional: could add for more emphasis
                   ),
                 ),
               ],
