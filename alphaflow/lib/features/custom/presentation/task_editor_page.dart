@@ -4,6 +4,7 @@ import 'package:alphaflow/providers/custom_tasks_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart'; // For date formatting
+import 'package:alphaflow/data/models/task_priority.dart';
 
 // Example predefined icons
 final Map<String, IconData> _predefinedIcons = {
@@ -47,6 +48,7 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
   int? _selectedColorValue;
   DateTime? _selectedDueDate;
   late TextEditingController _notesController;
+  TaskPriority _selectedPriority = TaskPriority.none;
 
   @override
   void initState() {
@@ -63,6 +65,7 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
       _selectedColorValue = widget.taskToEdit!.colorValue;
       _selectedDueDate = widget.taskToEdit!.dueDate;
       _notesController.text = widget.taskToEdit!.notes ?? '';
+      _selectedPriority = widget.taskToEdit!.priority;
     }
   }
 
@@ -110,6 +113,7 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
           colorValue: _selectedColorValue,
           dueDate: _selectedDueDate,
           notes: _notesController.text.trim(),
+          priority: _selectedPriority,
         );
         ScaffoldMessenger.of(
           context,
@@ -124,6 +128,7 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
           colorValue: _selectedColorValue,
           dueDate: _selectedDueDate,
           notes: _notesController.text.trim(),
+          priority: _selectedPriority,
           clearIconName: _selectedIconName == null,
           clearColorValue: _selectedColorValue == null,
           clearDueDate:
@@ -213,6 +218,30 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
                   }
                   return null;
                 },
+              ),
+              const SizedBox(height: 16), // Ensure appropriate spacing
+              DropdownButtonFormField<TaskPriority>(
+                value: _selectedPriority,
+                decoration: const InputDecoration(
+                  labelText: 'Priority',
+                  border: OutlineInputBorder(),
+                ),
+                items:
+                    TaskPriority.values.map((TaskPriority priority) {
+                      return DropdownMenuItem<TaskPriority>(
+                        value: priority,
+                        // Assumes TaskPriorityExtension with displayName is in task_priority.dart
+                        child: Text(priority.displayName),
+                      );
+                    }).toList(),
+                onChanged: (TaskPriority? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      _selectedPriority = newValue;
+                    });
+                  }
+                },
+                // No validator needed as it defaults to TaskPriority.none
               ),
               const SizedBox(height: 16),
               Text(

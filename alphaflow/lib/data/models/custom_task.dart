@@ -1,4 +1,5 @@
 import 'frequency.dart';
+import 'task_priority.dart';
 
 /// A user-created task in Custom mode (flat list).
 class CustomTask {
@@ -10,6 +11,7 @@ class CustomTask {
   final int? colorValue; // New field
   final DateTime? dueDate;
   final String? notes;
+  final TaskPriority priority;
 
   CustomTask({
     required this.id,
@@ -20,6 +22,7 @@ class CustomTask {
     this.colorValue, // Optional in constructor
     this.dueDate,
     this.notes,
+    this.priority = TaskPriority.none,
   });
 
   /// For persistence to JSON
@@ -42,6 +45,7 @@ class CustomTask {
     if (notes != null) {
       json['notes'] = notes;
     }
+    json['priority'] = priority.name;
     return json;
   }
 
@@ -58,6 +62,7 @@ class CustomTask {
               ? null
               : DateTime.tryParse(json['dueDate'] as String),
       notes: json['notes'] as String?,
+      priority: priorityFromString(json['priority'] as String?),
     );
   }
 
@@ -70,6 +75,7 @@ class CustomTask {
     int? colorValue,
     DateTime? dueDate,
     String? notes,
+    TaskPriority? priority,
     bool clearIconName = false,
     bool clearColorValue = false,
     bool clearDueDate = false,
@@ -84,6 +90,7 @@ class CustomTask {
       colorValue: clearColorValue ? null : colorValue ?? this.colorValue,
       dueDate: clearDueDate ? null : dueDate ?? this.dueDate,
       notes: clearNotes ? null : notes ?? this.notes,
+      priority: priority ?? this.priority,
     );
   }
 }

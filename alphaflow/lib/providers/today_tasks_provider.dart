@@ -139,9 +139,35 @@ final todayTasksProvider = Provider<List<TodayTask>>((ref) {
   }
 
   tasksForToday.sort((a, b) {
+    // Primary sort: Incomplete tasks first
     if (a.isCompleted != b.isCompleted) {
-      return a.isCompleted ? 1 : -1; // Incomplete tasks first
+      return a.isCompleted ? 1 : -1;
     }
+
+    // Secondary sort: By priority for custom tasks (High > Medium > Low > None)
+    // This applies only if completion status is the same.
+    if (a.type == TodayTaskType.custom && b.type == TodayTaskType.custom) {
+      // Access priority from TodayTask's new field
+      final priorityA = a.priority ?? TaskPriority.none;
+      final priorityB = b.priority ?? TaskPriority.none;
+
+      if (priorityA != priorityB) {
+        return priorityB.index.compareTo(
+          priorityA.index,
+        ); // Descending order of index
+      }
+    }
+    // Add further sorting if needed (e.g. by title) or return 0
+    // For now, if priorities are same or types differ (and completion is same), keep current relative order or sort by title
+
+    // Optional Tertiary sort: by title alphabetically (case-insensitive)
+    // This will apply if completion is same, and if custom tasks, priority is also same.
+    final titleA = a.title.toLowerCase();
+    final titleB = b.title.toLowerCase();
+    if (titleA != titleB) {
+      return titleA.compareTo(titleB);
+    }
+
     return 0;
   });
 

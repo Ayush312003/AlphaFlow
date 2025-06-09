@@ -9,6 +9,7 @@ import 'package:alphaflow/data/models/today_task.dart'; // Added import
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:alphaflow/data/models/task_priority.dart';
 
 // Duplicated from TaskEditorPage for now, consider moving to a shared utility
 final Map<String, IconData> _customTaskIcons = {
@@ -146,6 +147,28 @@ class CustomHomePage extends ConsumerWidget {
 
           // Use todayTask.isCompleted for styling and checkbox state
           final isCompleted = todayTask.isCompleted;
+          final TaskPriority priority = task.priority;
+
+          Widget? priorityIndicatorWidget;
+          if (priority == TaskPriority.high) {
+            priorityIndicatorWidget = Icon(
+              Icons.priority_high_rounded,
+              color: Colors.red.shade700,
+              size: 24,
+            );
+          } else if (priority == TaskPriority.medium) {
+            priorityIndicatorWidget = Icon(
+              Icons.flag_rounded,
+              color: Colors.orange.shade700,
+              size: 24,
+            );
+          } else if (priority == TaskPriority.low) {
+            priorityIndicatorWidget = Icon(
+              Icons.low_priority_rounded,
+              color: Colors.blue.shade700,
+              size: 24,
+            );
+          }
 
           final IconData? taskIconData =
               todayTask.iconName == null
@@ -162,6 +185,40 @@ class CustomHomePage extends ConsumerWidget {
               taskColor ??
               Theme.of(context).iconTheme.color ??
               Colors.grey.shade700;
+
+          List<Widget> leadingWidgets = [];
+          if (priorityIndicatorWidget != null) {
+            leadingWidgets.add(priorityIndicatorWidget);
+          }
+
+          if (taskIconData != null) {
+            if (leadingWidgets.isNotEmpty) {
+              leadingWidgets.add(
+                const SizedBox(width: 8),
+              ); // Space between priority and task icon
+            }
+            leadingWidgets.add(
+              Icon(
+                taskIconData,
+                color:
+                    isCompleted
+                        ? iconDisplayColor.withOpacity(0.5)
+                        : iconDisplayColor,
+                size: 28,
+              ),
+            );
+          }
+
+          Widget? finalLeadingWidget;
+          if (leadingWidgets.isNotEmpty) {
+            finalLeadingWidget = Row(
+              mainAxisSize: MainAxisSize.min,
+              children: leadingWidgets,
+            );
+          } else {
+            // Placeholder to maintain alignment if no icons at all
+            finalLeadingWidget = const SizedBox(width: 28, height: 28);
+          }
 
           final TaskStreakInfo? streakInfo =
               streaksMap[todayTask.id]; // Use todayTask.id for streaks
@@ -254,17 +311,7 @@ class CustomHomePage extends ConsumerWidget {
                 vertical: 8.0,
                 horizontal: 16.0,
               ),
-              leading:
-                  taskIconData != null
-                      ? Icon(
-                        taskIconData,
-                        color:
-                            isCompleted
-                                ? iconDisplayColor.withOpacity(0.5)
-                                : iconDisplayColor,
-                        size: 28,
-                      )
-                      : const SizedBox(width: 28, height: 28),
+              leading: finalLeadingWidget,
               title: Text(
                 todayTask.title, // Use todayTask for display
                 style: TextStyle(
