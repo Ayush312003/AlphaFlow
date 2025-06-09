@@ -25,22 +25,27 @@ final todayTasksProvider = Provider<List<TodayTask>>((ref) {
   final completions = ref.watch(completionsProvider);
 
   final List<TodayTask> tasksForToday = [];
-  final DateTime today = DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  final DateTime today = DateTime.utc(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
   final DateTime startOfThisWeek = _startOfWeek(today);
 
   bool isTaskCompletedToday(String taskId) {
-    return completions.any((comp) =>
-        comp.taskId == taskId &&
-        comp.date.year == today.year &&
-        comp.date.month == today.month &&
-        comp.date.day == today.day
+    return completions.any(
+      (comp) =>
+          comp.taskId == taskId &&
+          comp.date.year == today.year &&
+          comp.date.month == today.month &&
+          comp.date.day == today.day,
     );
   }
 
   bool isTaskCompletedThisWeek(String taskId) {
-    return completions.any((comp) =>
-        comp.taskId == taskId &&
-        _startOfWeek(comp.date) == startOfThisWeek
+    return completions.any(
+      (comp) =>
+          comp.taskId == taskId && _startOfWeek(comp.date) == startOfThisWeek,
     );
   }
 
@@ -49,41 +54,66 @@ final todayTasksProvider = Provider<List<TodayTask>>((ref) {
     // guidedTracksProvider is watched by currentGuidedLevelProvider indirectly.
     // We only need currentGuidedLevelProvider here.
 
-    if (selectedTrackId != null) { // Ensure a track is selected
-        final LevelDefinition? currentLevel = ref.watch(currentGuidedLevelProvider);
+    if (selectedTrackId != null) {
+      // Ensure a track is selected
+      final LevelDefinition? currentLevel = ref.watch(
+        currentGuidedLevelProvider,
+      );
 
-        if (currentLevel != null) {
-            final List<GuidedTask> levelTasks = currentLevel.unlockTasks;
+      if (currentLevel != null) {
+        final List<GuidedTask> levelTasks = currentLevel.unlockTasks;
 
-            for (final guidedTask in levelTasks) {
-                bool shouldDisplay = false;
-                bool isCompleted = false;
+        for (final guidedTask in levelTasks) {
+          bool shouldDisplay = false;
+          bool isCompleted = false;
 
-                if (guidedTask.frequency == Frequency.daily) {
-                    shouldDisplay = true;
-                    isCompleted = isTaskCompletedToday(guidedTask.id);
-                } else if (guidedTask.frequency == Frequency.weekly) {
-                    shouldDisplay = true;
-                    isCompleted = isTaskCompletedThisWeek(guidedTask.id);
-                } else if (guidedTask.frequency == Frequency.oneTime) {
-                    // Check completion specifically for this trackId, as task ID might not be globally unique for one-time tasks
-                    // if they are defined per level but could have same ID if not careful in data definition.
-                    // TaskCompletion for guided tasks should have trackId set.
-                    isCompleted = completions.any((c) => c.taskId == guidedTask.id && c.trackId == selectedTrackId);
-                    shouldDisplay = !isCompleted;
-                }
+          if (guidedTask.frequency == Frequency.daily) {
+            shouldDisplay = true;
+            isCompleted = isTaskCompletedToday(guidedTask.id);
+          } else if (guidedTask.frequency == Frequency.weekly) {
+            isCompleted = isTaskCompletedThisWeek(
+              guidedTask.id,
+            ); // Completion check is for the whole week
 
-                if (shouldDisplay) {
-                    tasksForToday.add(TodayTask.fromGuidedTask(guidedTask, isCompleted));
-                }
+            // The 'today' variable (DateTime.utc(...)) is defined earlier in the provider.
+            // We need to ensure it's accessible or re-fetch its weekday component if necessary.
+            // Assuming 'today' is accessible:
+            if (guidedTask.dayOfWeek != null) {
+              if (today.weekday == guidedTask.dayOfWeek) {
+                // today.weekday (1=Mon, 7=Sun)
+                shouldDisplay = true;
+              } else {
+                shouldDisplay = false;
+              }
+            } else {
+              // No specific day (dayOfWeek is null), so display it throughout the week
+              shouldDisplay = true;
             }
-        } else {
-            // No current level determined (e.g., track has no levels, or error in level provider)
-            // tasksForToday remains empty for guided mode.
-            print("todayTasksProvider: No current level determined for track $selectedTrackId.");
+          } else if (guidedTask.frequency == Frequency.oneTime) {
+            // Check completion specifically for this trackId, as task ID might not be globally unique for one-time tasks
+            // if they are defined per level but could have same ID if not careful in data definition.
+            // TaskCompletion for guided tasks should have trackId set.
+            isCompleted = completions.any(
+              (c) => c.taskId == guidedTask.id && c.trackId == selectedTrackId,
+            );
+            shouldDisplay = !isCompleted;
+          }
+
+          if (shouldDisplay) {
+            tasksForToday.add(
+              TodayTask.fromGuidedTask(guidedTask, isCompleted),
+            );
+          }
         }
+      } else {
+        // No current level determined (e.g., track has no levels, or error in level provider)
+        // tasksForToday remains empty for guided mode.
+        print(
+          "todayTasksProvider: No current level determined for track $selectedTrackId.",
+        );
+      }
     } else {
-        print("todayTasksProvider: No track selected for guided mode.");
+      print("todayTasksProvider: No track selected for guided mode.");
     }
   } else if (appMode == AppMode.custom) {
     final allCustomTasks = ref.watch(customTasksProvider);
