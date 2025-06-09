@@ -115,59 +115,83 @@ class CustomHomePage extends ConsumerWidget {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text('Sub-tasks for "$taskTitle"'),
-          content: SizedBox(
-            width: double.maxFinite, // Ensure dialog uses available width
-            height:
-                MediaQuery.of(context).size.height *
-                0.4, // Set a max height for the content area
-            child:
-                subTasks.isEmpty
-                    ? const Center(child: Text('No sub-tasks for this task.'))
-                    : ListView.builder(
-                      shrinkWrap:
-                          true, // Important when ListView is in a constrained SizedBox
-                      itemCount: subTasks.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final subTask = subTasks[index];
-                        return ListTile(
-                          dense: true,
-                          leading: Checkbox(
-                            value: subTask.isCompleted,
-                            onChanged: (bool? newValue) {
-                              if (newValue != null) {
-                                // 'ref' and 'parentTaskId' are parameters passed to _showSubTasksDialog
-                                // 'subTask.id' is from the current subTask in the list
-                                ref
-                                    .read(customTasksProvider.notifier)
-                                    .toggleSubTaskCompletion(
-                                      parentTaskId,
-                                      subTask.id,
-                                      newValue,
-                                    );
-                              }
-                            },
-                            visualDensity: VisualDensity.compact,
-                            // activeColor: Theme.of(context).colorScheme.primary, // Using default active color
-                          ),
-                          title: Text(
-                            subTask.title,
-                            style: TextStyle(
-                              decoration:
-                                  subTask.isCompleted
-                                      ? TextDecoration.lineThrough
-                                      : TextDecoration.none,
-                              color:
-                                  subTask.isCompleted
-                                      ? Theme.of(context)
-                                          .disabledColor // Dim completed text
-                                      : Theme.of(
-                                        context,
-                                      ).textTheme.bodyLarge?.color,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+          content: Consumer(
+            builder: (context, consumerRef, child) {
+              final allTasks = consumerRef.watch(customTasksProvider);
+              List<SubTask> displaySubTasksToShow =
+                  subTasks; // Default to initially passed subTasks
+
+              try {
+                // Find the most up-to-date version of the parent task
+                final currentParentTask = allTasks.firstWhere(
+                  (task) => task.id == parentTaskId,
+                );
+                displaySubTasksToShow = currentParentTask.subTasks;
+              } catch (e) {
+                // Parent task not found (e.g., deleted while dialog is open).
+                // Dialog will show initial subtasks, but they won't update further.
+                // Or, we can return an error message widget here:
+                // return const Center(child: Text("Parent task data is no longer available."));
+                // For now, let it use the initial 'subTasks' list if parent is gone, to avoid crashing dialog.
+              }
+
+              return SizedBox(
+                width: double.maxFinite, // Ensure dialog uses available width
+                height:
+                    MediaQuery.of(context).size.height *
+                    0.4, // Set a max height for the content area
+                child:
+                    displaySubTasksToShow.isEmpty
+                        ? const Center(
+                          child: Text('No sub-tasks for this task.'),
+                        )
+                        : ListView.builder(
+                          shrinkWrap:
+                              true, // Important when ListView is in a constrained SizedBox
+                          itemCount: displaySubTasksToShow.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final subTask = displaySubTasksToShow[index];
+                            return ListTile(
+                              dense: true,
+                              leading: Checkbox(
+                                value: subTask.isCompleted,
+                                onChanged: (bool? newValue) {
+                                  if (newValue != null) {
+                                    // Use the original 'ref' from _showSubTasksDialog parameters
+                                    ref
+                                        .read(customTasksProvider.notifier)
+                                        .toggleSubTaskCompletion(
+                                          parentTaskId,
+                                          subTask.id,
+                                          newValue,
+                                        );
+                                  }
+                                },
+                                visualDensity: VisualDensity.compact,
+                                // activeColor: Theme.of(context).colorScheme.primary, // Using default active color
+                              ),
+                              title: Text(
+                                subTask.title,
+                                softWrap: true, // Added for title wrapping
+                                style: TextStyle(
+                                  decoration:
+                                      subTask.isCompleted
+                                          ? TextDecoration.lineThrough
+                                          : TextDecoration.none,
+                                  color:
+                                      subTask.isCompleted
+                                          ? Theme.of(context)
+                                              .disabledColor // Dim completed text
+                                          : Theme.of(
+                                            context,
+                                          ).textTheme.bodyLarge?.color,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+              );
+            },
           ),
           contentPadding: const EdgeInsets.fromLTRB(
             20.0,
