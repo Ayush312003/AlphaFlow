@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:alphaflow/data/models/task_priority.dart';
+import 'package:alphaflow/data/models/sub_task.dart'; // Added import
 
 // Duplicated from TaskEditorPage for now, consider moving to a shared utility
 final Map<String, IconData> _customTaskIcons = {
@@ -88,6 +89,83 @@ class CustomHomePage extends ConsumerWidget {
           contentPadding: const EdgeInsets.all(
             24.0,
           ), // Ensure good padding for content
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showSubTasksDialog(
+    BuildContext context,
+    String taskTitle,
+    List<SubTask> subTasks,
+    WidgetRef ref,
+    String parentTaskId,
+  ) {
+    // parentTaskId and ref are included for potential future interactivity, not used in this read-only version.
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text('Sub-tasks for "$taskTitle"'),
+          content: SizedBox(
+            width: double.maxFinite, // Ensure dialog uses available width
+            height:
+                MediaQuery.of(context).size.height *
+                0.4, // Set a max height for the content area
+            child:
+                subTasks.isEmpty
+                    ? const Center(child: Text('No sub-tasks for this task.'))
+                    : ListView.builder(
+                      shrinkWrap:
+                          true, // Important when ListView is in a constrained SizedBox
+                      itemCount: subTasks.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final subTask = subTasks[index];
+                        return ListTile(
+                          dense: true,
+                          leading: Checkbox(
+                            value: subTask.isCompleted,
+                            onChanged: null, // Makes it read-only
+                            visualDensity: VisualDensity.compact,
+                            activeColor:
+                                Theme.of(
+                                  context,
+                                ).disabledColor, // Visual cue for read-only
+                          ),
+                          title: Text(
+                            subTask.title,
+                            style: TextStyle(
+                              decoration:
+                                  subTask.isCompleted
+                                      ? TextDecoration.lineThrough
+                                      : TextDecoration.none,
+                              color:
+                                  subTask.isCompleted
+                                      ? Theme.of(context)
+                                          .disabledColor // Dim completed text
+                                      : Theme.of(
+                                        context,
+                                      ).textTheme.bodyLarge?.color,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+          ),
+          contentPadding: const EdgeInsets.fromLTRB(
+            20.0,
+            20.0,
+            20.0,
+            0,
+          ), // Adjust padding around content
           actions: <Widget>[
             TextButton(
               child: const Text('Close'),
@@ -341,30 +419,61 @@ class CustomHomePage extends ConsumerWidget {
                 task.subTasks.where((st) => st.isCompleted).length;
             int totalCount = task.subTasks.length;
 
-            List<Widget> progressRowChildren = [
-              Icon(
-                Icons.checklist_rtl_outlined, // Icon for sub-tasks/checklist
-                size: 14,
-                color: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.color?.withOpacity(0.9),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                "Sub-tasks: $completedCount/$totalCount",
-                style: TextStyle(
-                  fontSize: 12,
-                  fontStyle: FontStyle.italic,
+            // This is the visual part (icon and text)
+            Widget subTaskVisualRow = Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.checklist_rtl_outlined,
+                  size: 14,
                   color: Theme.of(
                     context,
                   ).textTheme.bodySmall?.color?.withOpacity(0.9),
                 ),
-              ),
-            ];
+                const SizedBox(width: 4),
+                Text(
+                  "Sub-tasks: $completedCount/$totalCount", // Text changed to be more descriptive for tapping
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic,
+                    color:
+                        Theme.of(
+                          context,
+                        ).colorScheme.primary, // Make it look like a link
+                    // textDecoration: TextDecoration.underline, // Optional: for more link-like appearance
+                  ),
+                ),
+              ],
+            );
 
-            subTaskProgressWidget = Row(
-              mainAxisSize: MainAxisSize.min,
-              children: progressRowChildren,
+            // Wrap the visual part (and its padding) with InkWell
+            subTaskProgressWidget = InkWell(
+              onTap: () {
+                // task, context, and ref are from the itemBuilder's scope. task.id is the parentTaskId.
+                _showSubTasksDialog(
+                  context,
+                  task.title,
+                  task.subTasks,
+                  ref,
+                  task.id,
+                );
+              },
+              borderRadius: BorderRadius.circular(
+                4.0,
+              ), // Optional: for ink splash shape
+              child: Padding(
+                // This Padding provides spacing from elements above it
+                padding: EdgeInsets.only(
+                  top:
+                      (todayTask.description.isNotEmpty ||
+                              streakDisplayWidget != null ||
+                              dueDateWidget != null ||
+                              notesIndicatorWidget != null)
+                          ? 4.0
+                          : 0.0,
+                ),
+                child: subTaskVisualRow,
+              ),
             );
           }
 
@@ -459,18 +568,7 @@ class CustomHomePage extends ConsumerWidget {
                             // Padding is now part of the InkWell's child if notesIndicatorWidget is built
                             notesIndicatorWidget,
                           if (subTaskProgressWidget != null)
-                            Padding(
-                              padding: EdgeInsets.only(
-                                top:
-                                    (todayTask.description.isNotEmpty ||
-                                            streakDisplayWidget != null ||
-                                            dueDateWidget != null ||
-                                            notesIndicatorWidget != null)
-                                        ? 4.0
-                                        : 0.0,
-                              ),
-                              child: subTaskProgressWidget,
-                            ),
+                            subTaskProgressWidget,
                         ],
                       ),
               trailing: Row(
