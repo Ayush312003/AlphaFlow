@@ -17,12 +17,16 @@ class CompletionListNotifier extends StateNotifier<List<TaskCompletion>> {
   /// Adds a completion record if not already present for that task on that date.
   /// Removes it if it is present (toggles completion).
   /// Normalizes date to midnight UTC to ensure date-based uniqueness.
-  Future<void> toggleTaskCompletion(String taskId, DateTime date,
-      {String? trackId}) async {
+  Future<void> toggleTaskCompletion(
+    String taskId,
+    DateTime date, {
+    String? trackId,
+  }) async {
     final normalizedDate = DateTime.utc(date.year, date.month, date.day);
 
-    final existingCompletionIndex =
-        state.indexWhere((c) => c.taskId == taskId && c.date == normalizedDate);
+    final existingCompletionIndex = state.indexWhere(
+      (c) => c.taskId == taskId && c.date == normalizedDate,
+    );
 
     if (existingCompletionIndex != -1) {
       // Completion exists, so remove it
@@ -58,6 +62,15 @@ class CompletionListNotifier extends StateNotifier<List<TaskCompletion>> {
     return state.where((c) => c.taskId == taskId).toList();
   }
 
+  Future<void> clearGuidedTaskCompletions() async {
+    // Filter out completions that have a non-null trackId
+    // These are considered guided task completions.
+    final List<TaskCompletion> customCompletionsOnly =
+        state.where((completion) => completion.trackId == null).toList();
+    state = customCompletionsOnly;
+    await _prefsService.saveCompletions(state);
+  }
+
   // Method to clear all completions (optional, could be useful for debugging/reset)
   // Future<void> clearAllCompletions() async {
   //   state = [];
@@ -67,6 +80,6 @@ class CompletionListNotifier extends StateNotifier<List<TaskCompletion>> {
 
 final completionsProvider =
     StateNotifierProvider<CompletionListNotifier, List<TaskCompletion>>((ref) {
-  final prefsService = ref.watch(preferencesServiceProvider);
-  return CompletionListNotifier(prefsService);
-});
+      final prefsService = ref.watch(preferencesServiceProvider);
+      return CompletionListNotifier(prefsService);
+    });

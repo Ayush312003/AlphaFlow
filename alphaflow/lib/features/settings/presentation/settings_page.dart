@@ -40,7 +40,17 @@ class SettingsPage extends ConsumerWidget {
               style: TextButton.styleFrom(
                 foregroundColor: Theme.of(context).colorScheme.error,
               ),
-              onPressed: () {
+              onPressed: () async {
+                // Make this async
+                await ref
+                    .read(completionsProvider.notifier)
+                    .clearGuidedTaskCompletions();
+                ref.read(selectedTrackProvider.notifier).clearSelectedTrack();
+                ref.invalidate(xpProvider);
+                ref.invalidate(totalTrackXpProvider);
+                ref.invalidate(currentGuidedLevelProvider);
+                ref.invalidate(guidedTaskStreaksProvider);
+
                 ref.read(appModeProvider.notifier).clearAppMode();
                 Navigator.of(dialogContext).pop(); // Close dialog first
                 Navigator.of(
