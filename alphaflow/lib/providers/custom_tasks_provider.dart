@@ -1,6 +1,7 @@
 import 'package:alphaflow/data/local/preferences_service.dart';
 import 'package:alphaflow/data/models/custom_task.dart';
 import 'package:alphaflow/data/models/frequency.dart';
+import 'package:alphaflow/data/models/task_priority.dart'; // Added import
 import 'package:alphaflow/providers/app_mode_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -22,16 +23,22 @@ class CustomTaskListNotifier extends StateNotifier<List<CustomTask>> {
     required String title,
     required String description,
     required Frequency frequency,
-    String? iconName, // New
-    int? colorValue, // New
+    String? iconName,
+    int? colorValue,
+    DateTime? dueDate, // Added
+    String? notes, // Added
+    TaskPriority priority = TaskPriority.none, // Added
   }) async {
     final newTask = CustomTask(
       id: _uuid.v4(), // Generate a unique ID
       title: title,
       description: description,
       frequency: frequency,
-      iconName: iconName, // Pass to constructor
-      colorValue: colorValue, // Pass to constructor
+      iconName: iconName,
+      colorValue: colorValue,
+      dueDate: dueDate, // Added
+      notes: notes, // Added
+      priority: priority, // Added
     );
     state = [...state, newTask];
     await _prefsService.saveCustomTasks(state);
@@ -63,6 +70,6 @@ class CustomTaskListNotifier extends StateNotifier<List<CustomTask>> {
 
 final customTasksProvider =
     StateNotifierProvider<CustomTaskListNotifier, List<CustomTask>>((ref) {
-  final prefsService = ref.watch(preferencesServiceProvider);
-  return CustomTaskListNotifier(prefsService);
-});
+      final prefsService = ref.watch(preferencesServiceProvider);
+      return CustomTaskListNotifier(prefsService);
+    });

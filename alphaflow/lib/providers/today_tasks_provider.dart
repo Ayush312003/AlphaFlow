@@ -6,6 +6,7 @@ import 'package:alphaflow/data/models/guided_track.dart';
 import 'package:alphaflow/data/models/task_completion.dart';
 import 'package:alphaflow/data/models/today_task.dart';
 import 'package:alphaflow/data/models/frequency.dart';
+import 'package:alphaflow/data/models/task_priority.dart'; // Added missing import
 import 'package:alphaflow/data/models/level_definition.dart'; // Added import
 import 'package:alphaflow/providers/app_mode_provider.dart';
 import 'package:alphaflow/providers/selected_track_provider.dart';
