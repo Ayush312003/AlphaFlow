@@ -335,6 +335,39 @@ class CustomHomePage extends ConsumerWidget {
             );
           }
 
+          Widget? subTaskProgressWidget;
+          if (task.subTasks.isNotEmpty) {
+            int completedCount =
+                task.subTasks.where((st) => st.isCompleted).length;
+            int totalCount = task.subTasks.length;
+
+            List<Widget> progressRowChildren = [
+              Icon(
+                Icons.checklist_rtl_outlined, // Icon for sub-tasks/checklist
+                size: 14,
+                color: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.color?.withOpacity(0.9),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                "Sub-tasks: $completedCount/$totalCount",
+                style: TextStyle(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.color?.withOpacity(0.9),
+                ),
+              ),
+            ];
+
+            subTaskProgressWidget = Row(
+              mainAxisSize: MainAxisSize.min,
+              children: progressRowChildren,
+            );
+          }
+
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
             elevation: isCompleted ? 1.0 : 3.0,
@@ -378,7 +411,8 @@ class CustomHomePage extends ConsumerWidget {
                   (todayTask.description.isEmpty &&
                           streakDisplayWidget == null &&
                           dueDateWidget == null &&
-                          notesIndicatorWidget == null)
+                          notesIndicatorWidget == null &&
+                          subTaskProgressWidget == null)
                       ? null
                       : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -424,6 +458,19 @@ class CustomHomePage extends ConsumerWidget {
                           if (notesIndicatorWidget != null)
                             // Padding is now part of the InkWell's child if notesIndicatorWidget is built
                             notesIndicatorWidget,
+                          if (subTaskProgressWidget != null)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top:
+                                    (todayTask.description.isNotEmpty ||
+                                            streakDisplayWidget != null ||
+                                            dueDateWidget != null ||
+                                            notesIndicatorWidget != null)
+                                        ? 4.0
+                                        : 0.0,
+                              ),
+                              child: subTaskProgressWidget,
+                            ),
                         ],
                       ),
               trailing: Row(
