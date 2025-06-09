@@ -1,7 +1,8 @@
 import 'package:alphaflow/data/local/preferences_service.dart';
 import 'package:alphaflow/data/models/custom_task.dart';
 import 'package:alphaflow/data/models/frequency.dart';
-import 'package:alphaflow/data/models/task_priority.dart'; // Added import
+import 'package:alphaflow/data/models/task_priority.dart';
+import 'package:alphaflow/data/models/sub_task.dart'; // Added import
 import 'package:alphaflow/providers/app_mode_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -25,9 +26,10 @@ class CustomTaskListNotifier extends StateNotifier<List<CustomTask>> {
     required Frequency frequency,
     String? iconName,
     int? colorValue,
-    DateTime? dueDate, // Added
-    String? notes, // Added
-    TaskPriority priority = TaskPriority.none, // Added
+    DateTime? dueDate,
+    String? notes,
+    TaskPriority priority = TaskPriority.none,
+    List<SubTask>? subTasks, // Added
   }) async {
     final newTask = CustomTask(
       id: _uuid.v4(), // Generate a unique ID
@@ -36,9 +38,12 @@ class CustomTaskListNotifier extends StateNotifier<List<CustomTask>> {
       frequency: frequency,
       iconName: iconName,
       colorValue: colorValue,
-      dueDate: dueDate, // Added
-      notes: notes, // Added
-      priority: priority, // Added
+      dueDate: dueDate,
+      notes: notes,
+      priority: priority,
+      subTasks:
+          subTasks ??
+          const [], // Use ?? const [] to align with CustomTask constructor
     );
     state = [...state, newTask];
     await _prefsService.saveCustomTasks(state);
