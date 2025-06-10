@@ -584,7 +584,6 @@ class _CustomHomePageState extends ConsumerState<CustomHomePage> {
                                   context,
                                   task.title,
                                   task.subTasks,
-                                  ref,
                                   task.id,
                                 ),
                             borderRadius: BorderRadius.circular(4.0),

@@ -43,9 +43,12 @@ dependencies:
   cupertino_icons: ^1.0.8
 
 dev_dependencies:
+  flutter_test:
+    sdk: flutter
   build_runner: ^2.4.6
   freezed: ^2.4.2
   json_serializable: ^6.7.1
+  flutter_lints: ^4.0.0 # Added flutter_lints
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

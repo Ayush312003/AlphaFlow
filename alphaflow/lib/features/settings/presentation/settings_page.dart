@@ -100,7 +100,7 @@ class SettingsPage extends ConsumerWidget {
                 ref.invalidate(xpProvider);
                 ref.invalidate(totalTrackXpProvider);
                 ref.invalidate(currentGuidedLevelProvider);
-                ref.invalidate(todayTasksProvider);
+                ref.invalidate(displayedDateTasksProvider);
                 ref.invalidate(customTaskStreaksProvider);
                 ref.invalidate(guidedTaskStreaksProvider);
 

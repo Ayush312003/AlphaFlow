@@ -16,7 +16,7 @@ class GuidedHomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<TodayTask> tasksForDisplay = ref.watch(todayTasksProvider);
+    final List<TodayTask> tasksForDisplay = ref.watch(displayedDateTasksProvider);
     ref.watch(completionsProvider);
     final selectedTrackId = ref.watch(selectedTrackProvider);
     final int currentXp = ref.watch(xpProvider);
