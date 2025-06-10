@@ -2,7 +2,8 @@ import 'package:alphaflow/data/local/preferences_service.dart';
 import 'package:alphaflow/data/models/custom_task.dart';
 import 'package:alphaflow/data/models/frequency.dart';
 import 'package:alphaflow/data/models/task_priority.dart';
-import 'package:alphaflow/data/models/sub_task.dart'; // Added import
+import 'package:alphaflow/data/models/sub_task.dart';
+import 'package:alphaflow/data/models/task_target.dart'; // Added import
 import 'package:alphaflow/providers/app_mode_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -80,6 +81,36 @@ class CustomTaskListNotifier extends StateNotifier<List<CustomTask>> {
                     return st;
                   }).toList(),
             );
+          }
+          return task;
+        }).toList();
+    await _prefsService.saveCustomTasks(state);
+  }
+
+  Future<void> updateTaskTargetProgress(
+    String taskId,
+    double newCurrentValue,
+  ) async {
+    state =
+        state.map((task) {
+          if (task.id == taskId) {
+            // Ensure the task has a target and it's numeric before attempting to update
+            if (task.taskTarget != null &&
+                task.taskTarget!.type == TargetType.numeric) {
+              // Clamp newCurrentValue to be non-negative.
+              // The targetValue acts as the max for progress display, but currentValue can exceed it.
+              final checkedNewCurrentValue =
+                  newCurrentValue < 0 ? 0.0 : newCurrentValue;
+
+              return task.copyWith(
+                taskTarget: task.taskTarget!.copyWith(
+                  currentValue: checkedNewCurrentValue,
+                ),
+              );
+            }
+            // If the task doesn't have a numeric target, or no target at all,
+            // return it unchanged. This situation should ideally be prevented by the UI.
+            return task;
           }
           return task;
         }).toList();

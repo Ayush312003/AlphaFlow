@@ -10,7 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:alphaflow/data/models/task_priority.dart';
-import 'package:alphaflow/data/models/sub_task.dart'; // Added import
+import 'package:alphaflow/data/models/sub_task.dart';
+import 'package:alphaflow/data/models/task_target.dart'; // Added import
 
 // Duplicated from TaskEditorPage for now, consider moving to a shared utility
 final Map<String, IconData> _customTaskIcons = {
@@ -100,6 +101,79 @@ class CustomHomePage extends ConsumerWidget {
         );
       },
     );
+  }
+
+  void _showUpdateTargetProgressDialog(
+    BuildContext context,
+    WidgetRef ref,
+    CustomTask task,
+  ) {
+    final TextEditingController progressController = TextEditingController(
+      text:
+          task.taskTarget?.currentValue.toStringAsFixed(0) ??
+          '0', // Or more precise formatting
+    );
+    final formKey = GlobalKey<FormState>(); // For validation
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text('Update Progress for "${task.title}"'),
+          content: Form(
+            key: formKey,
+            child: TextFormField(
+              controller: progressController,
+              decoration: InputDecoration(
+                labelText: 'Current Progress (${task.taskTarget?.unit ?? ""})',
+                hintText: 'Enter current progress',
+                border: const OutlineInputBorder(),
+              ),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Please enter a value';
+                }
+                final number = double.tryParse(value);
+                if (number == null) {
+                  return 'Please enter a valid number';
+                }
+                if (number < 0) {
+                  return 'Progress cannot be negative';
+                }
+                // Optionally, validate against targetValue if needed, e.g., number > task.taskTarget!.targetValue
+                // For now, allow exceeding target.
+                return null;
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(dialogContext).pop(),
+            ),
+            TextButton(
+              child: const Text('Update'),
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  final newCurrentValue = double.parse(
+                    progressController.text.trim(),
+                  );
+                  ref
+                      .read(customTasksProvider.notifier)
+                      .updateTaskTargetProgress(task.id, newCurrentValue);
+                  Navigator.of(dialogContext).pop();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    ).then(
+      (_) => progressController.dispose(),
+    ); // Dispose controller when dialog is dismissed
   }
 
   void _showSubTasksDialog(
@@ -510,6 +584,76 @@ class CustomHomePage extends ConsumerWidget {
             );
           }
 
+          Widget? taskTargetDisplayWidget;
+          if (task.taskTarget != null &&
+              task.taskTarget!.type == TargetType.numeric &&
+              task.taskTarget!.targetValue > 0) {
+            final target = task.taskTarget!;
+            double progress = target.currentValue / target.targetValue;
+            if (progress < 0) progress = 0;
+            if (progress > 1) progress = 1; // Clamp progress for display
+
+            // Formatting current and target values (e.g., remove .0 for whole numbers)
+            String formatValue(double val) => val.toStringAsFixed(
+              val.truncateToDouble() == val ? 0 : (val * 10 % 10 == 0 ? 1 : 2),
+            );
+            final String currentFormatted = formatValue(target.currentValue);
+            final String targetFormatted = formatValue(target.targetValue);
+            final String unitDisplay =
+                target.unit != null && target.unit!.isNotEmpty
+                    ? " ${target.unit}"
+                    : "";
+
+            Widget targetVisual = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Target: $currentFormatted / $targetFormatted$unitDisplay",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic,
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.color?.withOpacity(0.9),
+                  ),
+                ),
+                if (target.targetValue > 0) ...[
+                  // Only show progress bar if target is positive
+                  const SizedBox(height: 3),
+                  LinearProgressIndicator(
+                    value: progress,
+                    minHeight: 6,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.surfaceVariant,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).colorScheme.primary,
+                    ),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ],
+              ],
+            );
+
+            taskTargetDisplayWidget = InkWell(
+              onTap: () => _showUpdateTargetProgressDialog(context, ref, task),
+              borderRadius: BorderRadius.circular(4.0),
+              child: Padding(
+                padding: EdgeInsets.only(
+                  top:
+                      (todayTask.description.isNotEmpty ||
+                              streakDisplayWidget != null ||
+                              dueDateWidget != null ||
+                              notesIndicatorWidget != null ||
+                              subTaskProgressWidget != null)
+                          ? 4.0
+                          : 0.0,
+                ),
+                child: targetVisual,
+              ),
+            );
+          }
+
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
             elevation: isCompleted ? 1.0 : 3.0,
@@ -554,7 +698,8 @@ class CustomHomePage extends ConsumerWidget {
                           streakDisplayWidget == null &&
                           dueDateWidget == null &&
                           notesIndicatorWidget == null &&
-                          subTaskProgressWidget == null)
+                          subTaskProgressWidget == null &&
+                          taskTargetDisplayWidget == null)
                       ? null
                       : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -602,6 +747,8 @@ class CustomHomePage extends ConsumerWidget {
                             notesIndicatorWidget,
                           if (subTaskProgressWidget != null)
                             subTaskProgressWidget,
+                          if (taskTargetDisplayWidget != null)
+                            taskTargetDisplayWidget,
                         ],
                       ),
               trailing: Row(

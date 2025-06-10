@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart'; // For date formatting
 import 'package:alphaflow/data/models/task_priority.dart';
+import 'package:alphaflow/data/models/task_target.dart';
 
 // Example predefined icons
 final Map<String, IconData> _predefinedIcons = {
@@ -55,6 +56,9 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
   TaskPriority _selectedPriority = TaskPriority.none;
   List<SubTask> _currentSubTasks = [];
   List<TextEditingController> _subTaskTitleControllers = [];
+  TargetType _selectedTargetType = TargetType.none;
+  late TextEditingController _targetValueController;
+  late TextEditingController _targetUnitController;
 
   @override
   void initState() {
@@ -62,6 +66,8 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
     _titleController = TextEditingController();
     _descriptionController = TextEditingController();
     _notesController = TextEditingController();
+    _targetValueController = TextEditingController(); // Initialize here
+    _targetUnitController = TextEditingController(); // Initialize here
 
     if (widget.taskToEdit != null) {
       _titleController.text = widget.taskToEdit!.title;
@@ -79,6 +85,17 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
           _currentSubTasks
               .map((st) => TextEditingController(text: st.title))
               .toList();
+      if (widget.taskToEdit!.taskTarget != null) {
+        final target = widget.taskToEdit!.taskTarget!;
+        _selectedTargetType = target.type;
+        if (target.type == TargetType.numeric) {
+          // Format targetValue to string, avoiding unnecessary .0 for whole numbers
+          _targetValueController.text = target.targetValue.toStringAsFixed(
+            target.targetValue.truncateToDouble() == target.targetValue ? 0 : 2,
+          );
+          _targetUnitController.text = target.unit ?? '';
+        }
+      }
     }
   }
 
@@ -133,6 +150,8 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
     for (var controller in _subTaskTitleControllers) {
       controller.dispose();
     }
+    _targetValueController.dispose();
+    _targetUnitController.dispose();
     super.dispose();
   }
 
@@ -142,6 +161,45 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
 
       final title = _titleController.text.trim();
       final description = _descriptionController.text.trim();
+
+      TaskTarget? finalTaskTarget;
+      if (_selectedTargetType == TargetType.numeric) {
+        final String targetValueStr = _targetValueController.text.trim();
+        final double? targetValue = double.tryParse(targetValueStr);
+
+        // Validator should have already ensured targetValue is valid if type is numeric
+        if (targetValue != null && targetValue > 0) {
+          final String? unit =
+              _targetUnitController.text.trim().isNotEmpty
+                  ? _targetUnitController.text.trim()
+                  : null;
+
+          double initialCurrentValue = 0.0;
+          // If editing and previous target was also numeric, preserve currentValue
+          // unless new targetValue is less than currentValue (then cap or reset - for now, preserve)
+          if (widget.taskToEdit?.taskTarget != null &&
+              widget.taskToEdit!.taskTarget!.type == TargetType.numeric) {
+            initialCurrentValue = widget.taskToEdit!.taskTarget!.currentValue;
+            if (targetValue < initialCurrentValue) {
+              // Decision: Cap currentValue to new targetValue if new target is smaller
+              // initialCurrentValue = targetValue;
+              // Or reset to 0: initialCurrentValue = 0.0;
+              // For now, let's preserve. User can manually adjust progress if target shrinks.
+            }
+          }
+
+          finalTaskTarget = TaskTarget(
+            type: TargetType.numeric,
+            targetValue: targetValue,
+            currentValue:
+                initialCurrentValue, // Start new/edited target's progress at 0 or preserved value
+            unit: unit,
+          );
+        }
+        // If numeric type is selected but value is invalid, validator stops form submission.
+        // If it somehow passed, finalTaskTarget remains null, effectively setting no target.
+      }
+      // If _selectedTargetType is TargetType.none, finalTaskTarget remains null.
 
       List<SubTask> finalSubTasks = [];
       for (int i = 0; i < _currentSubTasks.length; i++) {
@@ -165,6 +223,7 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
           notes: _notesController.text.trim(),
           priority: _selectedPriority,
           subTasks: finalSubTasks,
+          taskTarget: finalTaskTarget,
         );
         ScaffoldMessenger.of(
           context,
@@ -181,6 +240,7 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
           notes: _notesController.text.trim(),
           priority: _selectedPriority,
           subTasks: finalSubTasks,
+          taskTarget: finalTaskTarget,
           clearIconName: _selectedIconName == null,
           clearColorValue: _selectedColorValue == null,
           clearDueDate:
@@ -188,6 +248,8 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
           clearNotes:
               _notesController.text.trim().isEmpty &&
               (widget.taskToEdit?.notes?.isNotEmpty ?? false),
+          clearTaskTarget:
+              finalTaskTarget == null && widget.taskToEdit?.taskTarget != null,
         );
         customTasksNotifier.updateTask(updatedTask);
         ScaffoldMessenger.of(
@@ -409,6 +471,83 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
                   onPressed: _addSubTask,
                 ),
               ),
+              const SizedBox(height: 24), // Spacing from sub-task section
+              Text(
+                'Measurable Target (Optional)',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              DropdownButtonFormField<TargetType>(
+                value: _selectedTargetType,
+                decoration: const InputDecoration(
+                  labelText: 'Target Type',
+                  border: OutlineInputBorder(),
+                ),
+                items:
+                    [TargetType.none, TargetType.numeric].map((
+                      TargetType type,
+                    ) {
+                      // Simple capitalization for display name
+                      String displayName =
+                          type.name[0].toUpperCase() + type.name.substring(1);
+                      return DropdownMenuItem<TargetType>(
+                        value: type,
+                        child: Text(displayName),
+                      );
+                    }).toList(),
+                onChanged: (TargetType? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      _selectedTargetType = newValue;
+                      // Optionally clear targetValue and unit when type changes from numeric to none
+                      if (_selectedTargetType == TargetType.none) {
+                        _targetValueController.clear();
+                        _targetUnitController.clear();
+                      }
+                    });
+                  }
+                },
+              ),
+              if (_selectedTargetType == TargetType.numeric) ...[
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _targetValueController,
+                  decoration: const InputDecoration(
+                    labelText: 'Target Value',
+                    hintText: 'e.g., 100, 5.5, 30',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  validator: (value) {
+                    if (_selectedTargetType == TargetType.numeric) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter a target value';
+                      }
+                      final number = double.tryParse(value);
+                      if (number == null) {
+                        return 'Please enter a valid number';
+                      }
+                      if (number <= 0) {
+                        return 'Target must be a positive number';
+                      }
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _targetUnitController,
+                  decoration: const InputDecoration(
+                    labelText: 'Unit (Optional)',
+                    hintText: 'e.g., pages, km, minutes, reps',
+                    border: OutlineInputBorder(),
+                  ),
+                  textCapitalization:
+                      TextCapitalization.none, // Allow units like 'km'
+                ),
+              ],
               const SizedBox(height: 24),
               Text(
                 'Select Icon (Optional)',

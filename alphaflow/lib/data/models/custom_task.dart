@@ -1,6 +1,7 @@
 import 'frequency.dart';
 import 'task_priority.dart';
 import 'sub_task.dart';
+import 'task_target.dart';
 
 /// A user-created task in Custom mode (flat list).
 class CustomTask {
@@ -14,6 +15,7 @@ class CustomTask {
   final String? notes;
   final TaskPriority priority;
   final List<SubTask> subTasks;
+  final TaskTarget? taskTarget; // Nullable
 
   CustomTask({
     required this.id,
@@ -26,6 +28,7 @@ class CustomTask {
     this.notes,
     this.priority = TaskPriority.none,
     this.subTasks = const [], // Added
+    this.taskTarget, // Added new optional parameter
   });
 
   /// For persistence to JSON
@@ -53,6 +56,9 @@ class CustomTask {
     if (subTasks.isNotEmpty) {
       json['subTasks'] = subTasks.map((st) => st.toJson()).toList();
     }
+    if (taskTarget != null) {
+      json['taskTarget'] = taskTarget!.toJson();
+    }
     return json;
   }
 
@@ -77,6 +83,10 @@ class CustomTask {
               )
               .toList() ??
           const [], // Default to an empty list if 'subTasks' is null or not present
+      taskTarget:
+          json['taskTarget'] == null
+              ? null
+              : TaskTarget.fromJson(json['taskTarget'] as Map<String, dynamic>),
     );
   }
 
@@ -91,10 +101,12 @@ class CustomTask {
     String? notes,
     TaskPriority? priority,
     List<SubTask>? subTasks,
+    TaskTarget? taskTarget,
     bool clearIconName = false,
     bool clearColorValue = false,
     bool clearDueDate = false,
     bool clearNotes = false,
+    bool clearTaskTarget = false,
   }) {
     return CustomTask(
       id: id ?? this.id,
@@ -107,6 +119,7 @@ class CustomTask {
       notes: clearNotes ? null : notes ?? this.notes,
       priority: priority ?? this.priority,
       subTasks: subTasks ?? this.subTasks,
+      taskTarget: clearTaskTarget ? null : taskTarget ?? this.taskTarget,
     );
   }
 }
