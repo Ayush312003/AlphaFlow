@@ -108,46 +108,18 @@ class CustomHomePage extends ConsumerWidget {
     WidgetRef ref,
     CustomTask task,
   ) {
-    final TextEditingController progressController = TextEditingController(
-      text:
-          task.taskTarget?.currentValue.toStringAsFixed(0) ??
-          '0', // Or more precise formatting
-    );
-    final formKey = GlobalKey<FormState>(); // For validation
+    final GlobalKey<_UpdateTargetProgressDialogContentState> dialogContentKey =
+        GlobalKey<_UpdateTargetProgressDialogContentState>();
 
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text('Update Progress for "${task.title}"'),
-          content: Form(
-            key: formKey,
-            child: TextFormField(
-              controller: progressController,
-              decoration: InputDecoration(
-                labelText: 'Current Progress (${task.taskTarget?.unit ?? ""})',
-                hintText: 'Enter current progress',
-                border: const OutlineInputBorder(),
-              ),
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Please enter a value';
-                }
-                final number = double.tryParse(value);
-                if (number == null) {
-                  return 'Please enter a valid number';
-                }
-                if (number < 0) {
-                  return 'Progress cannot be negative';
-                }
-                // Optionally, validate against targetValue if needed, e.g., number > task.taskTarget!.targetValue
-                // For now, allow exceeding target.
-                return null;
-              },
-            ),
+          content: _UpdateTargetProgressDialogContent(
+            key: dialogContentKey, // Assign the GlobalKey
+            initialCurrentValue: task.taskTarget?.currentValue ?? 0.0,
+            unit: task.taskTarget?.unit,
           ),
           actions: <Widget>[
             TextButton(
@@ -157,23 +129,26 @@ class CustomHomePage extends ConsumerWidget {
             TextButton(
               child: const Text('Update'),
               onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  final newCurrentValue = double.parse(
-                    progressController.text.trim(),
-                  );
+                // Call the getValidatedProgress method on the state of _UpdateTargetProgressDialogContent
+                final double? validatedProgress =
+                    dialogContentKey.currentState?.getValidatedProgress();
+
+                if (validatedProgress != null) {
+                  // If validation passed and a value was returned
                   ref
                       .read(customTasksProvider.notifier)
-                      .updateTaskTargetProgress(task.id, newCurrentValue);
-                  Navigator.of(dialogContext).pop();
+                      .updateTaskTargetProgress(task.id, validatedProgress);
+                  Navigator.of(dialogContext).pop(); // Close the dialog
                 }
+                // If validatedProgress is null, it means validation failed inside the content widget,
+                // and the TextFormField should be displaying its error. So, do nothing here to keep the dialog open.
               },
             ),
           ],
         );
       },
-    ).then(
-      (_) => progressController.dispose(),
-    ); // Dispose controller when dialog is dismissed
+    );
+    // .then((_) => progressController.dispose()); // Disposal now handled by _UpdateTargetProgressDialogContentState
   }
 
   void _showSubTasksDialog(
@@ -841,3 +816,88 @@ class CustomHomePage extends ConsumerWidget {
     );
   }
 }
+
+// --- Start of new widget definition for dialog content ---
+class _UpdateTargetProgressDialogContent extends ConsumerStatefulWidget {
+  final double initialCurrentValue;
+  final String? unit;
+
+  const _UpdateTargetProgressDialogContent({
+    super.key,
+    required this.initialCurrentValue,
+    this.unit,
+  });
+
+  @override
+  ConsumerState<_UpdateTargetProgressDialogContent> createState() =>
+      _UpdateTargetProgressDialogContentState();
+}
+
+class _UpdateTargetProgressDialogContentState
+    extends ConsumerState<_UpdateTargetProgressDialogContent> {
+  late TextEditingController
+  progressController; // Not public, accessed via getValidatedProgress
+  final formKey =
+      GlobalKey<FormState>(); // Not public, accessed via getValidatedProgress
+
+  @override
+  void initState() {
+    super.initState();
+    // Format initial value to avoid unnecessary decimals for whole numbers
+    String initialText = widget.initialCurrentValue.toStringAsFixed(
+      widget.initialCurrentValue.truncateToDouble() ==
+              widget.initialCurrentValue
+          ? 0
+          : (widget.initialCurrentValue * 10 % 10 == 0 ? 1 : 2),
+    );
+    progressController = TextEditingController(text: initialText);
+  }
+
+  @override
+  void dispose() {
+    progressController.dispose();
+    super.dispose();
+  }
+
+  // Method to be called by the AlertDialog's "Update" button via GlobalKey
+  double? getValidatedProgress() {
+    if (formKey.currentState?.validate() ?? false) {
+      // Add null check for currentState
+      return double.tryParse(progressController.text.trim());
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: formKey,
+      child: TextFormField(
+        controller: progressController,
+        decoration: InputDecoration(
+          labelText:
+              'Current Progress${widget.unit != null && widget.unit!.isNotEmpty ? " (${widget.unit})" : ""}',
+          hintText: 'Enter current progress',
+          border: const OutlineInputBorder(),
+        ),
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        autofocus: true,
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) {
+            return 'Please enter a value';
+          }
+          final number = double.tryParse(value);
+          if (number == null) {
+            return 'Please enter a valid number';
+          }
+          if (number < 0) {
+            return 'Progress cannot be negative';
+          }
+          return null;
+        },
+      ),
+    );
+  }
+}
+
+// --- End of new widget definition ---
