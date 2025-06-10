@@ -30,7 +30,8 @@ class CustomTaskListNotifier extends StateNotifier<List<CustomTask>> {
     DateTime? dueDate,
     String? notes,
     TaskPriority priority = TaskPriority.none,
-    List<SubTask>? subTasks, // Added
+    List<SubTask>? subTasks,
+    TaskTarget? taskTarget, // Added
   }) async {
     final newTask = CustomTask(
       id: _uuid.v4(), // Generate a unique ID
@@ -42,9 +43,8 @@ class CustomTaskListNotifier extends StateNotifier<List<CustomTask>> {
       dueDate: dueDate,
       notes: notes,
       priority: priority,
-      subTasks:
-          subTasks ??
-          const [], // Use ?? const [] to align with CustomTask constructor
+      subTasks: subTasks ?? const [],
+      taskTarget: taskTarget, // Added
     );
     state = [...state, newTask];
     await _prefsService.saveCustomTasks(state);
