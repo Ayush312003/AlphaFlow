@@ -49,62 +49,62 @@ final displayedDateTasksProvider = Provider<List<TodayTask>>((ref) {
   }
 
   if (appMode == AppMode.guided) {
-    final DateTime nowDateNormalized = DateTime(
-      DateTime.now().year,
-      DateTime.now().month,
-      DateTime.now().day,
-    );
-    if (!isSameDay(currentDisplayDate, nowDateNormalized)) {
-      // For past/future dates, show no guided tasks in Phase 1
-    } else {
-      // Existing logic for today's guided tasks
-      final selectedTrackId = ref.watch(selectedTrackProvider);
-      if (selectedTrackId != null) {
-        final LevelDefinition? currentLevel = ref.watch(
-          currentGuidedLevelProvider,
-        );
-        if (currentLevel != null) {
-          final List<GuidedTask> levelTasks = currentLevel.unlockTasks;
-          for (final guidedTask in levelTasks) {
-            bool shouldDisplay = false;
-            bool isCompleted = false;
+    final selectedTrackId = ref.watch(selectedTrackProvider);
+    if (selectedTrackId != null) {
+      final LevelDefinition? currentLevel = ref.watch(
+        currentGuidedLevelProvider,
+      );
+      if (currentLevel != null) {
+        final List<GuidedTask> levelTasks = currentLevel.unlockTasks;
+        for (final guidedTask in levelTasks) {
+          bool shouldDisplay = false;
+          bool isCompleted = false;
 
-            if (guidedTask.frequency == Frequency.daily) {
-              shouldDisplay = true;
-              isCompleted = isTaskCompletedOnSelectedDate(guidedTask.id);
-            } else if (guidedTask.frequency == Frequency.weekly) {
-              isCompleted = isTaskCompletedThisWeek(guidedTask.id);
-              if (guidedTask.dayOfWeek != null) {
-                if (currentDisplayDate.weekday == guidedTask.dayOfWeek) {
-                  shouldDisplay = true;
-                } else {
-                  shouldDisplay = false;
-                }
-              } else {
+          if (guidedTask.frequency == Frequency.daily) {
+            shouldDisplay = true;
+            isCompleted = isTaskCompletedOnSelectedDate(guidedTask.id);
+          } else if (guidedTask.frequency == Frequency.weekly) {
+            isCompleted = isTaskCompletedThisWeek(guidedTask.id);
+            if (guidedTask.dayOfWeek != null) {
+              if (currentDisplayDate.weekday == guidedTask.dayOfWeek) {
                 shouldDisplay = true;
+              } else {
+                shouldDisplay = false;
               }
-            } else if (guidedTask.frequency == Frequency.oneTime) {
-              isCompleted = completions.any(
-                (c) =>
-                    c.taskId == guidedTask.id && c.trackId == selectedTrackId,
-              );
-              shouldDisplay = !isCompleted;
+            } else {
+              shouldDisplay = true;
             }
+          } else if (guidedTask.frequency == Frequency.oneTime) {
+            final firstCompletionForTrack = completions
+                .where((c) => c.taskId == guidedTask.id && c.trackId == selectedTrackId)
+                .map((c) => c.date)
+                .fold<DateTime?>(
+                  null,
+                  (prev, current) => (prev == null || current.isBefore(prev)) ? current : prev,
+                );
 
-            if (shouldDisplay) {
-              tasksForDisplay.add(
-                TodayTask.fromGuidedTask(guidedTask, isCompleted),
-              );
+            if (firstCompletionForTrack != null && !firstCompletionForTrack.isAfter(currentDisplayDate)) {
+              isCompleted = true;
+              shouldDisplay = false; // If completed on or before this date, don't display again
+            } else {
+              isCompleted = false;
+              shouldDisplay = true; // If not completed by this date, or completed after, display as to-do
             }
           }
-        } else {
-          print(
-            "displayedDateTasksProvider: No current level determined for track $selectedTrackId.",
-          );
+
+          if (shouldDisplay) {
+            tasksForDisplay.add(
+              TodayTask.fromGuidedTask(guidedTask, isCompleted),
+            );
+          }
         }
       } else {
-        print("displayedDateTasksProvider: No track selected for guided mode.");
+        print(
+          "displayedDateTasksProvider: No current level determined for track $selectedTrackId.",
+        );
       }
+    } else {
+      print("displayedDateTasksProvider: No track selected for guided mode.");
     }
   } else if (appMode == AppMode.custom) {
     final allCustomTasks = ref.watch(customTasksProvider);
@@ -116,8 +116,7 @@ final displayedDateTasksProvider = Provider<List<TodayTask>>((ref) {
         shouldDisplay = true;
         isCompleted = isTaskCompletedOnSelectedDate(customTask.id);
       } else if (customTask.frequency == Frequency.weekly) {
-        shouldDisplay =
-            true; // Custom weekly tasks always "available" on the list for the week
+        shouldDisplay = true;
         isCompleted = isTaskCompletedThisWeek(customTask.id);
       } else if (customTask.frequency == Frequency.oneTime) {
         final firstCompletionDate = completions
@@ -129,13 +128,13 @@ final displayedDateTasksProvider = Provider<List<TodayTask>>((ref) {
                   (prev == null || current.isBefore(prev)) ? current : prev,
             );
 
-        if (firstCompletionDate != null &&
-            !firstCompletionDate.isAfter(currentDisplayDate)) {
+        if (firstCompletionDate != null && !firstCompletionDate.isAfter(currentDisplayDate)) {
           isCompleted = true;
+          shouldDisplay = false; // Do not display if completed by this date
         } else {
           isCompleted = false;
+          shouldDisplay = true; // Display if not completed by this date
         }
-        shouldDisplay = !isCompleted;
       }
 
       if (shouldDisplay) {

@@ -51,26 +51,44 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
     final List<TodayTask> tasksForDisplay = ref.watch(displayedDateTasksProvider);
     ref.watch(completionsProvider); // Keep watching for rebuilds
     final selectedTrackId = ref.watch(selectedTrackProvider);
-    final int currentXp = ref.watch(xpProvider); // XP is always for the current day
+    final int currentSessionXp = ref.watch(xpProvider); // XP earned today (session XP)
     final LevelDefinition? currentLevel = ref.watch(currentGuidedLevelProvider);
     final streakData = ref.watch(guidedTaskStreaksProvider);
 
-    final List<TodayTask> actualTodayTasks;
-    if (isSameDay(selectedDate, _todayNormalized)) {
-      actualTodayTasks = tasksForDisplay;
-    } else {
-      // If a historical date is selected, tasksForDisplay are for that date.
-      // For XP bar, we use these tasks but with currentXp which is always for today.
-      actualTodayTasks = tasksForDisplay;
-    }
-
-    final double totalPossibleXpForSelectedDate = actualTodayTasks.fold(
+    // Calculate total possible XP for the tasks displayed on the selectedDate
+    final double totalPossibleXpForSelectedDate = tasksForDisplay.fold(
       0.0,
       (sum, task) => sum + task.xp,
     );
-    final double progress = (totalPossibleXpForSelectedDate > 0)
-        ? (currentXp / totalPossibleXpForSelectedDate)
-        : 0.0;
+
+    // Calculate XP earned specifically for the selectedDate
+    double xpEarnedForSelectedDate = 0;
+    for (var task in tasksForDisplay) {
+      if (task.isCompleted) { // isCompleted is true if task was completed on selectedDate
+        xpEarnedForSelectedDate += task.xp;
+      }
+    }
+
+    // Determine the XP value and progress for the UI based on selectedDate
+    double uiXpDisplayValue;
+    double uiTotalPossibleXp;
+    double uiProgressValue;
+    String xpTextLabel;
+
+    if (isSameDay(selectedDate, _todayNormalized)) {
+      uiXpDisplayValue = currentSessionXp.toDouble(); // Today's session XP
+      uiTotalPossibleXp = totalPossibleXpForSelectedDate;
+      xpTextLabel = "Today's XP:";
+    } else {
+      uiXpDisplayValue = xpEarnedForSelectedDate; // XP earned on that specific past day
+      uiTotalPossibleXp = totalPossibleXpForSelectedDate;
+      xpTextLabel = "${DateFormat.yMMMd().format(selectedDate)} XP:";
+    }
+
+    uiProgressValue = (uiTotalPossibleXp > 0) ? (uiXpDisplayValue / uiTotalPossibleXp) : 0.0;
+    if (uiProgressValue > 1.0) uiProgressValue = 1.0; // Cap progress
+    if (uiProgressValue < 0.0) uiProgressValue = 0.0;
+
 
     if (selectedTrackId == null) {
       return const Center(
@@ -84,7 +102,6 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Calendar
         TableCalendar(
           locale: Localizations.localeOf(context).toString(),
           firstDay: _todayNormalized.subtract(const Duration(days: 6)),
@@ -167,24 +184,26 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
                 ),
               const SizedBox(height: 10),
               Text(
-                isSameDay(selectedDate, _todayNormalized)
-                  ? "Today's XP: $currentXp / ${totalPossibleXpForSelectedDate.toInt()}"
-                  : "Today's XP: $currentXp (viewing tasks for ${DateFormat.yMMMd().format(selectedDate)})",
+                // Example: "Today's XP: 50 / 100" or "Nov 10, 2023 XP: 30 / 50"
+                "$xpTextLabel ${uiXpDisplayValue.toInt()} / ${uiTotalPossibleXp.toInt()}",
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 6),
-              if (isSameDay(selectedDate, _todayNormalized) && actualTodayTasks.isNotEmpty)
+              if (uiTotalPossibleXp > 0) // Show progress bar if there are tasks for the day
                 LinearProgressIndicator(
-                  value: progress > 1.0 ? 1.0 : progress,
+                  value: uiProgressValue,
                   minHeight: 12,
                   backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                   valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
                   borderRadius: BorderRadius.circular(6),
                 )
-              else if (isSameDay(selectedDate, _todayNormalized) && actualTodayTasks.isEmpty)
-                 Text("No tasks to earn XP from today.", style: Theme.of(context).textTheme.bodyMedium)
-              else if (!isSameDay(selectedDate, _todayNormalized))
-                Text("XP progress is shown for the current day only.", style: Theme.of(context).textTheme.bodyMedium),
+              else // No tasks for the selected day
+                 Text(
+                   isSameDay(selectedDate, _todayNormalized)
+                     ? "No tasks to earn XP from today."
+                     : "No tasks for XP on ${DateFormat.yMMMd().format(selectedDate)}.",
+                   style: Theme.of(context).textTheme.bodyMedium
+                 ),
             ],
           ),
         ),
@@ -215,6 +234,9 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
               itemCount: tasksForDisplay.length,
               itemBuilder: (context, index) {
                 final todayTask = tasksForDisplay[index];
+                // Determine if the checkbox should be editable
+                final bool isEditable = isSameDay(selectedDate, _todayNormalized) ||
+                                        isSameDay(selectedDate, _todayNormalized.subtract(const Duration(days: 1)));
                 return Card(
                   margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
                   elevation: todayTask.isCompleted ? 1.0 : 2.5,
@@ -230,15 +252,18 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
                     leading: Checkbox(
                       value: todayTask.isCompleted,
                       activeColor: Colors.green,
-                      onChanged: (bool? newValue) {
-                        if (newValue != null) {
-                          ref.read(completionsProvider.notifier).toggleTaskCompletion(
-                                todayTask.id,
-                                selectedDate,
-                                trackId: selectedTrackId,
-                              );
-                        }
-                      },
+                      // Conditionally set onChanged to null to disable
+                      onChanged: isEditable
+                          ? (bool? newValue) {
+                              if (newValue != null) {
+                                ref.read(completionsProvider.notifier).toggleTaskCompletion(
+                                      todayTask.id,
+                                      selectedDate,
+                                      trackId: selectedTrackId,
+                                    );
+                              }
+                            }
+                          : null,
                     ),
                     title: Text(
                       todayTask.title,
