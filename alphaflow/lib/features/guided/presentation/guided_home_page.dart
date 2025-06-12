@@ -10,11 +10,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alphaflow/providers/guided_task_streaks_provider.dart';
 import 'package:alphaflow/data/models/streak_info.dart';
 import 'package:alphaflow/data/models/frequency.dart';
-import 'package:table_calendar/table_calendar.dart'; // Added
-import 'package:alphaflow/providers/calendar_providers.dart'; // Added
-import 'package:intl/intl.dart'; // Added for date formatting
+import 'package:table_calendar/table_calendar.dart';
+import 'package:alphaflow/providers/calendar_providers.dart';
+import 'package:intl/intl.dart';
+import 'package:alphaflow/providers/app_mode_provider.dart'; // Added for firstActiveDateProvider
 
-// Changed to ConsumerStatefulWidget
 class GuidedHomePage extends ConsumerStatefulWidget {
   const GuidedHomePage({super.key});
 
@@ -48,47 +48,44 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
   @override
   Widget build(BuildContext context) {
     final selectedDate = ref.watch(selectedCalendarDateProvider);
+    final DateTime? firstActiveDate = ref.watch(firstActiveDateProvider); // Watch the new provider
     final List<TodayTask> tasksForDisplay = ref.watch(displayedDateTasksProvider);
-    ref.watch(completionsProvider); // Keep watching for rebuilds
+    ref.watch(completionsProvider);
     final selectedTrackId = ref.watch(selectedTrackProvider);
-    final int currentSessionXp = ref.watch(xpProvider); // XP earned today (session XP)
+    final int currentSessionXp = ref.watch(xpProvider);
     final LevelDefinition? currentLevel = ref.watch(currentGuidedLevelProvider);
     final streakData = ref.watch(guidedTaskStreaksProvider);
 
-    // Calculate total possible XP for the tasks displayed on the selectedDate
     final double totalPossibleXpForSelectedDate = tasksForDisplay.fold(
       0.0,
       (sum, task) => sum + task.xp,
     );
 
-    // Calculate XP earned specifically for the selectedDate
     double xpEarnedForSelectedDate = 0;
     for (var task in tasksForDisplay) {
-      if (task.isCompleted) { // isCompleted is true if task was completed on selectedDate
+      if (task.isCompleted) {
         xpEarnedForSelectedDate += task.xp;
       }
     }
 
-    // Determine the XP value and progress for the UI based on selectedDate
     double uiXpDisplayValue;
     double uiTotalPossibleXp;
     double uiProgressValue;
     String xpTextLabel;
 
     if (isSameDay(selectedDate, _todayNormalized)) {
-      uiXpDisplayValue = currentSessionXp.toDouble(); // Today's session XP
+      uiXpDisplayValue = currentSessionXp.toDouble();
       uiTotalPossibleXp = totalPossibleXpForSelectedDate;
       xpTextLabel = "Today's XP:";
     } else {
-      uiXpDisplayValue = xpEarnedForSelectedDate; // XP earned on that specific past day
+      uiXpDisplayValue = xpEarnedForSelectedDate;
       uiTotalPossibleXp = totalPossibleXpForSelectedDate;
       xpTextLabel = "${DateFormat.yMMMd().format(selectedDate)} XP:";
     }
 
     uiProgressValue = (uiTotalPossibleXp > 0) ? (uiXpDisplayValue / uiTotalPossibleXp) : 0.0;
-    if (uiProgressValue > 1.0) uiProgressValue = 1.0; // Cap progress
+    if (uiProgressValue > 1.0) uiProgressValue = 1.0;
     if (uiProgressValue < 0.0) uiProgressValue = 0.0;
-
 
     if (selectedTrackId == null) {
       return const Center(
@@ -132,7 +129,6 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
             if (!isSameDay(ref.read(selectedCalendarDateProvider), normalizedSelectedDay)) {
               ref.read(selectedCalendarDateProvider.notifier).state = normalizedSelectedDay;
             }
-            // Ensure focusedDay also respects the calendar boundaries if changed by selection
             DateTime newFocusedDay = focusedDay;
             final firstAllowed = _todayNormalized.subtract(const Duration(days: 6));
             final lastAllowed = _todayNormalized;
@@ -184,12 +180,11 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
                 ),
               const SizedBox(height: 10),
               Text(
-                // Example: "Today's XP: 50 / 100" or "Nov 10, 2023 XP: 30 / 50"
                 "$xpTextLabel ${uiXpDisplayValue.toInt()} / ${uiTotalPossibleXp.toInt()}",
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 6),
-              if (uiTotalPossibleXp > 0) // Show progress bar if there are tasks for the day
+              if (uiTotalPossibleXp > 0)
                 LinearProgressIndicator(
                   value: uiProgressValue,
                   minHeight: 12,
@@ -197,7 +192,7 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
                   valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
                   borderRadius: BorderRadius.circular(6),
                 )
-              else // No tasks for the selected day
+              else
                  Text(
                    isSameDay(selectedDate, _todayNormalized)
                      ? "No tasks to earn XP from today."
@@ -234,9 +229,21 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
               itemCount: tasksForDisplay.length,
               itemBuilder: (context, index) {
                 final todayTask = tasksForDisplay[index];
-                // Determine if the checkbox should be editable
+
+                final DateTime yesterdayDate = _todayNormalized.subtract(const Duration(days: 1));
+                bool canEditYesterday = false;
+                if (firstActiveDate != null) {
+                  // Yesterday is editable if it's not before the first active date.
+                  // (i.e., yesterday is same as firstActiveDate or after firstActiveDate)
+                  canEditYesterday = !yesterdayDate.isBefore(firstActiveDate);
+                }
+                // If firstActiveDate is null (should not happen for a user who has set a mode),
+                // canEditYesterday remains false, so yesterday won't be editable by default.
+                // This is a safe default.
+
                 final bool isEditable = isSameDay(selectedDate, _todayNormalized) ||
-                                        isSameDay(selectedDate, _todayNormalized.subtract(const Duration(days: 1)));
+                                        (isSameDay(selectedDate, yesterdayDate) && canEditYesterday);
+
                 return Card(
                   margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
                   elevation: todayTask.isCompleted ? 1.0 : 2.5,
@@ -252,7 +259,6 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
                     leading: Checkbox(
                       value: todayTask.isCompleted,
                       activeColor: Colors.green,
-                      // Conditionally set onChanged to null to disable
                       onChanged: isEditable
                           ? (bool? newValue) {
                               if (newValue != null) {

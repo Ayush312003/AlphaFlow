@@ -12,6 +12,7 @@ class PreferencesService {
   static const _keySelectedTrack  = 'selected_track';
   static const _keyCustomTasks    = 'custom_tasks';
   static const _keyCompletions    = 'task_completions';
+  static const _keyFirstActiveDate = 'first_active_date'; // New key added
 
   final SharedPreferences _prefs;
 
@@ -100,6 +101,35 @@ class PreferencesService {
   }
 
   // ──────────────────────────────────────────────────────────────────────────────
+  // First Active Date
+  // ──────────────────────────────────────────────────────────────────────────────
+
+  Future<void> saveFirstActiveDate(DateTime date) async {
+    // Normalize to UTC and store as YYYY-MM-DD string
+    final normalizedDate = DateTime.utc(date.year, date.month, date.day);
+    await _prefs.setString(_keyFirstActiveDate, normalizedDate.toIso8601String().substring(0, 10));
+  }
+
+  DateTime? loadFirstActiveDate() {
+    final dateString = _prefs.getString(_keyFirstActiveDate);
+    if (dateString == null || dateString.isEmpty) {
+      return null;
+    }
+    try {
+      // DateTime.parse will handle ISO8601 date strings (YYYY-MM-DD) correctly.
+      // The resulting DateTime will be in local time if no timezone info,
+      // but we reconstruct as UTC to be consistent with how it was saved.
+      final parsedDate = DateTime.parse(dateString);
+      return DateTime.utc(parsedDate.year, parsedDate.month, parsedDate.day);
+    } catch (e) {
+      print("Error parsing firstActiveDate: $e");
+      // Consider removing the invalid key if parsing fails, or log more robustly.
+      // await _prefs.remove(_keyFirstActiveDate);
+      return null;
+    }
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────────
   // Helpers / Reset
   // ──────────────────────────────────────────────────────────────────────────────
 
@@ -111,7 +141,8 @@ class PreferencesService {
   Future<void> clearAll() async {
     await clearAppMode();
     await clearSelectedTrack();
-    await _prefs.remove(_keyCustomTasks); // Assuming these will have their own clear methods later
-    await _prefs.remove(_keyCompletions);  // Assuming these will have their own clear methods later
+    await _prefs.remove(_keyCustomTasks);
+    await _prefs.remove(_keyCompletions);
+    await _prefs.remove(_keyFirstActiveDate); // Also clear firstActiveDate on full reset
   }
 }
