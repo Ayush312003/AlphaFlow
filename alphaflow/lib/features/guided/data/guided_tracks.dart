@@ -12,6 +12,7 @@ final List<GuidedTrack> guidedTracks = [
     id: 'monk_mode',
     title: 'Monk Mode',
     description: 'Extreme focus and discipline—cut out all distractions.',
+    icon: '❤️', // ADDED
     theme: 'dark_monastic',
     levels: [
       LevelDefinition(
@@ -54,7 +55,6 @@ final List<GuidedTrack> guidedTracks = [
           ),
         ],
       ),
-      // Higher levels currently have no new tasks; fill in as you expand
       LevelDefinition(levelNumber: 2, title: 'Hermes', icon: '🪽', xpThreshold: 100),
       LevelDefinition(levelNumber: 3, title: 'Artemis', icon: '🏹', xpThreshold: 200),
       LevelDefinition(levelNumber: 4, title: 'Ares', icon: '⚔️', xpThreshold: 300),
@@ -72,6 +72,7 @@ final List<GuidedTrack> guidedTracks = [
     id: 'dopamine_detox',
     title: 'Dopamine Detox',
     description: 'Reset by cutting out overstimulating activities.',
+    icon: '❤️', // ADDED (Note: Original first level icon was also ❤️, could be changed to e.g. 🧘 for variety if desired)
     theme: 'minimalist_gray',
     levels: [
       LevelDefinition(
@@ -131,6 +132,7 @@ final List<GuidedTrack> guidedTracks = [
     id: '75_hard',
     title: '75 Hard',
     description: 'Build mental toughness over 75 days.',
+    icon: '❤️', // ADDED
     theme: 'gritty_black',
     levels: [
       LevelDefinition(
@@ -206,6 +208,7 @@ final List<GuidedTrack> guidedTracks = [
     id: 'atomic_habits',
     title: 'Atomic Habits',
     description: 'Tiny changes that compound over time.',
+    icon: '❤️', // ADDED
     theme: 'clean_white',
     levels: [
       LevelDefinition(
@@ -257,6 +260,7 @@ final List<GuidedTrack> guidedTracks = [
     id: 'kaizen',
     title: 'Kaizen',
     description: 'Continuous 1% improvements every day.',
+    icon: '❤️', // ADDED
     theme: 'zen_purple',
     levels: [
       LevelDefinition(
@@ -300,6 +304,7 @@ final List<GuidedTrack> guidedTracks = [
     id: 'deep_work',
     title: 'Deep Work Mode',
     description: 'Block time for hyper-focused work.',
+    icon: '❤️', // ADDED
     theme: 'focus_blue',
     levels: [
       LevelDefinition(
@@ -343,6 +348,7 @@ final List<GuidedTrack> guidedTracks = [
     id: '5am_club',
     title: 'The 5 AM Club',
     description: 'Win your morning—win your day.',
+    icon: '❤️', // ADDED
     theme: 'sunrise_orange',
     levels: [
       LevelDefinition(
@@ -402,6 +408,7 @@ final List<GuidedTrack> guidedTracks = [
     id: 'no_zero_days',
     title: 'No Zero Days',
     description: 'Even a tiny win counts every day.',
+    icon: '❤️', // ADDED
     theme: 'momentum_green',
     levels: [
       LevelDefinition(
@@ -445,6 +452,7 @@ final List<GuidedTrack> guidedTracks = [
     id: 'flow_state',
     title: 'Flow State Optimization',
     description: 'Set up triggers to enter flow.',
+    icon: '❤️', // ADDED
     theme: 'neon_blue',
     levels: [
       LevelDefinition(
@@ -488,6 +496,7 @@ final List<GuidedTrack> guidedTracks = [
     id: 'discipline_freedom',
     title: 'Discipline = Freedom',
     description: 'Rigid habits that unlock real freedom.',
+    icon: '❤️', // ADDED
     theme: 'steel_gray',
     levels: [
       LevelDefinition(

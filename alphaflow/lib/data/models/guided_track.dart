@@ -5,6 +5,7 @@ class GuidedTrack {
   final String id;                         // e.g. "monk_mode"
   final String title;                      // "Monk Mode"
   final String description;                // short pitch
+  final String icon;                       // e.g. "❤️" <<< ADDED
   final String theme;                      // for UI styling
   final List<LevelDefinition> levels;      // progression steps
 
@@ -12,6 +13,7 @@ class GuidedTrack {
     required this.id,
     required this.title,
     required this.description,
+    required this.icon,                   // <<< ADDED
     required this.theme,
     required this.levels,
   });
