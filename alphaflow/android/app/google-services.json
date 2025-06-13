@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "29001474789",
+    "project_id": "alphaflow-69",
+    "storage_bucket": "alphaflow-69.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29001474789:android:3bcad57e3a2b0573c22a0c",
+        "android_client_info": {
+          "package_name": "com.blackmere.alphaflow"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChwcpFYGDCEm8oYxWlZV78bWJCSneOG5c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29001474789:android:53e96305dd095cfec22a0c",
+        "android_client_info": {
+          "package_name": "com.example.alphaflow"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChwcpFYGDCEm8oYxWlZV78bWJCSneOG5c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
