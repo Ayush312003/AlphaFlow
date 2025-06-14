@@ -136,6 +136,33 @@ class UserDataService {
     Map<String, dynamic> userDocUpdates = {};
     bool userDocNeedsUpdate = false;
 
+    final userDocSnapshot = await _userDocRef(userId).get(); // This line should already exist
+
+    // Logic for firstActiveDate:
+    // Ensure firstActiveDate is set if not already present in Firestore.
+    // Prioritize SharedPreferences value, otherwise use current date.
+    if (userDocSnapshot.data()?['firstActiveDate'] == null) {
+        if (localFirstActiveDate != null) { // localFirstActiveDate is from prefsService.loadFirstActiveDate()
+            userDocUpdates['firstActiveDate'] = Timestamp.fromDate(localFirstActiveDate);
+            userDocNeedsUpdate = true;
+            if (kDebugMode) {
+                print("Migrating firstActiveDate from SharedPreferences for userId: $userId");
+            }
+        } else {
+            userDocUpdates['firstActiveDate'] = Timestamp.fromDate(DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day));
+            userDocNeedsUpdate = true;
+            if (kDebugMode) {
+                print("Setting new firstActiveDate to current date for userId: $userId (not found in SharedPreferences or Firestore)");
+            }
+        }
+    } else {
+        if (kDebugMode) {
+            print("firstActiveDate already exists in Firestore for userId: $userId. No update needed from migration logic for this field.");
+        }
+    }
+
+    // Ensure localAppMode and localSelectedTrackId are processed as before:
+    // (The following lines should largely exist, ensure they are correct)
     if (localAppMode != null) {
         userDocUpdates['appMode'] = localAppMode.toShortString();
         userDocNeedsUpdate = true;
@@ -143,22 +170,6 @@ class UserDataService {
     if (localSelectedTrackId != null) {
         userDocUpdates['selectedTrackId'] = localSelectedTrackId;
         userDocNeedsUpdate = true;
-    }
-    // Important: Only migrate SharedPreferences firstActiveDate if Firestore one doesn't exist yet.
-    // The ensureUserDataDocumentExists or initial updateAppMode might have set one based on current date.
-    // The one from SharedPreferences is the true original one.
-    final userDocSnapshot = await _userDocRef(userId).get();
-    if (localFirstActiveDate != null && (userDocSnapshot.data()?['firstActiveDate'] == null)) {
-        userDocUpdates['firstActiveDate'] = Timestamp.fromDate(localFirstActiveDate);
-        userDocNeedsUpdate = true;
-    } else if (localFirstActiveDate == null && (userDocSnapshot.data()?['firstActiveDate'] == null) && localAppMode != null) {
-        // If no firstActiveDate from prefs, and none in Firestore, AND an app mode was set (implying activity)
-        // then set firstActiveDate to now (or a very old date if completions exist before it).
-        // For simplicity, if localAppMode exists, it implies activity; set firstActiveDate.
-        // This case is mostly for users who used app before firstActiveDate was tracked even in prefs.
-        // The most robust is to check earliest completion, but for now, this is simpler.
-         userDocUpdates['firstActiveDate'] = Timestamp.fromDate(DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day));
-         userDocNeedsUpdate = true;
     }
 
 
