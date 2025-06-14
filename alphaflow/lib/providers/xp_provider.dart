@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:alphaflow/features/user_profile/application/user_data_providers.dart';
 import 'package:alphaflow/data/models/app_mode.dart';
 import 'package:alphaflow/data/models/guided_task.dart';
 import 'package:alphaflow/data/models/guided_track.dart';
