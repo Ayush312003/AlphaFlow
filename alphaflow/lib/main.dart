@@ -76,15 +76,18 @@ class MyApp extends ConsumerWidget {
         return MaterialApp(home: Scaffold(body: Center(child: Text("Error loading data: $err"))));
       },
       data: (userData) {
-        final AppMode? appMode = userData?.appMode;
-        final String? selectedTrack = userData?.selectedTrackId;
+        print("MyApp data callback - userData: $userData");
+        String initialRoute = '/select_mode'; // Hardcoded for debugging
 
-        String initialRoute = '/home';
-        if (appMode == null) {
-          initialRoute = '/select_mode';
-        } else if (appMode == AppMode.guided && selectedTrack == null) {
-          initialRoute = '/select_track';
-        }
+        // final AppMode? appMode = userData?.appMode;
+        // final String? selectedTrack = userData?.selectedTrackId;
+        //
+        // String initialRoute = '/home'; // Original default
+        // if (appMode == null) {
+        //   initialRoute = '/select_mode';
+        // } else if (appMode == AppMode.guided && selectedTrack == null) {
+        //   initialRoute = '/select_track';
+        // }
 
         return MaterialApp(
           title: 'AlphaFlow',
