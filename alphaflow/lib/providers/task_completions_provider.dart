@@ -39,9 +39,9 @@ final completionsProvider = StreamProvider<List<TaskCompletion>>((ref) {
 class CompletionsManager {
   final String? _userId;
   final FirebaseFirestore _firestore;
-  final Reader _read; // Riverpod reader to access other providers
+  final Ref _ref; // Changed Reader to Ref. Riverpod reader to access other providers
 
-  CompletionsManager(this._userId, this._firestore, this._read);
+  CompletionsManager(this._userId, this._firestore, this._ref); // Changed _read to _ref
 
   Future<void> toggleTaskCompletion(
     String taskId,
@@ -77,7 +77,7 @@ class CompletionsManager {
       int xpToAward = 0;
       // Fetch XP for the task
       if (trackId != null) { // Guided Task
-        final allGuidedTracks = _read(guidedTracksProvider); // List<GuidedTrack>
+        final allGuidedTracks = _ref.read(guidedTracksProvider); // Changed _read to _ref.read
         for (var track in allGuidedTracks) {
           if (track.id == trackId) {
             for (var level in track.levels) {
@@ -140,5 +140,5 @@ final completionsManagerProvider = Provider<CompletionsManager>((ref) {
   final userId = ref.watch(currentUserIdProvider);
   // final firestore = ref.watch(firebaseFirestoreProvider); // Assuming a provider for FirebaseFirestore.instance if needed elsewhere
   final firestore = FirebaseFirestore.instance;
-  return CompletionsManager(userId, firestore, ref.read);
+  return CompletionsManager(userId, firestore, ref); // Changed ref.read to ref
 });

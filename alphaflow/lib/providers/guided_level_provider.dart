@@ -1,12 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alphaflow/data/models/guided_track.dart';
 import 'package:alphaflow/data/models/level_definition.dart';
-import 'package:alphaflow/providers/selected_track_provider.dart';
+// import 'package:alphaflow/providers/selected_track_provider.dart'; // Old
+import 'package:alphaflow/features/user_profile/application/user_data_providers.dart'; // New
 import 'package:alphaflow/features/guided/providers/guided_tracks_provider.dart';
 import 'package:alphaflow/providers/xp_provider.dart'; // For totalTrackXpProvider
 
 final currentGuidedLevelProvider = Provider<LevelDefinition?>((ref) {
-  final selectedTrackId = ref.watch(selectedTrackProvider);
+  final selectedTrackId = ref.watch(firestoreSelectedTrackProvider); // Changed
   final allGuidedTracks = ref.watch(guidedTracksProvider);
   // totalTrackXpProvider calculates total XP for the currently selected track
   final totalAccumulatedXp = ref.watch(totalTrackXpProvider);

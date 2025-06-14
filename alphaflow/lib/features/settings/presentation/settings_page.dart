@@ -43,15 +43,15 @@ class SettingsPage extends ConsumerWidget {
               onPressed: () async {
                 // Make this async
                 await ref
-                    .read(completionsProvider.notifier)
+                    .read(completionsManagerProvider) // Changed
                     .clearGuidedTaskCompletions();
-                ref.read(selectedTrackProvider.notifier).clearSelectedTrack();
+                ref.read(selectedTrackNotifierProvider.notifier).clearSelectedTrack(); // Changed
                 ref.invalidate(xpProvider);
                 ref.invalidate(totalTrackXpProvider);
                 ref.invalidate(currentGuidedLevelProvider);
                 ref.invalidate(guidedTaskStreaksProvider);
 
-                ref.read(appModeProvider.notifier).clearAppMode();
+                ref.read(appModeNotifierProvider.notifier).clearAppMode(); // Changed
                 Navigator.of(dialogContext).pop(); // Close dialog first
                 Navigator.of(
                   context,

@@ -32,7 +32,7 @@ class SelectModePage extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 onPressed: () {
-                  final appModeNotifier = ref.read(appModeProvider.notifier);
+                  final appModeNotifier = ref.read(appModeNotifierProvider.notifier); // Changed
                   appModeNotifier.setAppMode(AppMode.guided);
                   Navigator.pushNamedAndRemoveUntil(
                       context, '/select_track', (route) => false);
@@ -45,7 +45,7 @@ class SelectModePage extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 onPressed: () {
-                  final appModeNotifier = ref.read(appModeProvider.notifier);
+                  final appModeNotifier = ref.read(appModeNotifierProvider.notifier); // Changed
                   appModeNotifier.setAppMode(AppMode.custom);
                   Navigator.pushNamedAndRemoveUntil(
                       context, '/home', (route) => false);
