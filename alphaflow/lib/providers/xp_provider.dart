@@ -9,8 +9,8 @@ import 'package:alphaflow/features/guided/providers/guided_tracks_provider.dart'
 import 'package:alphaflow/providers/task_completions_provider.dart'; // Now a StreamProvider
 
 final xpProvider = Provider<int>((ref) {
-  final appMode = ref.watch(appModeProvider);
-  final selectedTrackId = ref.watch(selectedTrackProvider);
+  final appMode = ref.watch(firestoreAppModeProvider);
+  final selectedTrackId = ref.watch(firestoreSelectedTrackProvider);
   final completionsAsyncValue = ref.watch(completionsProvider); // AsyncValue<List<TaskCompletion>>
   final allGuidedTracks = ref.watch(guidedTracksProvider);
 
@@ -62,7 +62,7 @@ final xpProvider = Provider<int>((ref) {
 // For now, let's make it also consume completionsProvider correctly.
 // The definitive update to read from users/{userID}.trackProgress.totalXP will be in the next dedicated step for totalTrackXpProvider.
 final totalTrackXpProvider = Provider<int>((ref) {
-  final selectedTrackId = ref.watch(selectedTrackProvider);
+  final selectedTrackId = ref.watch(firestoreSelectedTrackProvider);
   final completionsAsyncValue = ref.watch(completionsProvider); // AsyncValue<List<TaskCompletion>>
   final allGuidedTracks = ref.watch(guidedTracksProvider);
 

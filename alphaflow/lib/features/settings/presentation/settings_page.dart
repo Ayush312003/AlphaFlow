@@ -93,8 +93,8 @@ class SettingsPage extends ConsumerWidget {
                 final prefsService = ref.read(preferencesServiceProvider);
                 await prefsService.clearAll();
 
-                ref.invalidate(appModeProvider);
-                ref.invalidate(selectedTrackProvider);
+                ref.invalidate(firestoreAppModeProvider);
+                ref.invalidate(firestoreSelectedTrackProvider);
                 ref.invalidate(customTasksProvider);
                 ref.invalidate(completionsProvider);
                 ref.invalidate(xpProvider);
