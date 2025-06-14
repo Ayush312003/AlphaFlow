@@ -76,7 +76,7 @@ class MyApp extends ConsumerWidget {
         return MaterialApp(home: Scaffold(body: Center(child: Text("Error loading data: $err"))));
       },
       data: (userData) {
-        print("MyApp data callback - userData: $userData");
+        print("MyApp data callback - userData: appMode=${userData?.appMode}, selectedTrackId=${userData?.selectedTrackId}, firstActiveDate=${userData?.firstActiveDate}");
         String initialRoute = '/select_mode'; // Hardcoded for debugging
 
         // final AppMode? appMode = userData?.appMode;
