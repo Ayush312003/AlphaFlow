@@ -16,7 +16,7 @@ class AppModeNotifier extends StateNotifier<AppMode?> {
   final Ref _ref; // Changed Reader to Ref
   final String? _userId;
 
-  AppModeNotifier(this._ref, this._userId) : super(null) { // Changed _read to _ref
+  AppModeNotifier(this._ref, this._userId) : super(AppMode.custom) { // Changed _read to _ref
     // Initial state can be null, UI will use firestoreAppModeProvider which has loading/data states.
     // Or, could try an initial sync read here if truly needed, but usually not for Notifiers.
   }
