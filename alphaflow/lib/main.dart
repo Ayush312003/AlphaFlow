@@ -69,7 +69,7 @@ class MyApp extends ConsumerWidget {
     final userDataAsync = ref.watch(userDataProvider);
 
     return userDataAsync.when(
-      loading: () => const MaterialApp(home: LoadingScreen()),
+      loading: () => MaterialApp(home: const LoadingScreen(), routes: {'/': (context) => const LoadingScreen()}),
       error: (err, stack) {
         print("Error loading user data in MyApp: $err");
         print(stack);
