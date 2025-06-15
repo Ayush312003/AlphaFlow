@@ -33,32 +33,38 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
+  <script>
+    window.flutterfire_ignore_scripts = true;
+  </script>
+
   <script src="https://www.gstatic.com/firebasejs/11.7.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.7.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.7.0/firebase-firestore-compat.js"></script>
+
   <script>
-    // TODO: User to fill in these values from firebase_options.dart (web section)
+    // User must ensure their actual Firebase config values are in this object.
+    // These are placeholders for the subtask.
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID",
-      measurementId: "YOUR_MEASUREMENT_ID" // This line is optional, include if present in firebase_options.dart
+      apiKey: "YOUR_API_KEY_PLACEHOLDER",
+      authDomain: "YOUR_AUTH_DOMAIN_PLACEHOLDER",
+      projectId: "YOUR_PROJECT_ID_PLACEHOLDER",
+      storageBucket: "YOUR_STORAGE_BUCKET_PLACEHOLDER",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID_PLACEHOLDER",
+      appId: "YOUR_APP_ID_PLACEHOLDER",
+      measurementId: "YOUR_MEASUREMENT_ID_PLACEHOLDER" // Optional
     };
 
     // Initialize Firebase
-    // Check if firebase is loaded and if no apps are already initialized.
     if (typeof firebase !== 'undefined' && firebase.apps && !firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
-      // console.log("Firebase Initialized directly in index.html by custom script");
+      // console.log("Firebase Initialized directly in index.html by custom script with ignore flag.");
     } else if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length) {
-      // console.log("Firebase was already initialized (by custom script or otherwise).");
+      // console.log("Firebase was already initialized when custom init script ran with ignore flag.");
     } else {
-      // console.error("Firebase compat scripts not loaded yet, or firebase object not defined when custom init script ran!");
+      // console.error("Firebase compat scripts not loaded or firebase object not defined when custom init script ran with ignore flag!");
     }
   </script>
+
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
