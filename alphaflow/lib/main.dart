@@ -38,21 +38,31 @@ void main() async {
   );
 
   try {
+    print("MAIN_TRACE: Attempting to get anonymous user...");
     final user = await container.read(anonymousUserProvider.future);
+    print("MAIN_TRACE: Anonymous user future completed. User: ${user?.uid}");
+
     if (user?.uid != null) {
       final userId = user!.uid;
+      print("MAIN_TRACE: UserID: $userId. Accessing UserDataService...");
       final userDataService = container.read(userDataServiceProvider);
+      print("MAIN_TRACE: UserDataService accessed. Ensuring user document exists for $userId...");
       await userDataService.ensureUserDataDocumentExists(userId);
+      print("MAIN_TRACE: ensureUserDataDocumentExists completed for $userId.");
 
-      // Perform migration
-      final allGuidedTracks = container.read(guidedTracksProvider); // Read for XP lookup
+      print("MAIN_TRACE: Accessing guidedTracksProvider...");
+      final allGuidedTracks = container.read(guidedTracksProvider);
+      print("MAIN_TRACE: guidedTracksProvider accessed. Starting data migration for $userId...");
       await userDataService.migrateUserDataIfNeeded(userId, prefsService, allGuidedTracks);
+      print("MAIN_TRACE: migrateUserDataIfNeeded completed for $userId.");
+    } else {
+      print("MAIN_TRACE: User was null or user.uid was null after anonymous sign-in attempt.");
     }
-  } catch (e) {
-    print("Error during initial user setup/migration: $e");
-    // Decide how to handle this - e.g., show an error page or try to proceed.
+  } catch (e, s) { // Added stack trace parameter s
+    print("MAIN_TRACE: ERROR during initial user setup/migration: $e");
+    print("MAIN_TRACE: Stack trace: $s"); // Print stack trace
   }
-
+  print("MAIN_TRACE: Proceeding to runApp().");
   runApp(
     UncontrolledProviderScope(
       container: container,
