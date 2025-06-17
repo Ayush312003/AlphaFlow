@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.alphaflow</string>
+	<string>com.blackmere.alphaflow</string>
 	<key>PROJECT_ID</key>
 	<string>alphaflow-69</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:29001474789:ios:51d0f0baf70cacd1c22a0c</string>
+	<string>1:29001474789:ios:86ba3167e95d393dc22a0c</string>
 </dict>
 </plist>

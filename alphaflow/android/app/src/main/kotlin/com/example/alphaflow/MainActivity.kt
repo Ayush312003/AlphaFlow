@@ -1,4 +1,4 @@
-package com.example.alphaflow
+package com.blackmere.alphaflow
 
 import io.flutter.embedding.android.FlutterActivity
 

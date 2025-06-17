@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart'
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
-/// Example:
+/// blackmere:
 /// ```dart
 /// import 'firebase_options.dart';
 /// // ...
@@ -42,17 +42,17 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyD6vZUK3qYl9pqOFuhdf3A1SCmak6AmjLQ',
-    appId: '1:29001474789:web:1791fa8194143ad6c22a0c',
+    appId: '1:29001474789:web:04a5f7caf843fa6dc22a0c',
     messagingSenderId: '29001474789',
     projectId: 'alphaflow-69',
     authDomain: 'alphaflow-69.firebaseapp.com',
     storageBucket: 'alphaflow-69.firebasestorage.app',
-    measurementId: 'G-V97SZZYN4P',
+    measurementId: 'G-HH67FVFV5L',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyChwcpFYGDCEm8oYxWlZV78bWJCSneOG5c',
-    appId: '1:29001474789:android:53e96305dd095cfec22a0c',
+    appId: '1:29001474789:android:3bcad57e3a2b0573c22a0c',
     messagingSenderId: '29001474789',
     projectId: 'alphaflow-69',
     storageBucket: 'alphaflow-69.firebasestorage.app',
@@ -60,29 +60,30 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyD9zeKSF4fl6bbQN2Qyw2SBtz9WnMFpt3s',
-    appId: '1:29001474789:ios:51d0f0baf70cacd1c22a0c',
+    appId: '1:29001474789:ios:86ba3167e95d393dc22a0c',
     messagingSenderId: '29001474789',
     projectId: 'alphaflow-69',
     storageBucket: 'alphaflow-69.firebasestorage.app',
-    iosBundleId: 'com.example.alphaflow',
+    iosBundleId: 'com.blackmere.alphaflow',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyD9zeKSF4fl6bbQN2Qyw2SBtz9WnMFpt3s',
-    appId: '1:29001474789:ios:51d0f0baf70cacd1c22a0c',
+    appId: '1:29001474789:ios:86ba3167e95d393dc22a0c',
     messagingSenderId: '29001474789',
     projectId: 'alphaflow-69',
     storageBucket: 'alphaflow-69.firebasestorage.app',
-    iosBundleId: 'com.example.alphaflow',
+    iosBundleId: 'com.blackmere.alphaflow',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyD6vZUK3qYl9pqOFuhdf3A1SCmak6AmjLQ',
-    appId: '1:29001474789:web:d98b1262ba0ccf95c22a0c',
+    appId: '1:29001474789:web:0d70e61cd5410741c22a0c',
     messagingSenderId: '29001474789',
     projectId: 'alphaflow-69',
     authDomain: 'alphaflow-69.firebaseapp.com',
     storageBucket: 'alphaflow-69.firebasestorage.app',
-    measurementId: 'G-753RE4GZ9F',
+    measurementId: 'G-DTDHFQPMGM',
   );
+
 }
