@@ -34,7 +34,7 @@ class SelectTrackPage extends ConsumerWidget {
                       subtitle: Text(track.description),
                       onTap: () {
                         final selectedTrackNotifier =
-                            ref.read(selectedTrackProvider.notifier);
+                            ref.read(selectedTrackNotifierProvider.notifier); // Changed to selectedTrackNotifierProvider
                         selectedTrackNotifier.setSelectedTrack(track.id);
                         Navigator.pushNamedAndRemoveUntil(
                             context, '/home', (route) => false);

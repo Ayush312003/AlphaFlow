@@ -822,7 +822,7 @@ class _CustomHomePageState extends ConsumerState<CustomHomePage> {
                                   onChanged: (bool? newValue) {
                                     if (newValue != null) {
                                       ref
-                                          .read(completionsProvider.notifier)
+                                          .read(completionsManagerProvider)
                                           .toggleTaskCompletion(
                                             todayTask.id,
                                             DateTime.now(),
@@ -860,7 +860,7 @@ class _CustomHomePageState extends ConsumerState<CustomHomePage> {
                             ),
                             onTap:
                                 () => ref
-                                    .read(completionsProvider.notifier)
+                                    .read(completionsManagerProvider)
                                     .toggleTaskCompletion(
                                       todayTask.id,
                                       DateTime.now(),

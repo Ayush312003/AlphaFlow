@@ -1,6 +1,6 @@
 import 'package:alphaflow/data/models/today_task.dart';
 import 'package:alphaflow/providers/today_tasks_provider.dart';
-import 'package:alphaflow/providers/selected_track_provider.dart';
+// import 'package:alphaflow/providers/selected_track_provider.dart'; // Old
 import 'package:alphaflow/providers/task_completions_provider.dart';
 import 'package:alphaflow/providers/xp_provider.dart';
 import 'package:alphaflow/providers/guided_level_provider.dart';
@@ -13,7 +13,8 @@ import 'package:alphaflow/data/models/frequency.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:alphaflow/providers/calendar_providers.dart';
 import 'package:intl/intl.dart';
-import 'package:alphaflow/providers/app_mode_provider.dart'; // Added for firstActiveDateProvider
+// import 'package:alphaflow/providers/app_mode_provider.dart'; // Old, and likely not providing firstActiveDateProvider anymore
+import 'package:alphaflow/features/user_profile/application/user_data_providers.dart'; // New provider location
 
 class GuidedHomePage extends ConsumerStatefulWidget {
   const GuidedHomePage({super.key});
@@ -48,10 +49,10 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
   @override
   Widget build(BuildContext context) {
     final selectedDate = ref.watch(selectedCalendarDateProvider);
-    final DateTime? firstActiveDate = ref.watch(firstActiveDateProvider); // Watch the new provider
+    final DateTime? firstActiveDate = ref.watch(firestoreFirstActiveDateProvider); // Changed to firestoreFirstActiveDateProvider
     final List<TodayTask> tasksForDisplay = ref.watch(displayedDateTasksProvider);
     ref.watch(completionsProvider);
-    final selectedTrackId = ref.watch(selectedTrackProvider);
+    final selectedTrackId = ref.watch(firestoreSelectedTrackProvider); // Changed to firestoreSelectedTrackProvider
     final int currentSessionXp = ref.watch(xpProvider);
     final LevelDefinition? currentLevel = ref.watch(currentGuidedLevelProvider);
     final streakData = ref.watch(guidedTaskStreaksProvider);
@@ -262,7 +263,7 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
                       onChanged: isEditable
                           ? (bool? newValue) {
                               if (newValue != null) {
-                                ref.read(completionsProvider.notifier).toggleTaskCompletion(
+                                ref.read(completionsManagerProvider).toggleTaskCompletion( // Changed to completionsManagerProvider
                                       todayTask.id,
                                       selectedDate,
                                       trackId: selectedTrackId,

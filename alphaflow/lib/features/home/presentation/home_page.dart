@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:alphaflow/providers/app_mode_provider.dart';
+// import 'package:alphaflow/providers/app_mode_provider.dart'; // Old
 import 'package:alphaflow/data/models/app_mode.dart';
 import 'package:alphaflow/features/guided/presentation/guided_home_page.dart';
 import 'package:alphaflow/features/custom/presentation/custom_home_page.dart';
 import 'package:alphaflow/widgets/navigation_drawer_widget.dart'; // Placeholder import
-import 'package:alphaflow/providers/selected_track_provider.dart';
+// import 'package:alphaflow/providers/selected_track_provider.dart'; // Old
+import 'package:alphaflow/features/user_profile/application/user_data_providers.dart'; // New
 import 'package:alphaflow/features/guided/providers/guided_tracks_provider.dart';
 
 class HomePage extends ConsumerWidget {
@@ -13,7 +14,7 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appMode = ref.watch(appModeProvider);
+    final appMode = ref.watch(firestoreAppModeProvider); // Changed
     const Widget drawerWidget = NavigationDrawerWidget(); // Use the actual widget
 
     String appBarTitle = "AlphaFlow"; // Default title
@@ -28,7 +29,7 @@ class HomePage extends ConsumerWidget {
       currentPageBody = const Center(child: CircularProgressIndicator());
       // appBarTitle remains default or could be "Loading..."
     } else if (appMode == AppMode.guided) {
-      final selectedTrackId = ref.watch(selectedTrackProvider);
+      final selectedTrackId = ref.watch(firestoreSelectedTrackProvider); // Changed
       if (selectedTrackId == null) {
         // This case implies an inconsistent state, redirect to track selection.
         // The route check for '/home' or isFirst is to avoid issues if already on home or during init.

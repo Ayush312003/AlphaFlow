@@ -8,9 +8,11 @@ import 'package:alphaflow/data/models/today_task.dart';
 import 'package:alphaflow/data/models/frequency.dart';
 import 'package:alphaflow/data/models/task_priority.dart';
 import 'package:alphaflow/data/models/level_definition.dart';
-import 'package:alphaflow/providers/app_mode_provider.dart';
+// Removed old appModeProvider and selectedTrackProvider imports
+// import 'package:alphaflow/providers/app_mode_provider.dart';
 import 'package:alphaflow/providers/calendar_providers.dart';
-import 'package:alphaflow/providers/selected_track_provider.dart';
+// import 'package:alphaflow/providers/selected_track_provider.dart';
+import 'package:alphaflow/features/user_profile/application/user_data_providers.dart'; // Added for new providers
 // import 'package:alphaflow/features/guided/providers/guided_tracks_provider.dart'; // Not directly used
 import 'package:alphaflow/providers/custom_tasks_provider.dart';
 import 'package:alphaflow/providers/task_completions_provider.dart';
@@ -25,31 +27,33 @@ DateTime _startOfWeek(DateTime date) {
 
 final displayedDateTasksProvider = Provider<List<TodayTask>>((ref) {
   final DateTime currentDisplayDate = ref.watch(selectedCalendarDateProvider);
-  final appMode = ref.watch(appModeProvider);
-  final completions = ref.watch(completionsProvider);
+  final appMode = ref.watch(firestoreAppModeProvider); // Changed to firestoreAppModeProvider
+  final completionsAsyncValue = ref.watch(completionsProvider); // Now AsyncValue
 
-  final List<TodayTask> tasksForDisplay = [];
-  final DateTime startOfThisWeek = _startOfWeek(currentDisplayDate);
+  return completionsAsyncValue.when(
+    data: (completions) { // completions is List<TaskCompletion>
+      final List<TodayTask> tasksForDisplay = [];
+      final DateTime startOfThisWeek = _startOfWeek(currentDisplayDate);
 
-  bool isTaskCompletedOnSelectedDate(String taskId) {
-    return completions.any(
-      (comp) =>
-          comp.taskId == taskId &&
-          comp.date.year == currentDisplayDate.year &&
-          comp.date.month == currentDisplayDate.month &&
-          comp.date.day == currentDisplayDate.day,
-    );
-  }
+      bool isTaskCompletedOnSelectedDate(String taskId) {
+        return completions.any(
+          (comp) =>
+              comp.taskId == taskId &&
+              comp.date.year == currentDisplayDate.year &&
+              comp.date.month == currentDisplayDate.month &&
+              comp.date.day == currentDisplayDate.day,
+        );
+      }
 
-  bool isTaskCompletedThisWeek(String taskId) {
-    return completions.any(
-      (comp) =>
-          comp.taskId == taskId && _startOfWeek(comp.date) == startOfThisWeek,
-    );
-  }
+      bool isTaskCompletedThisWeek(String taskId) {
+        return completions.any(
+          (comp) =>
+              comp.taskId == taskId && _startOfWeek(comp.date) == startOfThisWeek,
+        );
+      }
 
-  if (appMode == AppMode.guided) {
-    final selectedTrackId = ref.watch(selectedTrackProvider);
+      if (appMode == AppMode.guided) {
+    final selectedTrackId = ref.watch(firestoreSelectedTrackProvider); // Changed to firestoreSelectedTrackProvider
     if (selectedTrackId != null) {
       final LevelDefinition? currentLevel = ref.watch(
         currentGuidedLevelProvider,
@@ -163,4 +167,15 @@ final displayedDateTasksProvider = Provider<List<TodayTask>>((ref) {
   });
 
   return tasksForDisplay;
+    }, // Correctly end data, make sure loading/error are part of .when()
+    loading: () {
+      // print("displayedDateTasksProvider: Loading completions...");
+      return []; // Return empty list while loading
+    },
+    error: (err, stack) {
+      print("Error in displayedDateTasksProvider from completionsProvider: $err");
+      print(stack);
+      return []; // Return empty list on error
+    },
+  );
 });

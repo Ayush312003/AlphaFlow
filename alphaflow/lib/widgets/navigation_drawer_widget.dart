@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:alphaflow/features/user_profile/application/user_data_providers.dart';
 import 'package:alphaflow/providers/app_mode_provider.dart';
 import 'package:alphaflow/providers/selected_track_provider.dart';
 import 'package:alphaflow/data/models/app_mode.dart';
@@ -11,7 +12,7 @@ class NavigationDrawerWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentAppMode = ref.watch(appModeProvider);
+    final currentAppMode = ref.watch(firestoreAppModeProvider);
     final List<GuidedTrack> allGuidedTracks = ref.watch(guidedTracksProvider);
 
     return Drawer(
@@ -37,7 +38,7 @@ class NavigationDrawerWidget extends ConsumerWidget {
             selected: currentAppMode == AppMode.custom,
             selectedTileColor: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3), // Updated for consistency
             onTap: () {
-              ref.read(appModeProvider.notifier).setAppMode(AppMode.custom);
+              ref.read(appModeNotifierProvider.notifier).setAppMode(AppMode.custom);
               Navigator.pop(context);
             },
           ),
@@ -47,8 +48,8 @@ class NavigationDrawerWidget extends ConsumerWidget {
             title: const Text('Select Guided Track'),
             // No selected state for this action item
             onTap: () {
-              ref.read(appModeProvider.notifier).setAppMode(AppMode.guided);
-              ref.read(selectedTrackProvider.notifier).clearSelectedTrack();
+              ref.read(appModeNotifierProvider.notifier).setAppMode(AppMode.guided);
+              ref.read(selectedTrackNotifierProvider.notifier).clearSelectedTrack();
 
               Navigator.pop(context);
 
@@ -70,8 +71,8 @@ class NavigationDrawerWidget extends ConsumerWidget {
             ),
           ),
           ...allGuidedTracks.map((track) {
-            final isSelectedTrack = ref.watch(appModeProvider) == AppMode.guided &&
-                                   ref.watch(selectedTrackProvider) == track.id;
+            final isSelectedTrack = ref.watch(firestoreAppModeProvider) == AppMode.guided &&
+                                   ref.watch(firestoreSelectedTrackProvider) == track.id;
             return ListTile(
               leading: Text(
                 track.icon,
@@ -85,8 +86,8 @@ class NavigationDrawerWidget extends ConsumerWidget {
               selected: isSelectedTrack,
               selectedTileColor: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
               onTap: () {
-                ref.read(appModeProvider.notifier).setAppMode(AppMode.guided);
-                ref.read(selectedTrackProvider.notifier).setSelectedTrack(track.id);
+                ref.read(appModeNotifierProvider.notifier).setAppMode(AppMode.guided);
+                ref.read(selectedTrackNotifierProvider.notifier).setSelectedTrack(track.id);
                 Navigator.pop(context);
               },
             );

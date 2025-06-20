@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:alphaflow/features/user_profile/application/user_data_providers.dart';
 import 'package:alphaflow/providers/app_mode_provider.dart';
 import 'package:alphaflow/providers/selected_track_provider.dart';
 import 'package:alphaflow/providers/custom_tasks_provider.dart';
@@ -43,15 +44,15 @@ class SettingsPage extends ConsumerWidget {
               onPressed: () async {
                 // Make this async
                 await ref
-                    .read(completionsProvider.notifier)
+                    .read(completionsManagerProvider) // Changed
                     .clearGuidedTaskCompletions();
-                ref.read(selectedTrackProvider.notifier).clearSelectedTrack();
+                ref.read(selectedTrackNotifierProvider.notifier).clearSelectedTrack(); // Changed
                 ref.invalidate(xpProvider);
                 ref.invalidate(totalTrackXpProvider);
                 ref.invalidate(currentGuidedLevelProvider);
                 ref.invalidate(guidedTaskStreaksProvider);
 
-                ref.read(appModeProvider.notifier).clearAppMode();
+                ref.read(appModeNotifierProvider.notifier).clearAppMode(); // Changed
                 Navigator.of(dialogContext).pop(); // Close dialog first
                 Navigator.of(
                   context,
@@ -93,8 +94,8 @@ class SettingsPage extends ConsumerWidget {
                 final prefsService = ref.read(preferencesServiceProvider);
                 await prefsService.clearAll();
 
-                ref.invalidate(appModeProvider);
-                ref.invalidate(selectedTrackProvider);
+                ref.invalidate(firestoreAppModeProvider);
+                ref.invalidate(firestoreSelectedTrackProvider);
                 ref.invalidate(customTasksProvider);
                 ref.invalidate(completionsProvider);
                 ref.invalidate(xpProvider);
