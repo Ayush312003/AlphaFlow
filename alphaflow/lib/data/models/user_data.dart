@@ -13,12 +13,8 @@ class UserData {
   });
 
   factory UserData.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot) {
-    final data = snapshot.data();
-    if (data == null) {
-      // Return default UserData if document doesn't exist or has no data
-      // This helps in initializing the state before the document is created.
-      return UserData(appMode: null, selectedTrackId: null, firstActiveDate: null);
-    }
+    final data = snapshot.data() ?? {};
+    // Always return a UserData object, even if all fields are missing
     return UserData(
       appMode: data['appMode'] != null ? AppMode.fromString(data['appMode'] as String) : null,
       selectedTrackId: data['selectedTrackId'] as String?,
