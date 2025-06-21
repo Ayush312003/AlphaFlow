@@ -1,32 +1,52 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:alphaflow/features/user_profile/application/user_data_providers.dart'; // For new providers
-import 'package:alphaflow/features/user_profile/application/user_data_service.dart'; // For UserDataService
-import 'package:alphaflow/features/auth/application/auth_providers.dart'; // For currentUserIdProvider
+import 'package:alphaflow/data/local/preferences_service.dart';
+import 'package:alphaflow/providers/app_mode_provider.dart'; // For preferencesServiceProvider
 
 class SelectedTrackNotifier extends StateNotifier<String?> {
-  final Ref _ref; // Changed Reader to Ref
-  final String? _userId;
+  final PreferencesService _prefsService;
 
-  SelectedTrackNotifier(this._ref, this._userId) : super(null); // Changed _read to _ref
+  SelectedTrackNotifier(this._prefsService) : super(null) {
+    // Initialize state from SharedPreferences
+    _loadSelectedTrack();
+  }
+
+  /// Loads selected track from SharedPreferences
+  void _loadSelectedTrack() {
+    final selectedTrack = _prefsService.getSelectedTrack();
+    state = selectedTrack;
+  }
 
   Future<void> setSelectedTrack(String trackId) async {
-    if (_userId == null || _userId!.isEmpty) return;
-    // state = trackId;
-    await _ref.read(userDataServiceProvider).updateSelectedTrack(_userId!, trackId); // Changed _read to _ref.read
+    // Update SharedPreferences
+    await _prefsService.setSelectedTrack(trackId);
+    // Update local state
+    state = trackId;
   }
 
   Future<void> clearSelectedTrack() async {
-    if (_userId == null || _userId!.isEmpty) return;
-    // state = null;
-    await _ref.read(userDataServiceProvider).updateSelectedTrack(_userId!, null); // Changed _read to _ref.read
+    // Clear from SharedPreferences
+    await _prefsService.clearSelectedTrack();
+    // Update local state
+    state = null;
+  }
+
+  /// Resets selected track to null (for settings page)
+  Future<void> resetSelectedTrack() async {
+    await clearSelectedTrack();
   }
 }
 
 final selectedTrackNotifierProvider = StateNotifierProvider<SelectedTrackNotifier, String?>((ref) {
-  final userId = ref.watch(currentUserIdProvider);
-  return SelectedTrackNotifier(ref, userId); // Changed ref.read to ref
+  final prefsService = ref.watch(preferencesServiceProvider);
+  return SelectedTrackNotifier(prefsService);
 });
 
-// The main provider for GETTING selectedTrack is now firestoreSelectedTrackProvider.
-// UI should switch to watching firestoreSelectedTrackProvider.
+// Provider for getting selected track from SharedPreferences
+final localSelectedTrackProvider = Provider<String?>((ref) {
+  // Watch the notifier provider to get updates when selected track changes
+  return ref.watch(selectedTrackNotifierProvider);
+});
+
+// The main provider for GETTING selectedTrack is now localSelectedTrackProvider.
+// UI should switch to watching localSelectedTrackProvider instead of firestoreSelectedTrackProvider.
 // selectedTrackNotifierProvider is for SETTING the track.

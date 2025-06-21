@@ -13,14 +13,22 @@ import 'package:alphaflow/data/models/task_target.dart';
 
 // Example predefined icons
 final Map<String, IconData> _predefinedIcons = {
-  'task_alt': Icons.task_alt,
-  'star': Icons.star_border_purple500_outlined,
-  'flag': Icons.flag_outlined,
-  'fitness': Icons.fitness_center_outlined,
-  'book': Icons.book_outlined,
-  'work': Icons.work_outline,
-  'home': Icons.home_outlined,
-  'palette': Icons.palette_outlined,
+  'task_alt': Icons.task_alt_rounded,
+  'star': Icons.star_rounded,
+  'flag': Icons.flag_rounded,
+  'fitness': Icons.fitness_center_rounded,
+  'book': Icons.book_rounded,
+  'work': Icons.work_rounded,
+  'home': Icons.home_rounded,
+  'palette': Icons.palette_rounded,
+  'school': Icons.school_rounded,
+  'sports': Icons.sports_soccer_rounded,
+  'music': Icons.music_note_rounded,
+  'food': Icons.restaurant_rounded,
+  'shopping': Icons.shopping_cart_rounded,
+  'travel': Icons.flight_rounded,
+  'health': Icons.favorite_rounded,
+  'finance': Icons.account_balance_wallet_rounded,
 };
 
 // Example predefined colors
@@ -586,9 +594,7 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
                             borderRadius: BorderRadius.circular(8),
                             color:
                                 isSelected
-                                    ? Theme.of(
-                                      context,
-                                    ).colorScheme.primary.withOpacity(0.1)
+                                    ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
                                     : null,
                           ),
                           child: Icon(

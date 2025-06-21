@@ -1,0 +1,1031 @@
+{
+  "tracks": [
+    {
+      "id": "monk_mode",
+      "title": "Monk Mode",
+      "description": "Extreme focus and discipline—cut out all distractions and build mental strength.",
+      "icon": "🧘",
+      "theme": "dark_monastic",
+      "levels": [
+        {
+          "levelNumber": 1,
+          "title": "Novice",
+          "icon": "🌱",
+          "xpThreshold": 0,
+          "unlockTasks": [
+            {
+              "id": "monk_no_social",
+              "title": "No Social Media",
+              "description": "Avoid all social media platforms today.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 1
+            },
+            {
+              "id": "monk_workout",
+              "title": "Daily Workout",
+              "description": "Complete a physical workout session.",
+              "frequency": "daily",
+              "xp": 15,
+              "requiredLevel": 1
+            },
+            {
+              "id": "monk_meditate",
+              "title": "Meditate 10 Minutes",
+              "description": "Practice mindfulness meditation for at least 10 minutes.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 1
+            },
+            {
+              "id": "monk_deep_work",
+              "title": "1h Deep Work",
+              "description": "One hour of focused, undistracted work.",
+              "frequency": "daily",
+              "xp": 15,
+              "requiredLevel": 1
+            }
+          ]
+        },
+        {
+          "levelNumber": 2,
+          "title": "Apprentice",
+          "icon": "🌿",
+          "xpThreshold": 100,
+          "unlockTasks": [
+            {
+              "id": "monk_cold_shower",
+              "title": "Cold Shower",
+              "description": "Take a cold shower to build mental resilience.",
+              "frequency": "daily",
+              "xp": 20,
+              "requiredLevel": 2
+            },
+            {
+              "id": "monk_read_30min",
+              "title": "Read 30 Minutes",
+              "description": "Read a book for at least 30 minutes.",
+              "frequency": "daily",
+              "xp": 15,
+              "requiredLevel": 2
+            },
+            {
+              "id": "monk_no_sugar",
+              "title": "No Added Sugar",
+              "description": "Avoid all added sugars and sweeteners today.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 2
+            }
+          ]
+        },
+        {
+          "levelNumber": 3,
+          "title": "Disciple",
+          "icon": "🌳",
+          "xpThreshold": 250,
+          "unlockTasks": [
+            {
+              "id": "monk_2h_deep_work",
+              "title": "2h Deep Work",
+              "description": "Two hours of focused, undistracted work.",
+              "frequency": "daily",
+              "xp": 25,
+              "requiredLevel": 3
+            },
+            {
+              "id": "monk_meditate_20min",
+              "title": "Meditate 20 Minutes",
+              "description": "Practice mindfulness meditation for at least 20 minutes.",
+              "frequency": "daily",
+              "xp": 20,
+              "requiredLevel": 3
+            },
+            {
+              "id": "monk_no_phone_bedroom",
+              "title": "No Phone in Bedroom",
+              "description": "Keep your phone out of the bedroom for the entire day.",
+              "frequency": "daily",
+              "xp": 15,
+              "requiredLevel": 3
+            }
+          ]
+        },
+        {
+          "levelNumber": 4,
+          "title": "Adept",
+          "icon": "🏔️",
+          "xpThreshold": 450,
+          "unlockTasks": [
+            {
+              "id": "monk_intermittent_fast",
+              "title": "16:8 Intermittent Fast",
+              "description": "Fast for 16 hours, eat within 8-hour window.",
+              "frequency": "daily",
+              "xp": 30,
+              "requiredLevel": 4
+            },
+            {
+              "id": "monk_3h_deep_work",
+              "title": "3h Deep Work",
+              "description": "Three hours of focused, undistracted work.",
+              "frequency": "daily",
+              "xp": 35,
+              "requiredLevel": 4
+            },
+            {
+              "id": "monk_learn_skill",
+              "title": "Learn New Skill",
+              "description": "Spend time learning a new skill or language.",
+              "frequency": "daily",
+              "xp": 20,
+              "requiredLevel": 4
+            }
+          ]
+        },
+        {
+          "levelNumber": 5,
+          "title": "Master",
+          "icon": "⚡",
+          "xpThreshold": 700,
+          "unlockTasks": [
+            {
+              "id": "monk_4h_deep_work",
+              "title": "4h Deep Work",
+              "description": "Four hours of focused, undistracted work.",
+              "frequency": "daily",
+              "xp": 40,
+              "requiredLevel": 5
+            },
+            {
+              "id": "monk_meditate_30min",
+              "title": "Meditate 30 Minutes",
+              "description": "Practice mindfulness meditation for at least 30 minutes.",
+              "frequency": "daily",
+              "xp": 25,
+              "requiredLevel": 5
+            },
+            {
+              "id": "monk_digital_detox",
+              "title": "Digital Detox",
+              "description": "Use phone/computer only for essential tasks.",
+              "frequency": "daily",
+              "xp": 30,
+              "requiredLevel": 5
+            }
+          ]
+        },
+        {
+          "levelNumber": 6,
+          "title": "Sage",
+          "icon": "🌟",
+          "xpThreshold": 1000,
+          "unlockTasks": [
+            {
+              "id": "monk_5h_deep_work",
+              "title": "5h Deep Work",
+              "description": "Five hours of focused, undistracted work.",
+              "frequency": "daily",
+              "xp": 50,
+              "requiredLevel": 6
+            },
+            {
+              "id": "monk_teach_others",
+              "title": "Teach Others",
+              "description": "Share knowledge or mentor someone today.",
+              "frequency": "daily",
+              "xp": 35,
+              "requiredLevel": 6
+            },
+            {
+              "id": "monk_create_content",
+              "title": "Create Content",
+              "description": "Create something valuable (write, code, art, etc.).",
+              "frequency": "daily",
+              "xp": 30,
+              "requiredLevel": 6
+            }
+          ]
+        },
+        {
+          "levelNumber": 7,
+          "title": "Enlightened",
+          "icon": "✨",
+          "xpThreshold": 1350,
+          "unlockTasks": [
+            {
+              "id": "monk_6h_deep_work",
+              "title": "6h Deep Work",
+              "description": "Six hours of focused, undistracted work.",
+              "frequency": "daily",
+              "xp": 60,
+              "requiredLevel": 7
+            },
+            {
+              "id": "monk_meditate_45min",
+              "title": "Meditate 45 Minutes",
+              "description": "Practice mindfulness meditation for at least 45 minutes.",
+              "frequency": "daily",
+              "xp": 35,
+              "requiredLevel": 7
+            },
+            {
+              "id": "monk_help_others",
+              "title": "Help Others",
+              "description": "Perform an act of kindness or service for others.",
+              "frequency": "daily",
+              "xp": 25,
+              "requiredLevel": 7
+            }
+          ]
+        },
+        {
+          "levelNumber": 8,
+          "title": "Transcendent",
+          "icon": "🌌",
+          "xpThreshold": 1750,
+          "unlockTasks": [
+            {
+              "id": "monk_8h_deep_work",
+              "title": "8h Deep Work",
+              "description": "Eight hours of focused, undistracted work.",
+              "frequency": "daily",
+              "xp": 80,
+              "requiredLevel": 8
+            },
+            {
+              "id": "monk_meditate_60min",
+              "title": "Meditate 60 Minutes",
+              "description": "Practice mindfulness meditation for at least 60 minutes.",
+              "frequency": "daily",
+              "xp": 50,
+              "requiredLevel": 8
+            },
+            {
+              "id": "monk_master_skill",
+              "title": "Master a Skill",
+              "description": "Work on mastering a specific skill or craft.",
+              "frequency": "daily",
+              "xp": 40,
+              "requiredLevel": 8
+            }
+          ]
+        },
+        {
+          "levelNumber": 9,
+          "title": "Legendary",
+          "icon": "👑",
+          "xpThreshold": 2200,
+          "unlockTasks": [
+            {
+              "id": "monk_10h_deep_work",
+              "title": "10h Deep Work",
+              "description": "Ten hours of focused, undistracted work.",
+              "frequency": "daily",
+              "xp": 100,
+              "requiredLevel": 9
+            },
+            {
+              "id": "monk_meditate_90min",
+              "title": "Meditate 90 Minutes",
+              "description": "Practice mindfulness meditation for at least 90 minutes.",
+              "frequency": "daily",
+              "xp": 60,
+              "requiredLevel": 9
+            },
+            {
+              "id": "monk_inspire_others",
+              "title": "Inspire Others",
+              "description": "Motivate or inspire someone to improve themselves.",
+              "frequency": "daily",
+              "xp": 50,
+              "requiredLevel": 9
+            }
+          ]
+        },
+        {
+          "levelNumber": 10,
+          "title": "Immortal",
+          "icon": "🔥",
+          "xpThreshold": 2700,
+          "unlockTasks": [
+            {
+              "id": "monk_12h_deep_work",
+              "title": "12h Deep Work",
+              "description": "Twelve hours of focused, undistracted work.",
+              "frequency": "daily",
+              "xp": 120,
+              "requiredLevel": 10
+            },
+            {
+              "id": "monk_meditate_120min",
+              "title": "Meditate 120 Minutes",
+              "description": "Practice mindfulness meditation for at least 120 minutes.",
+              "frequency": "daily",
+              "xp": 80,
+              "requiredLevel": 10
+            },
+            {
+              "id": "monk_legacy",
+              "title": "Build Legacy",
+              "description": "Work on something that will outlast you.",
+              "frequency": "daily",
+              "xp": 100,
+              "requiredLevel": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dopamine_detox",
+      "title": "Dopamine Detox",
+      "description": "Reset your brain by cutting out overstimulating activities and rebuilding focus.",
+      "icon": "🧠",
+      "theme": "minimalist_gray",
+      "levels": [
+        {
+          "levelNumber": 1,
+          "title": "Beginner",
+          "icon": "🌱",
+          "xpThreshold": 0,
+          "unlockTasks": [
+            {
+              "id": "dopamine_no_junk",
+              "title": "No Junk Food",
+              "description": "Avoid processed and junk foods today.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 1
+            },
+            {
+              "id": "dopamine_no_social",
+              "title": "No Social Media",
+              "description": "Skip all social media platforms.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 1
+            },
+            {
+              "id": "dopamine_no_games",
+              "title": "No Video Games",
+              "description": "Avoid video games and gaming content.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 1
+            },
+            {
+              "id": "dopamine_read",
+              "title": "Read 10 Pages",
+              "description": "Read at least 10 pages of a book.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 1
+            }
+          ]
+        },
+        {
+          "levelNumber": 2,
+          "title": "Explorer",
+          "icon": "🔍",
+          "xpThreshold": 100,
+          "unlockTasks": [
+            {
+              "id": "dopamine_no_youtube",
+              "title": "No YouTube",
+              "description": "Avoid YouTube and video streaming platforms.",
+              "frequency": "daily",
+              "xp": 15,
+              "requiredLevel": 2
+            },
+            {
+              "id": "dopamine_walk",
+              "title": "30 Min Walk",
+              "description": "Take a 30-minute walk without music or podcasts.",
+              "frequency": "daily",
+              "xp": 15,
+              "requiredLevel": 2
+            },
+            {
+              "id": "dopamine_journal",
+              "title": "Journal 10 Minutes",
+              "description": "Write in your journal for at least 10 minutes.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 2
+            }
+          ]
+        },
+        {
+          "levelNumber": 3,
+          "title": "Seeker",
+          "icon": "🎯",
+          "xpThreshold": 250,
+          "unlockTasks": [
+            {
+              "id": "dopamine_no_netflix",
+              "title": "No Netflix/Streaming",
+              "description": "Avoid all streaming services and TV shows.",
+              "frequency": "daily",
+              "xp": 20,
+              "requiredLevel": 3
+            },
+            {
+              "id": "dopamine_read_30min",
+              "title": "Read 30 Minutes",
+              "description": "Read a book for at least 30 minutes.",
+              "frequency": "daily",
+              "xp": 15,
+              "requiredLevel": 3
+            },
+            {
+              "id": "dopamine_meditate",
+              "title": "Meditate 15 Minutes",
+              "description": "Practice mindfulness meditation for 15 minutes.",
+              "frequency": "daily",
+              "xp": 15,
+              "requiredLevel": 3
+            }
+          ]
+        },
+        {
+          "levelNumber": 4,
+          "title": "Purifier",
+          "icon": "💎",
+          "xpThreshold": 450,
+          "unlockTasks": [
+            {
+              "id": "dopamine_no_music",
+              "title": "No Background Music",
+              "description": "Avoid listening to music while working or studying.",
+              "frequency": "daily",
+              "xp": 25,
+              "requiredLevel": 4
+            },
+            {
+              "id": "dopamine_nature_time",
+              "title": "Nature Time",
+              "description": "Spend time in nature without any digital devices.",
+              "frequency": "daily",
+              "xp": 20,
+              "requiredLevel": 4
+            },
+            {
+              "id": "dopamine_read_60min",
+              "title": "Read 60 Minutes",
+              "description": "Read a book for at least 60 minutes.",
+              "frequency": "daily",
+              "xp": 25,
+              "requiredLevel": 4
+            }
+          ]
+        },
+        {
+          "levelNumber": 5,
+          "title": "Master",
+          "icon": "⚡",
+          "xpThreshold": 700,
+          "unlockTasks": [
+            {
+              "id": "dopamine_no_phone_4h",
+              "title": "No Phone 4 Hours",
+              "description": "Keep your phone away for 4 consecutive hours.",
+              "frequency": "daily",
+              "xp": 30,
+              "requiredLevel": 5
+            },
+            {
+              "id": "dopamine_meditate_30min",
+              "title": "Meditate 30 Minutes",
+              "description": "Practice mindfulness meditation for 30 minutes.",
+              "frequency": "daily",
+              "xp": 25,
+              "requiredLevel": 5
+            },
+            {
+              "id": "dopamine_create",
+              "title": "Create Something",
+              "description": "Create something without using digital tools.",
+              "frequency": "daily",
+              "xp": 20,
+              "requiredLevel": 5
+            }
+          ]
+        },
+        {
+          "levelNumber": 6,
+          "title": "Sage",
+          "icon": "🌟",
+          "xpThreshold": 1000,
+          "unlockTasks": [
+            {
+              "id": "dopamine_no_phone_8h",
+              "title": "No Phone 8 Hours",
+              "description": "Keep your phone away for 8 consecutive hours.",
+              "frequency": "daily",
+              "xp": 40,
+              "requiredLevel": 6
+            },
+            {
+              "id": "dopamine_read_90min",
+              "title": "Read 90 Minutes",
+              "description": "Read a book for at least 90 minutes.",
+              "frequency": "daily",
+              "xp": 35,
+              "requiredLevel": 6
+            },
+            {
+              "id": "dopamine_learn_skill",
+              "title": "Learn New Skill",
+              "description": "Learn a new skill without using digital resources.",
+              "frequency": "daily",
+              "xp": 30,
+              "requiredLevel": 6
+            }
+          ]
+        },
+        {
+          "levelNumber": 7,
+          "title": "Enlightened",
+          "icon": "✨",
+          "xpThreshold": 1350,
+          "unlockTasks": [
+            {
+              "id": "dopamine_no_phone_12h",
+              "title": "No Phone 12 Hours",
+              "description": "Keep your phone away for 12 consecutive hours.",
+              "frequency": "daily",
+              "xp": 50,
+              "requiredLevel": 7
+            },
+            {
+              "id": "dopamine_meditate_45min",
+              "title": "Meditate 45 Minutes",
+              "description": "Practice mindfulness meditation for 45 minutes.",
+              "frequency": "daily",
+              "xp": 35,
+              "requiredLevel": 7
+            },
+            {
+              "id": "dopamine_teach",
+              "title": "Teach Others",
+              "description": "Teach someone a skill without using digital tools.",
+              "frequency": "daily",
+              "xp": 30,
+              "requiredLevel": 7
+            }
+          ]
+        },
+        {
+          "levelNumber": 8,
+          "title": "Transcendent",
+          "icon": "🌌",
+          "xpThreshold": 1750,
+          "unlockTasks": [
+            {
+              "id": "dopamine_no_phone_16h",
+              "title": "No Phone 16 Hours",
+              "description": "Keep your phone away for 16 consecutive hours.",
+              "frequency": "daily",
+              "xp": 60,
+              "requiredLevel": 8
+            },
+            {
+              "id": "dopamine_read_120min",
+              "title": "Read 120 Minutes",
+              "description": "Read a book for at least 120 minutes.",
+              "frequency": "daily",
+              "xp": 45,
+              "requiredLevel": 8
+            },
+            {
+              "id": "dopamine_master_skill",
+              "title": "Master a Skill",
+              "description": "Work on mastering a skill without digital assistance.",
+              "frequency": "daily",
+              "xp": 40,
+              "requiredLevel": 8
+            }
+          ]
+        },
+        {
+          "levelNumber": 9,
+          "title": "Legendary",
+          "icon": "👑",
+          "xpThreshold": 2200,
+          "unlockTasks": [
+            {
+              "id": "dopamine_no_phone_20h",
+              "title": "No Phone 20 Hours",
+              "description": "Keep your phone away for 20 consecutive hours.",
+              "frequency": "daily",
+              "xp": 70,
+              "requiredLevel": 9
+            },
+            {
+              "id": "dopamine_meditate_60min",
+              "title": "Meditate 60 Minutes",
+              "description": "Practice mindfulness meditation for 60 minutes.",
+              "frequency": "daily",
+              "xp": 50,
+              "requiredLevel": 9
+            },
+            {
+              "id": "dopamine_inspire",
+              "title": "Inspire Others",
+              "description": "Inspire someone to reduce their digital consumption.",
+              "frequency": "daily",
+              "xp": 40,
+              "requiredLevel": 9
+            }
+          ]
+        },
+        {
+          "levelNumber": 10,
+          "title": "Immortal",
+          "icon": "🔥",
+          "xpThreshold": 2700,
+          "unlockTasks": [
+            {
+              "id": "dopamine_no_phone_24h",
+              "title": "No Phone 24 Hours",
+              "description": "Keep your phone away for 24 consecutive hours.",
+              "frequency": "daily",
+              "xp": 100,
+              "requiredLevel": 10
+            },
+            {
+              "id": "dopamine_read_180min",
+              "title": "Read 180 Minutes",
+              "description": "Read a book for at least 180 minutes.",
+              "frequency": "daily",
+              "xp": 60,
+              "requiredLevel": 10
+            },
+            {
+              "id": "dopamine_legacy",
+              "title": "Digital Legacy",
+              "description": "Help others create a healthier relationship with technology.",
+              "frequency": "daily",
+              "xp": 80,
+              "requiredLevel": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "75_hard",
+      "title": "75 Hard",
+      "description": "Build mental toughness and discipline over 75 days with extreme consistency.",
+      "icon": "💪",
+      "theme": "gritty_black",
+      "levels": [
+        {
+          "levelNumber": 1,
+          "title": "Warrior",
+          "icon": "⚔️",
+          "xpThreshold": 0,
+          "unlockTasks": [
+            {
+              "id": "75_workout1",
+              "title": "Workout #1",
+              "description": "45-minute indoor workout.",
+              "frequency": "daily",
+              "xp": 15,
+              "requiredLevel": 1
+            },
+            {
+              "id": "75_workout2",
+              "title": "Workout #2",
+              "description": "45-minute outdoor workout.",
+              "frequency": "daily",
+              "xp": 15,
+              "requiredLevel": 1
+            },
+            {
+              "id": "75_drink_water",
+              "title": "1 Gallon Water",
+              "description": "Drink at least 1 gallon of water.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 1
+            },
+            {
+              "id": "75_no_cheat",
+              "title": "No Cheat Meals",
+              "description": "Strict diet—no cheat meals or alcohol.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 1
+            },
+            {
+              "id": "75_read",
+              "title": "Read 10 Pages",
+              "description": "Read 10 pages of non-fiction.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 1
+            },
+            {
+              "id": "75_photo",
+              "title": "Progress Photo",
+              "description": "Take a daily progress photo.",
+              "frequency": "daily",
+              "xp": 5,
+              "requiredLevel": 1
+            }
+          ]
+        },
+        {
+          "levelNumber": 2,
+          "title": "Gladiator",
+          "icon": "🛡️",
+          "xpThreshold": 150,
+          "unlockTasks": [
+            {
+              "id": "75_cold_shower",
+              "title": "Cold Shower",
+              "description": "Take a cold shower to build mental toughness.",
+              "frequency": "daily",
+              "xp": 20,
+              "requiredLevel": 2
+            },
+            {
+              "id": "75_workout_intensity",
+              "title": "Increase Workout Intensity",
+              "description": "Make both workouts more challenging than yesterday.",
+              "frequency": "daily",
+              "xp": 25,
+              "requiredLevel": 2
+            },
+            {
+              "id": "75_read_20pages",
+              "title": "Read 20 Pages",
+              "description": "Read 20 pages of non-fiction.",
+              "frequency": "daily",
+              "xp": 15,
+              "requiredLevel": 2
+            }
+          ]
+        },
+        {
+          "levelNumber": 3,
+          "title": "Champion",
+          "icon": "🏆",
+          "xpThreshold": 350,
+          "unlockTasks": [
+            {
+              "id": "75_workout_60min",
+              "title": "60-Minute Workouts",
+              "description": "Increase both workouts to 60 minutes each.",
+              "frequency": "daily",
+              "xp": 30,
+              "requiredLevel": 3
+            },
+            {
+              "id": "75_meditate",
+              "title": "Meditate 15 Minutes",
+              "description": "Practice mindfulness meditation for 15 minutes.",
+              "frequency": "daily",
+              "xp": 15,
+              "requiredLevel": 3
+            },
+            {
+              "id": "75_read_30pages",
+              "title": "Read 30 Pages",
+              "description": "Read 30 pages of non-fiction.",
+              "frequency": "daily",
+              "xp": 20,
+              "requiredLevel": 3
+            }
+          ]
+        },
+        {
+          "levelNumber": 4,
+          "title": "Elite",
+          "icon": "👑",
+          "xpThreshold": 600,
+          "unlockTasks": [
+            {
+              "id": "75_workout_90min",
+              "title": "90-Minute Workouts",
+              "description": "Increase both workouts to 90 minutes each.",
+              "frequency": "daily",
+              "xp": 40,
+              "requiredLevel": 4
+            },
+            {
+              "id": "75_meditate_30min",
+              "title": "Meditate 30 Minutes",
+              "description": "Practice mindfulness meditation for 30 minutes.",
+              "frequency": "daily",
+              "xp": 25,
+              "requiredLevel": 4
+            },
+            {
+              "id": "75_read_50pages",
+              "title": "Read 50 Pages",
+              "description": "Read 50 pages of non-fiction.",
+              "frequency": "daily",
+              "xp": 30,
+              "requiredLevel": 4
+            }
+          ]
+        },
+        {
+          "levelNumber": 5,
+          "title": "Legend",
+          "icon": "🔥",
+          "xpThreshold": 900,
+          "unlockTasks": [
+            {
+              "id": "75_workout_120min",
+              "title": "120-Minute Workouts",
+              "description": "Increase both workouts to 120 minutes each.",
+              "frequency": "daily",
+              "xp": 50,
+              "requiredLevel": 5
+            },
+            {
+              "id": "75_meditate_45min",
+              "title": "Meditate 45 Minutes",
+              "description": "Practice mindfulness meditation for 45 minutes.",
+              "frequency": "daily",
+              "xp": 35,
+              "requiredLevel": 5
+            },
+            {
+              "id": "75_read_75pages",
+              "title": "Read 75 Pages",
+              "description": "Read 75 pages of non-fiction.",
+              "frequency": "daily",
+              "xp": 40,
+              "requiredLevel": 5
+            }
+          ]
+        },
+        {
+          "levelNumber": 6,
+          "title": "Mythic",
+          "icon": "⚡",
+          "xpThreshold": 1250,
+          "unlockTasks": [
+            {
+              "id": "75_workout_150min",
+              "title": "150-Minute Workouts",
+              "description": "Increase both workouts to 150 minutes each.",
+              "frequency": "daily",
+              "xp": 60,
+              "requiredLevel": 6
+            },
+            {
+              "id": "75_meditate_60min",
+              "title": "Meditate 60 Minutes",
+              "description": "Practice mindfulness meditation for 60 minutes.",
+              "frequency": "daily",
+              "xp": 45,
+              "requiredLevel": 6
+            },
+            {
+              "id": "75_read_100pages",
+              "title": "Read 100 Pages",
+              "description": "Read 100 pages of non-fiction.",
+              "frequency": "daily",
+              "xp": 50,
+              "requiredLevel": 6
+            }
+          ]
+        },
+        {
+          "levelNumber": 7,
+          "title": "Immortal",
+          "icon": "🌟",
+          "xpThreshold": 1650,
+          "unlockTasks": [
+            {
+              "id": "75_workout_180min",
+              "title": "180-Minute Workouts",
+              "description": "Increase both workouts to 180 minutes each.",
+              "frequency": "daily",
+              "xp": 70,
+              "requiredLevel": 7
+            },
+            {
+              "id": "75_meditate_90min",
+              "title": "Meditate 90 Minutes",
+              "description": "Practice mindfulness meditation for 90 minutes.",
+              "frequency": "daily",
+              "xp": 55,
+              "requiredLevel": 7
+            },
+            {
+              "id": "75_read_150pages",
+              "title": "Read 150 Pages",
+              "description": "Read 150 pages of non-fiction.",
+              "frequency": "daily",
+              "xp": 60,
+              "requiredLevel": 7
+            }
+          ]
+        },
+        {
+          "levelNumber": 8,
+          "title": "Divine",
+          "icon": "✨",
+          "xpThreshold": 2100,
+          "unlockTasks": [
+            {
+              "id": "75_workout_240min",
+              "title": "240-Minute Workouts",
+              "description": "Increase both workouts to 240 minutes each.",
+              "frequency": "daily",
+              "xp": 80,
+              "requiredLevel": 8
+            },
+            {
+              "id": "75_meditate_120min",
+              "title": "Meditate 120 Minutes",
+              "description": "Practice mindfulness meditation for 120 minutes.",
+              "frequency": "daily",
+              "xp": 65,
+              "requiredLevel": 8
+            },
+            {
+              "id": "75_read_200pages",
+              "title": "Read 200 Pages",
+              "description": "Read 200 pages of non-fiction.",
+              "frequency": "daily",
+              "xp": 70,
+              "requiredLevel": 8
+            }
+          ]
+        },
+        {
+          "levelNumber": 9,
+          "title": "Transcendent",
+          "icon": "🌌",
+          "xpThreshold": 2600,
+          "unlockTasks": [
+            {
+              "id": "75_workout_300min",
+              "title": "300-Minute Workouts",
+              "description": "Increase both workouts to 300 minutes each.",
+              "frequency": "daily",
+              "xp": 90,
+              "requiredLevel": 9
+            },
+            {
+              "id": "75_meditate_150min",
+              "title": "Meditate 150 Minutes",
+              "description": "Practice mindfulness meditation for 150 minutes.",
+              "frequency": "daily",
+              "xp": 75,
+              "requiredLevel": 9
+            },
+            {
+              "id": "75_read_300pages",
+              "title": "Read 300 Pages",
+              "description": "Read 300 pages of non-fiction.",
+              "frequency": "daily",
+              "xp": 80,
+              "requiredLevel": 9
+            }
+          ]
+        },
+        {
+          "levelNumber": 10,
+          "title": "Ultimate",
+          "icon": "💎",
+          "xpThreshold": 3150,
+          "unlockTasks": [
+            {
+              "id": "75_workout_360min",
+              "title": "360-Minute Workouts",
+              "description": "Increase both workouts to 360 minutes each.",
+              "frequency": "daily",
+              "xp": 100,
+              "requiredLevel": 10
+            },
+            {
+              "id": "75_meditate_180min",
+              "title": "Meditate 180 Minutes",
+              "description": "Practice mindfulness meditation for 180 minutes.",
+              "frequency": "daily",
+              "xp": 85,
+              "requiredLevel": 10
+            },
+            {
+              "id": "75_read_500pages",
+              "title": "Read 500 Pages",
+              "description": "Read 500 pages of non-fiction.",
+              "frequency": "daily",
+              "xp": 90,
+              "requiredLevel": 10
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 

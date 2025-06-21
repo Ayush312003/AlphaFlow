@@ -37,6 +37,7 @@ dependencies:
   json_annotation: ^4.8.1
   intl: ^0.19.0
   table_calendar: ^3.1.0
+  google_fonts: ^6.1.0 # For Noto fonts and emoji support
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -65,6 +66,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/guided_tracks.json
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

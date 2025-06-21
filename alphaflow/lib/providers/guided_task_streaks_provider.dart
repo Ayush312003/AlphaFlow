@@ -6,6 +6,7 @@ import 'package:alphaflow/data/models/guided_task.dart';
 import 'package:alphaflow/data/models/level_definition.dart'; // Required for currentGuidedLevelProvider's return type
 import 'package:alphaflow/providers/task_completions_provider.dart';
 import 'package:alphaflow/providers/guided_level_provider.dart';
+import 'package:alphaflow/providers/selected_track_provider.dart';
 // import 'package:alphaflow/providers/selected_track_provider.dart'; // Old
 import 'package:alphaflow/features/user_profile/application/user_data_providers.dart'; // New
 
@@ -43,18 +44,21 @@ int _calculateDailyStreak(String taskId, List<TaskCompletion> allCompletions) {
   if (taskCompletions.contains(today)) {
     currentStreak = 1;
     DateTime dayToCheck = yesterday;
+    // Start looking from the completion *after* today in the sorted list
     int todayIndex = taskCompletions.indexOf(today);
     for (int i = todayIndex + 1; i < taskCompletions.length; i++) {
       if (taskCompletions[i] == dayToCheck) {
         currentStreak++;
         dayToCheck = dayToCheck.subtract(const Duration(days: 1));
       } else if (taskCompletions[i].isBefore(dayToCheck)) {
+        // Gap in completions, streak broken earlier than dayToCheck
         break;
       }
     }
   } else if (taskCompletions.contains(yesterday)) {
     currentStreak = 1;
     DateTime dayToCheck = yesterday.subtract(const Duration(days: 1));
+    // Start looking from the completion *after* yesterday in the sorted list
     int yesterdayIndex = taskCompletions.indexOf(yesterday);
     for (int i = yesterdayIndex + 1; i < taskCompletions.length; i++) {
       if (taskCompletions[i] == dayToCheck) {
@@ -80,7 +84,7 @@ int _calculateWeeklyStreak(String taskId, List<TaskCompletion> allCompletions) {
   if (taskCompletionsOnFirstDayOfWeek.isEmpty) return 0;
 
   int currentStreak = 0;
-  DateTime startOfCurrentWeek = startOfWeek(DateTime.now());
+  DateTime startOfCurrentWeek = _startOfWeek(DateTime.now());
   DateTime startOfLastWeek = startOfCurrentWeek.subtract(
     const Duration(days: 7),
   );
@@ -126,46 +130,33 @@ int _calculateWeeklyStreak(String taskId, List<TaskCompletion> allCompletions) {
 }
 
 final guidedTaskStreaksProvider = Provider<Map<String, TaskStreakInfo>>((ref) {
-  final allCompletionsAsyncValue = ref.watch(completionsProvider);
+  final allCompletions = ref.watch(combinedCompletionsProvider); // Use combined provider for immediate updates
   final LevelDefinition? currentLevel = ref.watch(currentGuidedLevelProvider);
 
   // Watch selectedTrackProvider to ensure this provider rebuilds when the track changes.
   ref.watch(firestoreSelectedTrackProvider); // Changed
 
-  return allCompletionsAsyncValue.when(
-    data: (allCompletions) { // allCompletions is List<TaskCompletion>
-      final streaksMap = <String, TaskStreakInfo>{};
+  final streaksMap = <String, TaskStreakInfo>{};
 
-      if (currentLevel == null) {
-        return streaksMap; // Return empty map if no current level
-      }
+  if (currentLevel == null) {
+    return streaksMap; // Return empty map if no current level
+  }
 
-      final List<GuidedTask> currentLevelTasks = currentLevel.unlockTasks;
+  final List<GuidedTask> currentLevelTasks = currentLevel.unlockTasks;
 
-      for (final task in currentLevelTasks) {
-        if (task.frequency == Frequency.daily) {
-          streaksMap[task.id] = TaskStreakInfo(
-            streakCount: _calculateDailyStreak(task.id, allCompletions),
-            frequency: Frequency.daily,
-          );
-        } else if (task.frequency == Frequency.weekly) {
-          streaksMap[task.id] = TaskStreakInfo(
-            streakCount: _calculateWeeklyStreak(task.id, allCompletions),
-            frequency: Frequency.weekly,
-          );
-        }
-        // 'oneTime' tasks do not have streaks and are not added to the map
-      }
-      return streaksMap;
-    },
-    loading: () {
-      // print("guidedTaskStreaksProvider: Loading completions...");
-      return <String, TaskStreakInfo>{}; // Return empty map while loading
-    },
-    error: (err, stack) {
-      print("Error in guidedTaskStreaksProvider from completionsProvider: $err");
-      print(stack);
-      return <String, TaskStreakInfo>{}; // Return empty map on error
-    },
-  );
+  for (final task in currentLevelTasks) {
+    if (task.frequency == Frequency.daily) {
+      streaksMap[task.id] = TaskStreakInfo(
+        streakCount: _calculateDailyStreak(task.id, allCompletions),
+        frequency: Frequency.daily,
+      );
+    } else if (task.frequency == Frequency.weekly) {
+      streaksMap[task.id] = TaskStreakInfo(
+        streakCount: _calculateWeeklyStreak(task.id, allCompletions),
+        frequency: Frequency.weekly,
+      );
+    }
+    // 'oneTime' tasks do not have streaks and are not added to the map
+  }
+  return streaksMap;
 });

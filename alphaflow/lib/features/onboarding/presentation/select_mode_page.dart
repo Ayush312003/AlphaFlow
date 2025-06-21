@@ -34,8 +34,7 @@ class SelectModePage extends ConsumerWidget {
                 onPressed: () {
                   final appModeNotifier = ref.read(appModeNotifierProvider.notifier);
                   appModeNotifier.setAppMode(AppMode.guided);
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, '/select_track', (route) => false);
+                  // No navigation needed - HomePage will handle showing the appropriate page
                 },
                 child: const Text('Guided Mode'),
               ),
@@ -47,8 +46,7 @@ class SelectModePage extends ConsumerWidget {
                 onPressed: () {
                   final appModeNotifier = ref.read(appModeNotifierProvider.notifier);
                   appModeNotifier.setAppMode(AppMode.custom);
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, '/home', (route) => false);
+                  // No navigation needed - HomePage will handle showing the appropriate page
                 },
                 child: const Text('Custom Mode'),
               ),

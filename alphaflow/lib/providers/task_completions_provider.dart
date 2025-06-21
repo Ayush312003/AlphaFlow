@@ -6,8 +6,11 @@ import 'package:alphaflow/features/guided/providers/guided_tracks_provider.dart'
 import 'package:alphaflow/data/models/guided_task.dart'; // For GuidedTask type
 import 'package:alphaflow/data/models/custom_task.dart'; // For CustomTask type (future use for custom task XP)
 import 'package:alphaflow/providers/custom_tasks_provider.dart'; // For customTasksProvider (future use for custom task XP)
+import 'package:alphaflow/providers/batch_sync_provider.dart'; // For batch sync functionality
+import 'package:flutter/widgets.dart';
 
 // Provider that streams the list of task completions from Firestore
+// This now only includes guided task completions, as custom tasks are stored locally
 final completionsProvider = StreamProvider<List<TaskCompletion>>((ref) {
   final userId = ref.watch(currentUserIdProvider);
   if (userId == null || userId.isEmpty) {
@@ -26,12 +29,106 @@ final completionsProvider = StreamProvider<List<TaskCompletion>>((ref) {
           .map((doc) => TaskCompletion.fromJson(doc.data()))
           .toList();
     } catch (e, stackTrace) {
-      print('Error parsing completions snapshot: \$e');
+      print('Error parsing completions snapshot: $e');
       print(stackTrace);
       // Depending on how strict you want to be, you could return an empty list
       // or rethrow to indicate a critical error to an error handler provider.
       return [];
     }
+  });
+});
+
+// Provider for local completions state (for immediate UI updates)
+final localCompletionsProvider = StateNotifierProvider<LocalCompletionsNotifier, List<TaskCompletion>>((ref) {
+  return LocalCompletionsNotifier();
+});
+
+// Notifier for managing local completions state
+class LocalCompletionsNotifier extends StateNotifier<List<TaskCompletion>> {
+  LocalCompletionsNotifier() : super([]);
+
+  void addCompletion(TaskCompletion completion) {
+    // Check if completion already exists
+    final existingIndex = state.indexWhere((c) => 
+      c.taskId == completion.taskId && 
+      c.trackId == completion.trackId && 
+      c.date.isAtSameMomentAs(completion.date)
+    );
+    
+    if (existingIndex >= 0) {
+      // Update existing completion
+      final newState = List<TaskCompletion>.from(state);
+      newState[existingIndex] = completion;
+      state = newState;
+    } else {
+      // Add new completion
+      state = [...state, completion];
+    }
+  }
+
+  void removeCompletion(String taskId, String? trackId, DateTime date) {
+    state = state.where((c) => 
+      !(c.taskId == taskId && 
+        c.trackId == trackId && 
+        c.date.isAtSameMomentAs(date))
+    ).toList();
+  }
+
+  void clearAll() {
+    state = [];
+  }
+
+  void syncWithFirestore(List<TaskCompletion> firestoreCompletions) {
+    state = firestoreCompletions;
+  }
+
+  /// Initializes local state with Firestore completions
+  /// This should be called on app startup to ensure consistency
+  void initializeWithFirestore(List<TaskCompletion> firestoreCompletions) {
+    if (state.isEmpty) {
+      // Only initialize if local state is empty to avoid overwriting recent changes
+      state = firestoreCompletions;
+    }
+  }
+}
+
+// Combined provider that merges local and Firestore completions
+final combinedCompletionsProvider = Provider<List<TaskCompletion>>((ref) {
+  final firestoreCompletionsAsync = ref.watch(completionsProvider);
+  final localCompletions = ref.watch(localCompletionsProvider);
+  
+  // Get current Firestore completions (or empty list if still loading/error)
+  final firestoreCompletions = firestoreCompletionsAsync.asData?.value ?? [];
+  
+  // Merge local and Firestore completions, with local taking precedence
+  final Map<String, TaskCompletion> mergedCompletions = {};
+  
+  // Add Firestore completions first
+  for (final completion in firestoreCompletions) {
+    final key = '${completion.taskId}_${completion.trackId ?? 'null'}_${completion.date.toIso8601String()}';
+    mergedCompletions[key] = completion;
+  }
+  
+  // Override with local completions (these take precedence)
+  for (final completion in localCompletions) {
+    final key = '${completion.taskId}_${completion.trackId ?? 'null'}_${completion.date.toIso8601String()}';
+    mergedCompletions[key] = completion;
+  }
+  
+  return mergedCompletions.values.toList();
+});
+
+// Separate provider for initializing local completions with Firestore data
+final localCompletionsInitializerProvider = Provider<void>((ref) {
+  final firestoreCompletionsAsync = ref.watch(completionsProvider);
+  final localCompletionsNotifier = ref.read(localCompletionsProvider.notifier);
+  
+  // Initialize local state with Firestore data when it becomes available
+  firestoreCompletionsAsync.whenData((firestoreCompletions) {
+    // Use a post-frame callback to avoid provider modification during build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      localCompletionsNotifier.initializeWithFirestore(firestoreCompletions);
+    });
   });
 });
 
@@ -43,12 +140,12 @@ class CompletionsManager {
 
   CompletionsManager(this._userId, this._firestore, this._ref); // Changed _read to _ref
 
+  /// Toggles task completion for both guided and custom tasks
+  /// Guided tasks use batch sync, custom tasks are stored locally only
   Future<void> toggleTaskCompletion(
     String taskId,
     DateTime date, {
     String? trackId,
-    // Custom tasks are not explicitly handled for XP here yet, focus on guided.
-    // bool isCustomTask = false,
   }) async {
     if (_userId == null || _userId!.isEmpty) {
       print("User not logged in. Cannot toggle task completion.");
@@ -56,68 +153,175 @@ class CompletionsManager {
     }
 
     final normalizedDate = DateTime.utc(date.year, date.month, date.day);
-    final CollectionReference completionsRef = _firestore
-        .collection('users')
-        .doc(_userId)
-        .collection('taskCompletions');
 
-    // Query for existing completion
-    final querySnapshot = await completionsRef
-        .where('taskId', isEqualTo: taskId)
-        .where('date', isEqualTo: Timestamp.fromDate(normalizedDate))
-        // .where('trackId', isEqualTo: trackId) // trackId can be null, this might not be needed if taskId+date is unique enough
-        .limit(1)
-        .get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      // Completion exists, so remove it
-      await completionsRef.doc(querySnapshot.docs.first.id).delete();
+    if (trackId != null) {
+      // Guided task - use immediate local update + background sync
+      await _toggleGuidedTaskCompletion(taskId, trackId, normalizedDate);
     } else {
-      // Completion does not exist, so add it
-      int xpToAward = 0;
-      // Fetch XP for the task
-      if (trackId != null) { // Guided Task
-        final allGuidedTracks = _ref.read(guidedTracksProvider); // Changed _read to _ref.read
+      // Custom task - store locally only
+      await _toggleCustomTaskCompletion(taskId, normalizedDate);
+    }
+  }
+
+  /// Handles guided task completion using immediate local update + background sync
+  Future<void> _toggleGuidedTaskCompletion(
+    String taskId,
+    String trackId,
+    DateTime normalizedDate,
+  ) async {
+    final localCompletionsNotifier = _ref.read(localCompletionsProvider.notifier);
+    final batchSyncService = _ref.read(batchSyncServiceProvider);
+    final syncStatusNotifier = _ref.read(syncStatusProvider.notifier);
+
+    // Check if completion already exists locally (no Firestore query for performance)
+    final existingCompletions = localCompletionsNotifier.state;
+    final completionExists = existingCompletions.any((comp) => 
+      comp.taskId == taskId && 
+      comp.trackId == trackId && 
+      comp.date.isAtSameMomentAs(normalizedDate)
+    );
+
+    if (completionExists) {
+      // Remove completion - immediate local update
+      localCompletionsNotifier.removeCompletion(taskId, trackId, normalizedDate);
+      
+      // Background sync to Firestore
+      syncStatusNotifier.setSyncing();
+      try {
+        await batchSyncService.removeGuidedCompletion(
+          taskId: taskId,
+          trackId: trackId,
+          date: normalizedDate,
+        );
+        syncStatusNotifier.setSuccess();
+      } catch (e) {
+        syncStatusNotifier.setError("Failed to remove completion: $e");
+        print("Error removing guided completion: $e");
+      }
+    } else {
+      // Add completion - immediate local update
+      int xpToAward = _getGuidedTaskXP(taskId, trackId);
+      
+      final newCompletion = TaskCompletion(
+        taskId: taskId,
+        date: normalizedDate,
+        trackId: trackId,
+        xpAwarded: xpToAward,
+      );
+      
+      localCompletionsNotifier.addCompletion(newCompletion);
+      
+      // Background sync to Firestore
+      syncStatusNotifier.setSyncing();
+      try {
+        await batchSyncService.addGuidedCompletion(
+          taskId: taskId,
+          trackId: trackId,
+          date: normalizedDate,
+          xpAwarded: xpToAward,
+        );
+        syncStatusNotifier.setSuccess();
+      } catch (e) {
+        syncStatusNotifier.setError("Failed to add completion: $e");
+        print("Error adding guided completion: $e");
+      }
+    }
+  }
+
+  /// Handles custom task completion using local storage only
+  Future<void> _toggleCustomTaskCompletion(
+    String taskId,
+    DateTime normalizedDate,
+  ) async {
+    final localCompletionsNotifier = _ref.read(localCompletionsProvider.notifier);
+    
+    // Check if completion already exists locally
+    final existingCompletions = localCompletionsNotifier.state;
+    final completionExists = existingCompletions.any((comp) => 
+      comp.taskId == taskId && 
+      comp.trackId == null && // Custom tasks have no trackId
+      comp.date.isAtSameMomentAs(normalizedDate)
+    );
+
+    if (completionExists) {
+      // Remove completion
+      localCompletionsNotifier.removeCompletion(taskId, null, normalizedDate);
+      print("Removed custom task completion: $taskId for ${normalizedDate.toIso8601String()}");
+    } else {
+      // Add completion - custom tasks get 1 XP by default
+      final newCompletion = TaskCompletion(
+        taskId: taskId,
+        date: normalizedDate,
+        trackId: null, // Custom tasks have no trackId
+        xpAwarded: 1, // Default XP for custom tasks
+      );
+      
+      localCompletionsNotifier.addCompletion(newCompletion);
+      print("Added custom task completion: $taskId for ${normalizedDate.toIso8601String()}");
+    }
+  }
+
+  /// Gets existing guided completions from Firestore for a specific task and date
+  Future<List<TaskCompletion>> _getExistingGuidedCompletions(
+    String taskId,
+    DateTime normalizedDate,
+  ) async {
+    if (_userId == null || _userId!.isEmpty) return [];
+
+    try {
+      final querySnapshot = await _firestore
+          .collection('users')
+          .doc(_userId)
+          .collection('taskCompletions')
+          .where('taskId', isEqualTo: taskId)
+          .where('date', isEqualTo: Timestamp.fromDate(normalizedDate))
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) => TaskCompletion.fromJson(doc.data()))
+          .toList();
+    } catch (e) {
+      print("Error getting existing guided completions: $e");
+      return [];
+    }
+  }
+
+  /// Gets XP value for a guided task
+  int _getGuidedTaskXP(String taskId, String trackId) {
+    final guidedTracksAsync = _ref.read(guidedTracksProvider);
+    
+    // Handle async loading of guided tracks
+    return guidedTracksAsync.when(
+      data: (allGuidedTracks) {
         for (var track in allGuidedTracks) {
           if (track.id == trackId) {
             for (var level in track.levels) {
               try {
                 final task = level.unlockTasks.firstWhere((t) => t.id == taskId);
-                xpToAward = task.xp;
-                break;
+                return task.xp;
               } catch (e) {
                 // Task not found in this level
               }
             }
           }
-          if (xpToAward > 0) break;
         }
-      } else {
-        // TODO: Handle XP for custom tasks if they have XP
-        // final allCustomTasks = _read(customTasksProvider);
-        // try {
-        //   final task = allCustomTasks.firstWhere((t) => t.id == taskId);
-        //   xpToAward = task.xp ?? 0; // Assuming CustomTask has an optional xp field
-        // } catch (e) {
-        //   // Task not found
-        // }
-      }
-
-      final newCompletion = TaskCompletion(
-        taskId: taskId,
-        date: normalizedDate, // Already normalized
-        trackId: trackId,
-        xpAwarded: xpToAward,
-      );
-      await completionsRef.add(newCompletion.toJson());
-    }
+        return 0; // Default XP if task not found
+      },
+      loading: () => 0,
+      error: (error, stack) {
+        print("Error loading guided tracks in _getGuidedTaskXP: $error");
+        return 0;
+      },
+    );
   }
 
+  /// Clears all guided task completions from Firestore
   Future<void> clearGuidedTaskCompletions() async {
     if (_userId == null || _userId!.isEmpty) {
       print("User not logged in. Cannot clear guided task completions.");
       return;
     }
+    
     final CollectionReference completionsRef = _firestore
         .collection('users')
         .doc(_userId)
@@ -132,6 +336,48 @@ class CompletionsManager {
       batch.delete(doc.reference);
     }
     await batch.commit();
+    
+    // Also clear pending completions and local state
+    final batchSyncService = _ref.read(batchSyncServiceProvider);
+    await batchSyncService.clearPendingCompletions();
+    
+    final localCompletionsNotifier = _ref.read(localCompletionsProvider.notifier);
+    localCompletionsNotifier.clearAll();
+  }
+
+  /// Manually triggers a sync of pending completions
+  Future<void> syncPendingCompletions() async {
+    final batchSyncService = _ref.read(batchSyncServiceProvider);
+    final syncStatusNotifier = _ref.read(syncStatusProvider.notifier);
+    
+    syncStatusNotifier.setSyncing();
+    try {
+      final success = await batchSyncService.syncPendingCompletions();
+      if (success) {
+        syncStatusNotifier.setSuccess();
+      } else {
+        syncStatusNotifier.setError("Sync failed");
+      }
+    } catch (e) {
+      syncStatusNotifier.setError("Sync error: $e");
+    }
+  }
+
+  /// Syncs pending completions on app startup
+  /// This ensures any pending changes from previous sessions are synced
+  Future<void> syncOnStartup() async {
+    final batchSyncService = _ref.read(batchSyncServiceProvider);
+    
+    try {
+      final success = await batchSyncService.syncPendingCompletions();
+      if (success) {
+        print("CompletionsManager: Successfully synced pending completions on startup");
+      } else {
+        print("CompletionsManager: Failed to sync pending completions on startup");
+      }
+    } catch (e) {
+      print("CompletionsManager: Error syncing pending completions on startup: $e");
+    }
   }
 }
 

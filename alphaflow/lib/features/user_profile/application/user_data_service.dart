@@ -18,6 +18,28 @@ class UserDataService {
     return _firestore.collection('users').doc(userId);
   }
 
+  Future<void> ensureFirstActiveDate(String userId) async {
+    final docRef = _userDocRef(userId);
+    final snapshot = await docRef.get();
+    if (!snapshot.exists) {
+      // If the document doesn't exist, create it with firstActiveDate
+      await docRef.set({
+        'firstActiveDate': Timestamp.fromDate(DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day)),
+      });
+      if (kDebugMode) {
+        print("Created user doc and set firstActiveDate for userId: $userId");
+      }
+    } else if (snapshot.data()?['firstActiveDate'] == null) {
+      // If the document exists but firstActiveDate is missing, set it
+      await docRef.update({
+        'firstActiveDate': Timestamp.fromDate(DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day)),
+      });
+      if (kDebugMode) {
+        print("Set firstActiveDate for userId: $userId");
+      }
+    }
+  }
+
   Future<void> ensureUserDataDocumentExists(String userId) async {
     final docRef = _userDocRef(userId);
     final snapshot = await docRef.get();
@@ -25,14 +47,16 @@ class UserDataService {
       try {
         await docRef.set({});
         if (kDebugMode) {
-          print("Created empty user document for userId: \$userId");
+          print("Created empty user document for userId: $userId");
         }
       } catch (e) {
         if (kDebugMode) {
-          print("Error ensuring user document exists for userId: \$userId, error: \$e");
+          print("Error ensuring user document exists for userId: $userId, error: $e");
         }
       }
     }
+    // Always ensure firstActiveDate is set
+    await ensureFirstActiveDate(userId);
   }
 
   Stream<UserData> streamUserData(String userId) {
