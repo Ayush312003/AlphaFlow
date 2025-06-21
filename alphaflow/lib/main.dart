@@ -16,162 +16,141 @@ import 'package:alphaflow/data/local/preferences_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:alphaflow/widgets/loading_screen.dart';
+import 'package:alphaflow/widgets/app_lifecycle_handler.dart'; // For batch sync lifecycle handling
 import 'package:alphaflow/features/user_profile/application/user_data_providers.dart';
 import 'package:alphaflow/features/auth/application/auth_providers.dart';
 import 'package:alphaflow/features/user_profile/application/user_data_service.dart';
 import 'package:alphaflow/features/guided/providers/guided_tracks_provider.dart'; // For migration
 import 'package:alphaflow/data/models/guided_track.dart'; // For migration List<GuidedTrack>
+import 'package:google_fonts/google_fonts.dart'; // For better font and emoji support
+import 'package:alphaflow/providers/task_completions_provider.dart'; // For localCompletionsInitializerProvider
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   final prefsService = await PreferencesService.init();
 
-  final container = ProviderContainer(
-    overrides: [
-      preferencesServiceProvider.overrideWithValue(prefsService),
-    ],
-  );
-
-  try {
-    print("MAIN_TRACE: Attempting to get anonymous user...");
-    final user = await container.read(anonymousUserProvider.future);
-    print("MAIN_TRACE: Anonymous user future completed. User: ${user?.uid}");
-
-    if (user?.uid != null) {
-      final userId = user!.uid;
-      print("MAIN_TRACE: UserID: $userId. Accessing UserDataService...");
-      final userDataService = container.read(userDataServiceProvider);
-      print("MAIN_TRACE: UserDataService accessed. Ensuring user document exists for $userId...");
-      await userDataService.ensureUserDataDocumentExists(userId);
-      print("MAIN_TRACE: ensureUserDataDocumentExists completed for $userId.");
-
-      print("MAIN_TRACE: Accessing guidedTracksProvider...");
-      final allGuidedTracks = container.read(guidedTracksProvider);
-      print("MAIN_TRACE: guidedTracksProvider accessed. Starting data migration for $userId...");
-      await userDataService.migrateUserDataIfNeeded(userId, prefsService, allGuidedTracks);
-      print("MAIN_TRACE: migrateUserDataIfNeeded completed for $userId.");
-    } else {
-      print("MAIN_TRACE: User was null or user.uid was null after anonymous sign-in attempt.");
-    }
-  } catch (e, s) {
-    print("MAIN_TRACE: ERROR during initial user setup/migration: $e");
-    print("MAIN_TRACE: Stack trace: $s");
-  }
-  print("MAIN_TRACE: Proceeding to runApp().");
   runApp(
-    UncontrolledProviderScope(
-      container: container,
-      child: const MyApp(),
-    )
+    ProviderScope(
+      overrides: [
+        preferencesServiceProvider.overrideWithValue(prefsService),
+      ],
+      child: const AlphaFlowApp(),
+    ),
   );
 }
 
-class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
+class AlphaFlowApp extends ConsumerStatefulWidget {
+  const AlphaFlowApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final userDataAsync = ref.watch(userDataProvider);
+  ConsumerState<AlphaFlowApp> createState() => _AlphaFlowAppState();
+}
 
-    return userDataAsync.when(
-      loading: () => MaterialApp(
-        title: 'AlphaFlow',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
-          useMaterial3: true,
-        ),
-        debugShowCheckedModeBanner: false,
-        home: const LoadingScreen(),
-      ),
-      error: (err, stack) {
-        print("Error loading user data in MyApp: $err");
-        print(stack);
-        return MaterialApp(
-          title: 'AlphaFlow',
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
-            useMaterial3: true,
-          ),
-          debugShowCheckedModeBanner: false,
-          home: Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Error loading data:", style: TextStyle(fontSize: 18)),
-                  const SizedBox(height: 8),
-                  Text("$err", style: const TextStyle(fontSize: 14, color: Colors.red)),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      ref.invalidate(userDataProvider);
-                    },
-                    child: const Text("Retry"),
-                  ),
-                ],
-              ),
+class _AlphaFlowAppState extends ConsumerState<AlphaFlowApp> {
+  @override
+  void initState() {
+    super.initState();
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    final userId = ref.read(currentUserIdProvider);
+    if (userId != null && userId.isNotEmpty) {
+      final userDataService = ref.read(userDataServiceProvider);
+      final guidedTracksAsync = ref.read(guidedTracksProvider);
+      final prefsService = ref.read(preferencesServiceProvider);
+
+      // Ensure user document exists and migrate data if needed
+      await userDataService.ensureUserDataDocumentExists(userId);
+      
+      // Handle async loading of guided tracks for migration
+      final allGuidedTracks = await guidedTracksAsync.when(
+        data: (tracks) => tracks,
+        loading: () => <GuidedTrack>[],
+        error: (error, stack) {
+          print("Error loading guided tracks for migration: $error");
+          return <GuidedTrack>[];
+        },
+      );
+      
+      await userDataService.migrateUserDataIfNeeded(userId, prefsService, allGuidedTracks);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AppLifecycleHandler(
+      child: Consumer(
+        builder: (context, ref, child) {
+          final authState = ref.watch(anonymousUserProvider);
+          
+          // Initialize local completions with Firestore data
+          ref.watch(localCompletionsInitializerProvider);
+
+          return MaterialApp(
+            title: 'AlphaFlow',
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
+              useMaterial3: true,
+              textTheme: GoogleFonts.notoSansTextTheme(Theme.of(context).textTheme),
             ),
-          ),
-        );
-      },
-      data: (userData) {
-        final AppMode? appMode = userData?.appMode;
-        final String? selectedTrack = userData?.selectedTrackId;
+            debugShowCheckedModeBanner: false,
+            home: authState.when(
+              data: (user) {
+                if (user == null) {
+                  return const LoadingScreen();
+                }
 
-        String initialRoute = '/home';
-        if (appMode == null) {
-          initialRoute = '/select_mode';
-        } else if (appMode == AppMode.guided && selectedTrack == null) {
-          initialRoute = '/select_track';
-        }
-
-        return MaterialApp(
-          title: 'AlphaFlow',
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
-            useMaterial3: true,
-          ),
-          debugShowCheckedModeBanner: false,
-          home: const HomePage(),
-          routes: {
-            '/home': (context) {
-              print('Navigating to /home');
-              return const HomePage();
+                // Always start with HomePage and let it handle navigation
+                return const HomePage();
+              },
+              loading: () => const LoadingScreen(),
+              error: (error, stack) {
+                print('Auth error: $error');
+                return const LoadingScreen();
+              },
+            ),
+            routes: {
+              '/home': (context) {
+                print('Navigating to /home');
+                return const HomePage();
+              },
+              '/select_mode': (context) {
+                print('Navigating to /select_mode');
+                return const SelectModePage();
+              },
+              '/select_track': (context) {
+                print('Navigating to /select_track');
+                return const SelectTrackPage();
+              },
+              '/task_editor': (context) {
+                print('Navigating to /task_editor');
+                final args = ModalRoute.of(context)?.settings.arguments;
+                if (args is CustomTask) {
+                  return TaskEditorPage(taskToEdit: args);
+                }
+                return const TaskEditorPage();
+              },
+              '/settings': (context) {
+                print('Navigating to /settings');
+                return const SettingsPage();
+              },
             },
-            '/select_mode': (context) {
-              print('Navigating to /select_mode');
-              return const SelectModePage();
+            onUnknownRoute: (settings) {
+              print('Unknown route: ${settings.name}');
+              return MaterialPageRoute(
+                builder: (context) => Scaffold(
+                  body: Center(child: Text('Unknown route: ${settings.name}')),
+                ),
+              );
             },
-            '/select_track': (context) {
-              print('Navigating to /select_track');
-              return const SelectTrackPage();
-            },
-            '/task_editor': (context) {
-              print('Navigating to /task_editor');
-              final args = ModalRoute.of(context)?.settings.arguments;
-              if (args is CustomTask) {
-                return TaskEditorPage(taskToEdit: args);
-              }
-              return const TaskEditorPage();
-            },
-            '/settings': (context) {
-              print('Navigating to /settings');
-              return const SettingsPage();
-            },
-          },
-          onUnknownRoute: (settings) {
-            print('Unknown route: \\${settings.name}');
-            return MaterialPageRoute(
-              builder: (context) => Scaffold(
-                body: Center(child: Text('Unknown route: \\${settings.name}')),
-              ),
-            );
-          },
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

@@ -4,7 +4,7 @@ import 'package:alphaflow/data/models/custom_task.dart';
 import 'package:alphaflow/data/models/task_completion.dart';
 import 'package:alphaflow/data/models/frequency.dart';
 import 'package:alphaflow/providers/custom_tasks_provider.dart';
-import 'package:alphaflow/providers/task_completions_provider.dart';
+import 'package:alphaflow/providers/task_completions_provider.dart'; // Now includes combinedCompletionsProvider
 
 // Helper function to get the start of the week (Monday UTC)
 DateTime _startOfWeek(DateTime date) {
@@ -74,7 +74,7 @@ int _calculateWeeklyStreak(String taskId, List<TaskCompletion> allCompletions) {
   if (taskCompletionsOnFirstDayOfWeek.isEmpty) return 0;
 
   int currentStreak = 0;
-  DateTime startOfCurrentWeek = startOfWeek(DateTime.now());
+  DateTime startOfCurrentWeek = _startOfWeek(DateTime.now());
   DateTime startOfLastWeek = startOfCurrentWeek.subtract(
     const Duration(days: 7),
   );
@@ -121,36 +121,23 @@ int _calculateWeeklyStreak(String taskId, List<TaskCompletion> allCompletions) {
 
 final customTaskStreaksProvider = Provider<Map<String, TaskStreakInfo>>((ref) {
   final allCustomTasks = ref.watch(customTasksProvider);
-  final allCompletionsAsyncValue = ref.watch(completionsProvider);
+  final allCompletions = ref.watch(combinedCompletionsProvider); // Use combined provider for immediate updates
 
-  return allCompletionsAsyncValue.when(
-    data: (allCompletions) { // allCompletions is List<TaskCompletion>
-      final streaksMap = <String, TaskStreakInfo>{};
+  final streaksMap = <String, TaskStreakInfo>{};
 
-      for (final task in allCustomTasks) {
-        if (task.frequency == Frequency.daily) {
-          streaksMap[task.id] = TaskStreakInfo(
-            streakCount: _calculateDailyStreak(task.id, allCompletions),
-            frequency: Frequency.daily,
-          );
-        } else if (task.frequency == Frequency.weekly) {
-          streaksMap[task.id] = TaskStreakInfo(
-            streakCount: _calculateWeeklyStreak(task.id, allCompletions),
-            frequency: Frequency.weekly,
-          );
-        }
-        // 'oneTime' tasks don't have streaks and are not added to the map
-      }
-      return streaksMap;
-    },
-    loading: () {
-      // print("customTaskStreaksProvider: Loading completions...");
-      return <String, TaskStreakInfo>{}; // Return empty map while loading
-    },
-    error: (err, stack) {
-      print("Error in customTaskStreaksProvider from completionsProvider: $err");
-      print(stack);
-      return <String, TaskStreakInfo>{}; // Return empty map on error
-    },
-  );
+  for (final task in allCustomTasks) {
+    if (task.frequency == Frequency.daily) {
+      streaksMap[task.id] = TaskStreakInfo(
+        streakCount: _calculateDailyStreak(task.id, allCompletions),
+        frequency: Frequency.daily,
+      );
+    } else if (task.frequency == Frequency.weekly) {
+      streaksMap[task.id] = TaskStreakInfo(
+        streakCount: _calculateWeeklyStreak(task.id, allCompletions),
+        frequency: Frequency.weekly,
+      );
+    }
+    // 'oneTime' tasks don't have streaks and are not added to the map
+  }
+  return streaksMap;
 });

@@ -10,6 +10,7 @@ import 'package:alphaflow/providers/guided_level_provider.dart';
 import 'package:alphaflow/providers/today_tasks_provider.dart';
 import 'package:alphaflow/providers/custom_task_streaks_provider.dart';
 import 'package:alphaflow/providers/guided_task_streaks_provider.dart';
+import 'package:alphaflow/widgets/batch_sync_test_widget.dart'; // For development testing
 // preferencesServiceProvider is defined in app_mode_provider.dart (already imported)
 // No direct import for 'package:alphaflow/data/local/preferences_service.dart' needed if using provider
 
@@ -46,13 +47,13 @@ class SettingsPage extends ConsumerWidget {
                 await ref
                     .read(completionsManagerProvider) // Changed
                     .clearGuidedTaskCompletions();
-                ref.read(selectedTrackNotifierProvider.notifier).clearSelectedTrack(); // Changed
+                ref.read(selectedTrackNotifierProvider.notifier).resetSelectedTrack(); // Changed to use reset method
                 ref.invalidate(xpProvider);
                 ref.invalidate(totalTrackXpProvider);
                 ref.invalidate(currentGuidedLevelProvider);
                 ref.invalidate(guidedTaskStreaksProvider);
 
-                ref.read(appModeNotifierProvider.notifier).clearAppMode(); // Changed
+                ref.read(appModeNotifierProvider.notifier).resetAppMode(); // Changed to use reset method
                 Navigator.of(dialogContext).pop(); // Close dialog first
                 Navigator.of(
                   context,
@@ -94,8 +95,8 @@ class SettingsPage extends ConsumerWidget {
                 final prefsService = ref.read(preferencesServiceProvider);
                 await prefsService.clearAll();
 
-                ref.invalidate(firestoreAppModeProvider);
-                ref.invalidate(firestoreSelectedTrackProvider);
+                ref.invalidate(localAppModeProvider);
+                ref.invalidate(localSelectedTrackProvider);
                 ref.invalidate(customTasksProvider);
                 ref.invalidate(completionsProvider);
                 ref.invalidate(xpProvider);
@@ -145,6 +146,20 @@ class SettingsPage extends ConsumerWidget {
               _showClearAllUserDataConfirmationDialog(context, ref);
             },
           ),
+          const Divider(),
+          // Development testing section
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              'Development Tools',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          const BatchSyncTestWidget(), // Add the test widget
           // Future settings options will be added here
         ],
       ),

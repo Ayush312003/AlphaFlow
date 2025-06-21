@@ -11,40 +11,55 @@ final preferencesServiceProvider = Provider<PreferencesService>((ref) {
   throw UnimplementedError("Prefs service should be overridden in main.dart");
 });
 
-// AppModeNotifier now primarily WRITES to UserDataService. The state is READ via firestoreAppModeProvider.
+// AppModeNotifier now uses SharedPreferences instead of Firestore
 class AppModeNotifier extends StateNotifier<AppMode?> {
-  final Ref _ref; // Changed Reader to Ref
-  final String? _userId;
+  final PreferencesService _prefsService;
 
-  AppModeNotifier(this._ref, this._userId) : super(null) { // Changed _read to _ref
-    // Initial state can be null, UI will use firestoreAppModeProvider which has loading/data states.
-    // Or, could try an initial sync read here if truly needed, but usually not for Notifiers.
+  AppModeNotifier(this._prefsService) : super(null) {
+    // Initialize state from SharedPreferences
+    _loadAppMode();
+  }
+
+  /// Loads app mode from SharedPreferences
+  void _loadAppMode() {
+    final appMode = _prefsService.getAppMode();
+    state = appMode;
   }
 
   Future<void> setAppMode(AppMode mode) async {
-    if (_userId == null || _userId!.isEmpty) return;
-    // Optimistically update local state if desired, or rely on stream.
-    // For simplicity here, we just call the service. The UI will react to stream updates.
-    // state = mode;
-    await _ref.read(userDataServiceProvider).updateAppMode(_userId!, mode); // Changed _read to _ref.read
+    // Update SharedPreferences
+    await _prefsService.setAppMode(mode);
+    // Update local state
+    state = mode;
   }
 
   Future<void> clearAppMode() async {
-    if (_userId == null || _userId!.isEmpty) return;
-    // state = null;
-    await _ref.read(userDataServiceProvider).clearAppMode(_userId!); // Changed _read to _ref.read
+    // Clear from SharedPreferences
+    await _prefsService.clearAppMode();
+    // Update local state
+    state = null;
+  }
+
+  /// Resets app mode to null (for settings page)
+  Future<void> resetAppMode() async {
+    await clearAppMode();
   }
 }
 
 final appModeNotifierProvider = StateNotifierProvider<AppModeNotifier, AppMode?>((ref) {
-  final userId = ref.watch(currentUserIdProvider);
-  return AppModeNotifier(ref, userId); // Changed ref.read to ref
+  final prefsService = ref.watch(preferencesServiceProvider);
+  return AppModeNotifier(prefsService);
 });
 
-// The main provider for GETTING appMode is now firestoreAppModeProvider.
-// This old appModeProvider (if UI directly watches it for state) might need to be removed or its usages updated.
-// For now, let's assume UI will switch to firestoreAppModeProvider.
-// We are keeping the appModeNotifierProvider for SETTING the app mode.
+// Provider for getting app mode from SharedPreferences
+final localAppModeProvider = Provider<AppMode?>((ref) {
+  // Watch the notifier provider to get updates when app mode changes
+  return ref.watch(appModeNotifierProvider);
+});
+
+// The main provider for GETTING appMode is now localAppModeProvider.
+// UI should switch to watching localAppModeProvider instead of firestoreAppModeProvider.
+// appModeNotifierProvider is for SETTING the app mode.
 
 // firstActiveDateProvider is now replaced by firestoreFirstActiveDateProvider from user_data_providers.dart
 // So the old firstActiveDateProvider that read from SharedPreferences is no longer needed here.

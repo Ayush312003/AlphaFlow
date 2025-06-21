@@ -17,14 +17,22 @@ import 'package:alphaflow/providers/calendar_providers.dart'; // Added
 
 // Duplicated from TaskEditorPage for now, consider moving to a shared utility
 final Map<String, IconData> _customTaskIcons = {
-  'task_alt': Icons.task_alt,
-  'star': Icons.star_border_purple500_outlined,
-  'flag': Icons.flag_outlined,
-  'fitness': Icons.fitness_center_outlined,
-  'book': Icons.book_outlined,
-  'work': Icons.work_outline,
-  'home': Icons.home_outlined,
-  'palette': Icons.palette_outlined,
+  'task_alt': Icons.task_alt_rounded,
+  'star': Icons.star_rounded,
+  'flag': Icons.flag_rounded,
+  'fitness': Icons.fitness_center_rounded,
+  'book': Icons.book_rounded,
+  'work': Icons.work_rounded,
+  'home': Icons.home_rounded,
+  'palette': Icons.palette_rounded,
+  'school': Icons.school_rounded,
+  'sports': Icons.sports_soccer_rounded,
+  'music': Icons.music_note_rounded,
+  'food': Icons.restaurant_rounded,
+  'shopping': Icons.shopping_cart_rounded,
+  'travel': Icons.flight_rounded,
+  'health': Icons.favorite_rounded,
+  'finance': Icons.account_balance_wallet_rounded,
 };
 
 class CustomHomePage extends ConsumerStatefulWidget {
@@ -472,13 +480,24 @@ class _CustomHomePageState extends ConsumerState<CustomHomePage> {
                                   ? "day"
                                   : "week";
                           if (streakInfo.streakCount > 1) frequencyText += "s";
-                          streakDisplayWidget = Text(
-                            "🔥 ${streakInfo.streakCount} $frequencyText streak!",
-                            style: TextStyle(
-                              color: Colors.orange.shade800,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
+                          streakDisplayWidget = Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.local_fire_department_rounded,
+                                size: 16,
+                                color: Colors.orange.shade700,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                "${streakInfo.streakCount} $frequencyText streak!",
+                                style: TextStyle(
+                                  color: Colors.orange.shade800,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
                           );
                         }
 
@@ -558,7 +577,7 @@ class _CustomHomePageState extends ConsumerState<CustomHomePage> {
                                   .length;
                           int totalCount = task.subTasks.length;
                           Widget subTaskVisualRow = Row(
-                            mainAxisSize: MainAxisSize.min,
+                            mainAxisSize: MainAxisSize.max,
                             children: [
                               Icon(
                                 Icons.checklist_rtl_outlined,
@@ -568,12 +587,15 @@ class _CustomHomePageState extends ConsumerState<CustomHomePage> {
                                 ).textTheme.bodySmall?.color?.withOpacity(0.9),
                               ),
                               const SizedBox(width: 4),
-                              Text(
-                                "Sub-tasks: $completedCount/$totalCount",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontStyle: FontStyle.italic,
-                                  color: Theme.of(context).colorScheme.primary,
+                              Expanded(
+                                child: Text(
+                                  "Sub-tasks: $completedCount/$totalCount",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontStyle: FontStyle.italic,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
                                 ),
                               ),
                             ],
@@ -792,71 +814,74 @@ class _CustomHomePageState extends ConsumerState<CustomHomePage> {
                                           taskTargetDisplayWidget,
                                       ],
                                     ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  todayTask.frequency.toShortString(),
-                                  style: TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    fontSize: 12,
-                                    color:
-                                        isCompleted
-                                            ? Theme.of(context)
-                                                .textTheme
-                                                .bodySmall
-                                                ?.color
-                                                ?.withOpacity(0.7)
-                                            : Theme.of(context)
-                                                .textTheme
-                                                .bodySmall
-                                                ?.color
-                                                ?.withOpacity(0.8),
+                            trailing: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    todayTask.frequency.toShortString(),
+                                    style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      fontSize: 12,
+                                      color:
+                                          isCompleted
+                                              ? Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall
+                                                  ?.color
+                                                  ?.withOpacity(0.7)
+                                              : Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall
+                                                  ?.color
+                                                  ?.withOpacity(0.8),
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 0),
-                                Checkbox(
-                                  value: isCompleted,
-                                  activeColor: activeColor,
-                                  visualDensity: VisualDensity.compact,
-                                  onChanged: (bool? newValue) {
-                                    if (newValue != null) {
-                                      ref
-                                          .read(completionsManagerProvider)
-                                          .toggleTaskCompletion(
-                                            todayTask.id,
-                                            DateTime.now(),
-                                            trackId: null,
-                                          );
-                                    }
-                                  },
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.edit_outlined),
-                                  iconSize: 22.0,
-                                  visualDensity: VisualDensity.compact,
-                                  color: Theme.of(context).colorScheme.primary,
-                                  tooltip: 'Edit Task',
-                                  onPressed:
-                                      () => Navigator.pushNamed(
-                                        context,
-                                        '/task_editor',
-                                        arguments: task,
-                                      ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete_outline),
-                                  iconSize: 22.0,
-                                  visualDensity: VisualDensity.compact,
-                                  color: Colors.red.shade700,
-                                  tooltip: 'Delete Task',
-                                  onPressed:
-                                      () => _showDeleteConfirmationDialog(
-                                        context,
-                                        task,
-                                      ),
-                                ), // Use 'ref' from state class
-                              ],
+                                  const SizedBox(width: 0),
+                                  Checkbox(
+                                    value: isCompleted,
+                                    activeColor: activeColor,
+                                    visualDensity: VisualDensity.compact,
+                                    onChanged: (bool? newValue) {
+                                      if (newValue != null) {
+                                        ref
+                                            .read(completionsManagerProvider)
+                                            .toggleTaskCompletion(
+                                              todayTask.id,
+                                              DateTime.now(),
+                                              trackId: null,
+                                            );
+                                      }
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.edit_outlined),
+                                    iconSize: 22.0,
+                                    visualDensity: VisualDensity.compact,
+                                    color: Theme.of(context).colorScheme.primary,
+                                    tooltip: 'Edit Task',
+                                    onPressed:
+                                        () => Navigator.pushNamed(
+                                          context,
+                                          '/task_editor',
+                                          arguments: task,
+                                        ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete_outline),
+                                    iconSize: 22.0,
+                                    visualDensity: VisualDensity.compact,
+                                    color: Colors.red.shade700,
+                                    tooltip: 'Delete Task',
+                                    onPressed:
+                                        () => _showDeleteConfirmationDialog(
+                                          context,
+                                          task,
+                                        ),
+                                  ),
+                                ],
+                              ),
                             ),
                             onTap:
                                 () => ref

@@ -1,14 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alphaflow/data/models/guided_track.dart';
 import 'package:alphaflow/data/models/level_definition.dart';
-// import 'package:alphaflow/providers/selected_track_provider.dart'; // Old
-import 'package:alphaflow/features/user_profile/application/user_data_providers.dart'; // New
+import 'package:alphaflow/providers/selected_track_provider.dart'; // For localSelectedTrackProvider
 import 'package:alphaflow/features/guided/providers/guided_tracks_provider.dart';
 import 'package:alphaflow/providers/xp_provider.dart'; // For totalTrackXpProvider
 
 final currentGuidedLevelProvider = Provider<LevelDefinition?>((ref) {
-  final selectedTrackId = ref.watch(firestoreSelectedTrackProvider); // Changed
-  final allGuidedTracks = ref.watch(guidedTracksProvider);
+  final selectedTrackId = ref.watch(localSelectedTrackProvider); // Changed to local provider
+  final guidedTracksAsync = ref.watch(guidedTracksProvider);
   // totalTrackXpProvider calculates total XP for the currently selected track
   final totalAccumulatedXp = ref.watch(totalTrackXpProvider);
 
@@ -16,39 +15,53 @@ final currentGuidedLevelProvider = Provider<LevelDefinition?>((ref) {
     return null; // No track selected
   }
 
-  GuidedTrack? currentTrack;
-  try {
-    currentTrack = allGuidedTracks.firstWhere((track) => track.id == selectedTrackId);
-  } catch (e) {
-    print("Error: Selected track with ID $selectedTrackId not found in currentGuidedLevelProvider. $e");
-    return null; // Selected track not found
-  }
+  // Handle async loading of guided tracks
+  return guidedTracksAsync.when(
+    data: (allGuidedTracks) {
+      GuidedTrack? currentTrack;
+      try {
+        currentTrack = allGuidedTracks.firstWhere((track) => track.id == selectedTrackId);
+      } catch (e) {
+        print("Error: Selected track with ID $selectedTrackId not found in currentGuidedLevelProvider. $e");
+        return null; // Selected track not found
+      }
 
-  if (currentTrack.levels.isEmpty) {
-    print("Warning: Selected track ${currentTrack.title} has no levels defined.");
-    return null; // Track has no levels defined
-  }
+      if (currentTrack.levels.isEmpty) {
+        print("Warning: Selected track ${currentTrack.title} has no levels defined.");
+        return null; // Track has no levels defined
+      }
 
-  // Assuming currentTrack.levels are sorted by xpThreshold in ascending order
-  // (as they are in guided_tracks.dart).
-  // Iterate from the highest defined level downwards.
-  LevelDefinition? currentLevel = null;
-  for (int i = currentTrack.levels.length - 1; i >= 0; i--) {
-    final level = currentTrack.levels[i];
-    if (totalAccumulatedXp >= level.xpThreshold) {
-      currentLevel = level;
-      break; // Found the highest level achieved
-    }
-  }
+      // Assuming currentTrack.levels are sorted by xpThreshold in ascending order
+      // (as they are in guided_tracks.dart).
+      // Iterate from the highest defined level downwards.
+      LevelDefinition? currentLevel = null;
+      for (int i = currentTrack.levels.length - 1; i >= 0; i--) {
+        final level = currentTrack.levels[i];
+        if (totalAccumulatedXp >= level.xpThreshold) {
+          currentLevel = level;
+          break; // Found the highest level achieved
+        }
+      }
 
-  // If after the loop, currentLevel is still null, it means totalAccumulatedXp is less than
-  // the xpThreshold of all defined levels. This should only happen if the first level's
-  // threshold is > 0 and user has less XP than that.
-  // However, our data ensures the first level has xpThreshold: 0.
-  // So, if currentTrack.levels is not empty, currentLevel should not be null here.
-  // If it were possible for levels to not start at 0 XP, one might return currentTrack.levels.first
-  // or null based on specific game logic for users below the first threshold.
-  // For our case, the loop should suffice.
+      // If after the loop, currentLevel is still null, it means totalAccumulatedXp is less than
+      // the xpThreshold of all defined levels. This should only happen if the first level's
+      // threshold is > 0 and user has less XP than that.
+      // However, our data ensures the first level has xpThreshold: 0.
+      // So, if currentTrack.levels is not empty, currentLevel should not be null here.
+      // If it were possible for levels to not start at 0 XP, one might return currentTrack.levels.first
+      // or null based on specific game logic for users below the first threshold.
+      // For our case, the loop should suffice.
 
-  return currentLevel;
+      if (currentLevel == null) {
+        return currentTrack.levels.first; // Return first level if no level found
+      }
+
+      return currentLevel;
+    },
+    loading: () => null,
+    error: (error, stack) {
+      print("Error loading guided tracks in currentGuidedLevelProvider: $error");
+      return null;
+    },
+  );
 });

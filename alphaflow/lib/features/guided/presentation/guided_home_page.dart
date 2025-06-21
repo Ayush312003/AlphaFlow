@@ -15,6 +15,8 @@ import 'package:alphaflow/providers/calendar_providers.dart';
 import 'package:intl/intl.dart';
 // import 'package:alphaflow/providers/app_mode_provider.dart'; // Old, and likely not providing firstActiveDateProvider anymore
 import 'package:alphaflow/features/user_profile/application/user_data_providers.dart'; // New provider location
+import 'package:alphaflow/providers/selected_track_provider.dart';
+import 'package:alphaflow/widgets/manual_sync_widget.dart';
 
 class GuidedHomePage extends ConsumerStatefulWidget {
   const GuidedHomePage({super.key});
@@ -52,7 +54,7 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
     final DateTime? firstActiveDate = ref.watch(firestoreFirstActiveDateProvider); // Changed to firestoreFirstActiveDateProvider
     final List<TodayTask> tasksForDisplay = ref.watch(displayedDateTasksProvider);
     ref.watch(completionsProvider);
-    final selectedTrackId = ref.watch(firestoreSelectedTrackProvider); // Changed to firestoreSelectedTrackProvider
+    final selectedTrackId = ref.watch(localSelectedTrackProvider); // Changed to local provider
     final int currentSessionXp = ref.watch(xpProvider);
     final LevelDefinition? currentLevel = ref.watch(currentGuidedLevelProvider);
     final streakData = ref.watch(guidedTaskStreaksProvider);
@@ -198,143 +200,143 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
                    isSameDay(selectedDate, _todayNormalized)
                      ? "No tasks to earn XP from today."
                      : "No tasks for XP on ${DateFormat.yMMMd().format(selectedDate)}.",
-                   style: Theme.of(context).textTheme.bodyMedium
+                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                       ),
                  ),
             ],
           ),
         ),
-        const Divider(height: 1, indent: 16, endIndent: 16, thickness: 1),
 
         Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
             _getFormattedDate(selectedDate),
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
           ),
         ),
 
-        if (tasksForDisplay.isEmpty)
-          Expanded(
-            child: Center(
-              child: Text(
-                isSameDay(selectedDate, _todayNormalized)
-                  ? "No tasks for today, or the selected track has no tasks for the current level."
-                  : "No guided tasks recorded for ${DateFormat.yMMMd().format(selectedDate)}.",
-              ),
-            ),
-          )
-        else
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.only(top: 0, bottom: 16.0),
-              itemCount: tasksForDisplay.length,
-              itemBuilder: (context, index) {
-                final todayTask = tasksForDisplay[index];
+        const SizedBox(height: 8),
 
-                final DateTime yesterdayDate = _todayNormalized.subtract(const Duration(days: 1));
-                bool canEditYesterday = false;
-                if (firstActiveDate != null) {
-                  // Yesterday is editable if it's not before the first active date.
-                  // (i.e., yesterday is same as firstActiveDate or after firstActiveDate)
-                  canEditYesterday = !yesterdayDate.isBefore(firstActiveDate);
-                }
-                // If firstActiveDate is null (should not happen for a user who has set a mode),
-                // canEditYesterday remains false, so yesterday won't be editable by default.
-                // This is a safe default.
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              await ref.read(completionsManagerProvider).syncPendingCompletions();
+            },
+            child: tasksForDisplay.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.task_alt,
+                          size: 64,
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          isSameDay(selectedDate, _todayNormalized)
+                              ? "No tasks for today!"
+                              : "No tasks for ${DateFormat.yMMMd().format(selectedDate)}",
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                              ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "All caught up! 🎉",
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                              ),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    itemCount: tasksForDisplay.length,
+                    itemBuilder: (context, index) {
+                      final task = tasksForDisplay[index];
+                      final streakInfo = streakData[task.id];
 
-                final bool isEditable = isSameDay(selectedDate, _todayNormalized) ||
-                                        (isSameDay(selectedDate, yesterdayDate) && canEditYesterday);
-
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
-                  elevation: todayTask.isCompleted ? 1.0 : 2.5,
-                  color: todayTask.isCompleted ? Colors.green.withOpacity(0.05) : Theme.of(context).cardColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    side: todayTask.isCompleted
-                        ? BorderSide(color: Colors.green.withOpacity(0.4), width: 1.5)
-                        : BorderSide.none,
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                    leading: Checkbox(
-                      value: todayTask.isCompleted,
-                      activeColor: Colors.green,
-                      onChanged: isEditable
-                          ? (bool? newValue) {
-                              if (newValue != null) {
-                                ref.read(completionsManagerProvider).toggleTaskCompletion( // Changed to completionsManagerProvider
-                                      todayTask.id,
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 8.0),
+                        child: ListTile(
+                          leading: Checkbox(
+                            value: task.isCompleted,
+                            onChanged: (
+                              isSameDay(selectedDate, _todayNormalized) ||
+                              (isSameDay(selectedDate, _todayNormalized.subtract(const Duration(days: 1))) &&
+                                firstActiveDate != null && firstActiveDate.isBefore(_todayNormalized))
+                            )
+                                ? (bool? value) {
+                                    final completionsManager = ref.read(completionsManagerProvider);
+                                    completionsManager.toggleTaskCompletion(
+                                      task.id,
                                       selectedDate,
                                       trackId: selectedTrackId,
                                     );
-                              }
-                            }
-                          : null,
-                    ),
-                    title: Text(
-                      todayTask.title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        decoration: todayTask.isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
-                        color: todayTask.isCompleted
-                            ? Theme.of(context).textTheme.bodySmall?.color
-                            : Theme.of(context).textTheme.bodyLarge?.color,
-                      ),
-                    ),
-                    subtitle: Padding(
-                      padding: const EdgeInsets.only(top: 4.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            todayTask.description,
+                                  }
+                                : null,
+                          ),
+                          title: Text(
+                            task.title,
                             style: TextStyle(
-                              color: todayTask.isCompleted
-                                  ? Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7)
-                                  : Theme.of(context).textTheme.bodyMedium?.color,
+                              decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+                              color: task.isCompleted
+                                  ? Theme.of(context).colorScheme.onSurface.withOpacity(0.6)
+                                  : null,
                             ),
                           ),
-                          Builder(
-                            builder: (context) {
-                              final streakInfo = streakData[todayTask.id];
-                              if (streakInfo != null && streakInfo.streakCount > 0) {
-                                final frequencyText = streakInfo.frequency == Frequency.daily ? "day" : "week";
-                                final pluralS = streakInfo.streakCount > 1 ? "s" : "";
-                                return Padding(
-                                  padding: const EdgeInsets.only(top: 6.0),
-                                  child: Text(
-                                    "🔥 ${streakInfo.streakCount} ${frequencyText}${pluralS} streak!",
-                                    style: TextStyle(
-                                      color: todayTask.isCompleted
-                                          ? Theme.of(context).colorScheme.primary.withOpacity(0.7)
-                                          : Theme.of(context).colorScheme.primary,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13,
-                                    ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (task.description.isNotEmpty)
+                                Text(
+                                  task.description,
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                                    fontSize: 12,
                                   ),
-                                );
-                              }
-                              return const SizedBox.shrink();
-                            },
+                                ),
+                              if (streakInfo != null && streakInfo.streakCount > 0)
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.local_fire_department,
+                                      size: 16,
+                                      color: Colors.orange,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      "${streakInfo.streakCount} day${streakInfo.streakCount == 1 ? '' : 's'}",
+                                      style: TextStyle(
+                                        color: Colors.orange,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                    trailing: Text(
-                      "XP: ${todayTask.xp}",
-                      style: TextStyle(
-                        color: todayTask.isCompleted ? Colors.green : Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
+                          trailing: Text(
+                            "${task.xp} XP",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: task.isCompleted
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           ),
+        ),
       ],
     );
   }
