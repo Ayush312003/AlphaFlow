@@ -24,6 +24,7 @@ import 'package:alphaflow/features/guided/providers/guided_tracks_provider.dart'
 import 'package:alphaflow/data/models/guided_track.dart'; // For migration List<GuidedTrack>
 import 'package:google_fonts/google_fonts.dart'; // For better font and emoji support
 import 'package:alphaflow/providers/task_completions_provider.dart'; // For localCompletionsInitializerProvider
+import 'package:alphaflow/core/theme/alphaflow_theme.dart'; // Import the new theme
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,8 +36,8 @@ void main() async {
 
   runApp(
     ProviderScope(
-      overrides: [
-        preferencesServiceProvider.overrideWithValue(prefsService),
+    overrides: [
+      preferencesServiceProvider.overrideWithValue(prefsService),
       ],
       child: const AlphaFlowApp(),
     ),
@@ -91,14 +92,10 @@ class _AlphaFlowAppState extends ConsumerState<AlphaFlowApp> {
           // Initialize local completions with Firestore data
           ref.watch(localCompletionsInitializerProvider);
 
-          return MaterialApp(
-            title: 'AlphaFlow',
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
-              useMaterial3: true,
-              textTheme: GoogleFonts.notoSansTextTheme(Theme.of(context).textTheme),
-            ),
-            debugShowCheckedModeBanner: false,
+        return MaterialApp(
+          title: 'AlphaFlow',
+            theme: AlphaFlowTheme.darkTheme, // Use the new premium dark theme
+          debugShowCheckedModeBanner: false,
             home: authState.when(
               data: (user) {
                 if (user == null) {
@@ -114,7 +111,7 @@ class _AlphaFlowAppState extends ConsumerState<AlphaFlowApp> {
                 return const LoadingScreen();
               },
             ),
-            routes: {
+          routes: {
               '/home': (context) {
                 print('Navigating to /home');
                 return const HomePage();
@@ -127,14 +124,14 @@ class _AlphaFlowAppState extends ConsumerState<AlphaFlowApp> {
                 print('Navigating to /select_track');
                 return const SelectTrackPage();
               },
-              '/task_editor': (context) {
+            '/task_editor': (context) {
                 print('Navigating to /task_editor');
-                final args = ModalRoute.of(context)?.settings.arguments;
-                if (args is CustomTask) {
-                  return TaskEditorPage(taskToEdit: args);
-                }
-                return const TaskEditorPage();
-              },
+              final args = ModalRoute.of(context)?.settings.arguments;
+              if (args is CustomTask) {
+                return TaskEditorPage(taskToEdit: args);
+              }
+              return const TaskEditorPage();
+            },
               '/settings': (context) {
                 print('Navigating to /settings');
                 return const SettingsPage();
@@ -147,9 +144,9 @@ class _AlphaFlowAppState extends ConsumerState<AlphaFlowApp> {
                   body: Center(child: Text('Unknown route: ${settings.name}')),
                 ),
               );
-            },
-          );
-        },
+          },
+        );
+      },
       ),
     );
   }

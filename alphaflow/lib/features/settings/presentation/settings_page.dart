@@ -11,6 +11,7 @@ import 'package:alphaflow/providers/today_tasks_provider.dart';
 import 'package:alphaflow/providers/custom_task_streaks_provider.dart';
 import 'package:alphaflow/providers/guided_task_streaks_provider.dart';
 import 'package:alphaflow/widgets/batch_sync_test_widget.dart'; // For development testing
+import 'package:alphaflow/core/theme/alphaflow_theme.dart'; // Import the correct theme
 // preferencesServiceProvider is defined in app_mode_provider.dart (already imported)
 // No direct import for 'package:alphaflow/data/local/preferences_service.dart' needed if using provider
 
@@ -47,66 +48,18 @@ class SettingsPage extends ConsumerWidget {
                 await ref
                     .read(completionsManagerProvider) // Changed
                     .clearGuidedTaskCompletions();
-                ref.read(selectedTrackNotifierProvider.notifier).resetSelectedTrack(); // Changed to use reset method
+                await ref.read(selectedTrackNotifierProvider.notifier).resetSelectedTrack(); // Changed to use reset method
+                await ref.read(appModeNotifierProvider.notifier).resetAppMode(); // Changed to use reset method
+                
+                // Invalidate all related providers
                 ref.invalidate(xpProvider);
                 ref.invalidate(totalTrackXpProvider);
                 ref.invalidate(currentGuidedLevelProvider);
                 ref.invalidate(guidedTaskStreaksProvider);
-
-                ref.read(appModeNotifierProvider.notifier).resetAppMode(); // Changed to use reset method
-                Navigator.of(dialogContext).pop(); // Close dialog first
-                Navigator.of(
-                  context,
-                ).pushNamedAndRemoveUntil('/select_mode', (route) => false);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showClearAllUserDataConfirmationDialog(
-    BuildContext context,
-    WidgetRef ref,
-  ) {
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('Clear All User Data?'),
-          content: const Text(
-            'WARNING: This action is irreversible and will delete all your tasks, progress, and settings. Are you absolutely sure?',
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Clear Data'),
-              style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).colorScheme.error,
-              ),
-              onPressed: () async {
-                // Make async due to prefsService.clearAll()
-                final prefsService = ref.read(preferencesServiceProvider);
-                await prefsService.clearAll();
-
                 ref.invalidate(localAppModeProvider);
                 ref.invalidate(localSelectedTrackProvider);
-                ref.invalidate(customTasksProvider);
-                ref.invalidate(completionsProvider);
-                ref.invalidate(xpProvider);
-                ref.invalidate(totalTrackXpProvider);
-                ref.invalidate(currentGuidedLevelProvider);
-                ref.invalidate(displayedDateTasksProvider);
-                ref.invalidate(customTaskStreaksProvider);
-                ref.invalidate(guidedTaskStreaksProvider);
 
-                Navigator.of(dialogContext).pop(); // Close dialog
+                Navigator.of(dialogContext).pop(); // Close dialog first
                 Navigator.of(
                   context,
                 ).pushNamedAndRemoveUntil('/select_mode', (route) => false);
@@ -121,32 +74,47 @@ class SettingsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      backgroundColor: AlphaFlowTheme.background,
+      appBar: AppBar(
+        title: const Text(
+          'Settings',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: AlphaFlowTheme.textPrimary,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: ListView(
         children: <Widget>[
           ListTile(
-            leading: const Icon(Icons.restart_alt),
-            title: const Text('Reset App Mode'),
+            leading: const Icon(
+              Icons.restart_alt,
+              color: AlphaFlowTheme.textPrimary,
+            ),
+            title: const Text(
+              'Reset App Mode',
+              style: TextStyle(
+                color: AlphaFlowTheme.textPrimary,
+                fontFamily: 'Sora',
+              ),
+            ),
             subtitle: const Text(
               'Return to the initial mode selection screen.',
+              style: TextStyle(
+                color: AlphaFlowTheme.textSecondary,
+                fontFamily: 'Sora',
+              ),
             ),
             onTap: () {
               _showResetAppModeConfirmationDialog(
                 context,
                 ref,
-              ); // 'ref' is available in ConsumerWidget
+              );
             },
           ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.delete_forever),
-            title: const Text('Clear All User Data'),
-            subtitle: const Text('Reset all tasks, progress, and settings.'),
-            onTap: () {
-              _showClearAllUserDataConfirmationDialog(context, ref);
-            },
-          ),
-          const Divider(),
+          const Divider(color: Color(0xFF333333)),
           // Development testing section
           const Padding(
             padding: EdgeInsets.all(16.0),
@@ -155,7 +123,8 @@ class SettingsPage extends ConsumerWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey,
+                color: Color(0xFF888888),
+                fontFamily: 'Sora',
               ),
             ),
           ),

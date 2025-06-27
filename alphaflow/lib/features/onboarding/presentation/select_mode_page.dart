@@ -31,10 +31,17 @@ class SelectModePage extends ConsumerWidget {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   final appModeNotifier = ref.read(appModeNotifierProvider.notifier);
-                  appModeNotifier.setAppMode(AppMode.guided);
-                  // No navigation needed - HomePage will handle showing the appropriate page
+                  await appModeNotifier.setAppMode(AppMode.guided);
+                  
+                  // Force rebuild of the app by invalidating the provider
+                  ref.invalidate(localAppModeProvider);
+                  
+                  // Navigate to home page to trigger rebuild
+                  if (context.mounted) {
+                    Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+                  }
                 },
                 child: const Text('Guided Mode'),
               ),
@@ -43,10 +50,17 @@ class SelectModePage extends ConsumerWidget {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   final appModeNotifier = ref.read(appModeNotifierProvider.notifier);
-                  appModeNotifier.setAppMode(AppMode.custom);
-                  // No navigation needed - HomePage will handle showing the appropriate page
+                  await appModeNotifier.setAppMode(AppMode.custom);
+                  
+                  // Force rebuild of the app by invalidating the provider
+                  ref.invalidate(localAppModeProvider);
+                  
+                  // Navigate to home page to trigger rebuild
+                  if (context.mounted) {
+                    Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+                  }
                 },
                 child: const Text('Custom Mode'),
               ),

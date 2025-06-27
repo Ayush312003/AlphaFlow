@@ -68,6 +68,10 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/guided_tracks.json
+    - assets/monkMode.jpg
+    - assets/75Hard.jpg
+    - assets/earlyRiser.jpg
+    - assets/socialMedia.jpg
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

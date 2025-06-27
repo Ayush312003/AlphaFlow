@@ -1026,6 +1026,207 @@
           ]
         }
       ]
+    },
+    {
+      "id": "morning_miracle",
+      "title": "Morning Miracle",
+      "description": "Transform your life with a powerful morning routine that sets the tone for success.",
+      "icon": "🌅",
+      "theme": "sunrise_energy",
+      "levels": [
+        {
+          "levelNumber": 1,
+          "title": "Early Bird",
+          "icon": "🐦",
+          "xpThreshold": 0,
+          "unlockTasks": [
+            {
+              "id": "miracle_wake_6am",
+              "title": "Wake Up at 6 AM",
+              "description": "Wake up at 6:00 AM sharp, no snoozing allowed.",
+              "frequency": "daily",
+              "xp": 15,
+              "requiredLevel": 1
+            },
+            {
+              "id": "miracle_water",
+              "title": "Drink Water First",
+              "description": "Drink 16 oz of water immediately upon waking.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 1
+            },
+            {
+              "id": "miracle_make_bed",
+              "title": "Make Your Bed",
+              "description": "Make your bed perfectly to start the day with a win.",
+              "frequency": "daily",
+              "xp": 5,
+              "requiredLevel": 1
+            }
+          ]
+        },
+        {
+          "levelNumber": 2,
+          "title": "Rising Star",
+          "icon": "⭐",
+          "xpThreshold": 100,
+          "unlockTasks": [
+            {
+              "id": "miracle_wake_5am",
+              "title": "Wake Up at 5 AM",
+              "description": "Wake up at 5:00 AM to gain an extra hour.",
+              "frequency": "daily",
+              "xp": 20,
+              "requiredLevel": 2
+            },
+            {
+              "id": "miracle_exercise",
+              "title": "Morning Exercise",
+              "description": "Complete 20 minutes of morning exercise.",
+              "frequency": "daily",
+              "xp": 15,
+              "requiredLevel": 2
+            },
+            {
+              "id": "miracle_affirmations",
+              "title": "Daily Affirmations",
+              "description": "Recite positive affirmations for 5 minutes.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 2
+            }
+          ]
+        },
+        {
+          "levelNumber": 3,
+          "title": "Dawn Warrior",
+          "icon": "⚔️",
+          "xpThreshold": 250,
+          "unlockTasks": [
+            {
+              "id": "miracle_wake_4am",
+              "title": "Wake Up at 4 AM",
+              "description": "Wake up at 4:00 AM for maximum productivity.",
+              "frequency": "daily",
+              "xp": 25,
+              "requiredLevel": 3
+            },
+            {
+              "id": "miracle_meditate",
+              "title": "Morning Meditation",
+              "description": "Practice 15 minutes of morning meditation.",
+              "frequency": "daily",
+              "xp": 15,
+              "requiredLevel": 3
+            },
+            {
+              "id": "miracle_journal",
+              "title": "Gratitude Journal",
+              "description": "Write 3 things you're grateful for.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 3
+            }
+          ]
+        },
+        {
+          "levelNumber": 4,
+          "title": "Sun Chaser",
+          "icon": "🌞",
+          "xpThreshold": 450,
+          "unlockTasks": [
+            {
+              "id": "miracle_wake_3am",
+              "title": "Wake Up at 3 AM",
+              "description": "Wake up at 3:00 AM for elite-level productivity.",
+              "frequency": "daily",
+              "xp": 30,
+              "requiredLevel": 4
+            },
+            {
+              "id": "miracle_workout",
+              "title": "Intense Workout",
+              "description": "Complete 45 minutes of intense morning workout.",
+              "frequency": "daily",
+              "xp": 20,
+              "requiredLevel": 4
+            },
+            {
+              "id": "miracle_reading",
+              "title": "Morning Reading",
+              "description": "Read 30 pages of personal development book.",
+              "frequency": "daily",
+              "xp": 15,
+              "requiredLevel": 4
+            }
+          ]
+        },
+        {
+          "levelNumber": 5,
+          "title": "Miracle Master",
+          "icon": "🌟",
+          "xpThreshold": 700,
+          "unlockTasks": [
+            {
+              "id": "miracle_wake_2am",
+              "title": "Wake Up at 2 AM",
+              "description": "Wake up at 2:00 AM for legendary productivity.",
+              "frequency": "daily",
+              "xp": 35,
+              "requiredLevel": 5
+            },
+            {
+              "id": "miracle_meditate_30min",
+              "title": "Deep Meditation",
+              "description": "Practice 30 minutes of deep morning meditation.",
+              "frequency": "daily",
+              "xp": 25,
+              "requiredLevel": 5
+            },
+            {
+              "id": "miracle_planning",
+              "title": "Strategic Planning",
+              "description": "Plan your day in detail for maximum efficiency.",
+              "frequency": "daily",
+              "xp": 20,
+              "requiredLevel": 5
+            }
+          ]
+        },
+        {
+          "levelNumber": 6,
+          "title": "Legendary Riser",
+          "icon": "👑",
+          "xpThreshold": 1000,
+          "unlockTasks": [
+            {
+              "id": "miracle_wake_1am",
+              "title": "Wake Up at 1 AM",
+              "description": "Wake up at 1:00 AM for ultimate mastery.",
+              "frequency": "daily",
+              "xp": 40,
+              "requiredLevel": 6
+            },
+            {
+              "id": "miracle_meditate_45min",
+              "title": "Master Meditation",
+              "description": "Practice 45 minutes of master-level meditation.",
+              "frequency": "daily",
+              "xp": 30,
+              "requiredLevel": 6
+            },
+            {
+              "id": "miracle_teaching",
+              "title": "Teach Others",
+              "description": "Share your morning routine wisdom with others.",
+              "frequency": "daily",
+              "xp": 25,
+              "requiredLevel": 6
+            }
+          ]
+        }
+      ]
     }
   ]
 } 
