@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart'; // For date formatting
 import 'package:alphaflow/data/models/task_priority.dart';
 import 'package:alphaflow/data/models/task_target.dart';
+import 'package:alphaflow/core/theme/alphaflow_theme.dart';
 
 // Example predefined icons
 final Map<String, IconData> _predefinedIcons = {
@@ -31,16 +32,16 @@ final Map<String, IconData> _predefinedIcons = {
   'finance': Icons.account_balance_wallet_rounded,
 };
 
-// Example predefined colors
+// Premium guided mode color palette
 final List<Color> _predefinedColors = [
-  Colors.grey.shade300, // A 'none' or default option
-  Colors.blue.shade200,
-  Colors.green.shade200,
+  Colors.white,
+  Colors.grey.shade300,
+  Colors.grey.shade600,
+  AlphaFlowTheme.guidedAccentOrange,
   Colors.orange.shade200,
-  Colors.purple.shade200,
+  Colors.green.shade200,
   Colors.red.shade200,
-  Colors.teal.shade200,
-  Colors.pink.shade200,
+  Colors.black.withOpacity(0.7),
 ];
 
 class TaskEditorPage extends ConsumerStatefulWidget {
@@ -57,7 +58,6 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
   Frequency _selectedFrequency = Frequency.daily;
-  String? _selectedIconName;
   int? _selectedColorValue;
   DateTime? _selectedDueDate;
   late TextEditingController _notesController;
@@ -81,7 +81,6 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
       _titleController.text = widget.taskToEdit!.title;
       _descriptionController.text = widget.taskToEdit!.description;
       _selectedFrequency = widget.taskToEdit!.frequency;
-      _selectedIconName = widget.taskToEdit!.iconName;
       _selectedColorValue = widget.taskToEdit!.colorValue;
       _selectedDueDate = widget.taskToEdit!.dueDate;
       _notesController.text = widget.taskToEdit!.notes ?? '';
@@ -113,10 +112,30 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
       initialDate: _selectedDueDate ?? DateTime.now(),
       firstDate: DateTime.now().subtract(
         const Duration(days: 365),
-      ), // Allow past dates for flexibility
+      ),
       lastDate: DateTime.now().add(
         const Duration(days: 365 * 5),
-      ), // Allow up to 5 years in future
+      ),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+              primary: AlphaFlowTheme.guidedTextPrimary,
+              onPrimary: Colors.black,
+              surface: AlphaFlowTheme.guidedBackground,
+              onSurface: AlphaFlowTheme.guidedTextPrimary,
+              secondary: AlphaFlowTheme.guidedAccentOrange,
+            ),
+            dialogBackgroundColor: AlphaFlowTheme.guidedBackground,
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: AlphaFlowTheme.guidedAccentOrange,
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (pickedDate != null && pickedDate != _selectedDueDate) {
       setState(() {
@@ -225,7 +244,7 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
           title: title,
           description: description,
           frequency: _selectedFrequency,
-          iconName: _selectedIconName,
+          iconName: null,
           colorValue: _selectedColorValue,
           dueDate: _selectedDueDate,
           notes: _notesController.text.trim(),
@@ -242,14 +261,14 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
           title: title,
           description: description,
           frequency: _selectedFrequency,
-          iconName: _selectedIconName,
+          iconName: null,
           colorValue: _selectedColorValue,
           dueDate: _selectedDueDate,
           notes: _notesController.text.trim(),
           priority: _selectedPriority,
           subTasks: finalSubTasks,
           taskTarget: finalTaskTarget,
-          clearIconName: _selectedIconName == null,
+          clearIconName: true,
           clearColorValue: _selectedColorValue == null,
           clearDueDate:
               _selectedDueDate == null && widget.taskToEdit?.dueDate != null,
@@ -281,416 +300,358 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
       appBar: AppBar(
         title: Text(widget.taskToEdit == null ? 'Create Task' : 'Edit Task'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: <Widget>[
-              TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Title',
-                  hintText: 'Enter task title',
-                  border: OutlineInputBorder(),
-                  isDense: true, // Added
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12.0,
-                    vertical: 14.0,
-                  ), // Added/Adjusted
+      body: Container(
+        color: AlphaFlowTheme.guidedBackground,
+        child: SafeArea(
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: Theme.of(context).colorScheme.copyWith(
+                primary: AlphaFlowTheme.guidedTextPrimary,
+                secondary: AlphaFlowTheme.guidedAccentOrange,
+              ),
+              inputDecorationTheme: const InputDecorationTheme(
+                labelStyle: TextStyle(color: AlphaFlowTheme.guidedTextPrimary),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: AlphaFlowTheme.guidedTextPrimary, width: 2),
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter a title';
-                  }
-                  return null;
-                },
-                textCapitalization: TextCapitalization.sentences,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Description (Optional)',
-                  hintText: 'Enter task description',
-                  border: OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: AlphaFlowTheme.guidedTextSecondary, width: 1),
                 ),
-                maxLines: 3,
-                textCapitalization: TextCapitalization.sentences,
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<Frequency>(
-                value: _selectedFrequency,
-                decoration: const InputDecoration(
-                  labelText: 'Frequency',
-                  border: OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: AlphaFlowTheme.guidedTextSecondary, width: 1),
                 ),
-                items:
-                    Frequency.values.map((Frequency frequency) {
-                      return DropdownMenuItem<Frequency>(
-                        value: frequency,
-                        child: Text(frequency.toShortString()),
-                      );
-                    }).toList(),
-                onChanged: (Frequency? newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      _selectedFrequency = newValue;
-                    });
-                  }
-                },
-                validator: (value) {
-                  if (value == null) {
-                    return 'Please select a frequency';
-                  }
-                  return null;
-                },
+                hintStyle: TextStyle(color: AlphaFlowTheme.guidedTextSecondary),
               ),
-              const SizedBox(height: 16), // Ensure appropriate spacing
-              DropdownButtonFormField<TaskPriority>(
-                value: _selectedPriority,
-                decoration: const InputDecoration(
-                  labelText: 'Priority',
-                  border: OutlineInputBorder(),
-                ),
-                items:
-                    TaskPriority.values.map((TaskPriority priority) {
-                      return DropdownMenuItem<TaskPriority>(
-                        value: priority,
-                        // Assumes TaskPriorityExtension with displayName is in task_priority.dart
-                        child: Text(priority.displayName),
-                      );
-                    }).toList(),
-                onChanged: (TaskPriority? newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      _selectedPriority = newValue;
-                    });
-                  }
-                },
-                // No validator needed as it defaults to TaskPriority.none
+              textSelectionTheme: const TextSelectionThemeData(
+                cursorColor: AlphaFlowTheme.guidedTextPrimary,
+                selectionColor: AlphaFlowTheme.guidedAccentOrange,
+                selectionHandleColor: AlphaFlowTheme.guidedAccentOrange,
               ),
-              const SizedBox(height: 16),
-              Text(
-                'Due Date (Optional)',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              ListTile(
-                leading: const Icon(Icons.calendar_today_outlined),
-                title: Text(
-                  _selectedDueDate == null
-                      ? 'Not set'
-                      : DateFormat.yMMMd().format(_selectedDueDate!),
-                ),
-                trailing:
-                    _selectedDueDate == null
-                        ? null
-                        : IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            setState(() {
-                              _selectedDueDate = null;
-                            });
-                          },
-                        ),
-                onTap: _pickDueDate,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  side: BorderSide(color: Colors.grey.shade400),
-                ),
-                tileColor: Colors.grey.shade50, // Slight background tint
-              ),
-              const SizedBox(height: 16), // Spacing after due date picker
-              TextFormField(
-                controller: _notesController,
-                decoration: const InputDecoration(
-                  labelText: 'Notes (Optional)',
-                  hintText: 'Add any notes for your task...',
-                  border: OutlineInputBorder(),
-                  alignLabelWithHint: true, // Good for multi-line fields
-                ),
-                maxLines: 4, // Increased maxLines
-                textCapitalization: TextCapitalization.sentences,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Sub-tasks / Checklist',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              if (_currentSubTasks.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    'No sub-tasks yet. Tap "Add Sub-task" to create one.',
-                    style: Theme.of(context).textTheme.bodySmall,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              Column(
-                children:
-                    _currentSubTasks.asMap().entries.map((entry) {
-                      int idx = entry.key;
-                      SubTask subTask = entry.value;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2.0),
-                        child: Row(
-                          children: [
-                            Checkbox(
-                              value: subTask.isCompleted,
-                              onChanged:
-                                  (bool? newValue) =>
-                                      _toggleSubTaskCompletion(idx, newValue),
-                              visualDensity: VisualDensity.compact,
-                            ),
-                            Expanded(
-                              child: TextFormField(
-                                controller: _subTaskTitleControllers[idx],
-                                decoration: InputDecoration(
-                                  hintText: 'Sub-task ${idx + 1}',
-                                  isDense: true,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 8.0,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.delete_outline,
-                                color: Colors.grey,
-                              ),
-                              iconSize: 22,
-                              visualDensity: VisualDensity.compact,
-                              onPressed: () => _removeSubTask(idx),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-              ),
-              const SizedBox(height: 8),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton.icon(
-                  icon: const Icon(Icons.add, size: 18),
-                  label: const Text('Add Sub-task'),
-                  onPressed: _addSubTask,
-                ),
-              ),
-              const SizedBox(height: 24), // Spacing from sub-task section
-              Text(
-                'Measurable Target (Optional)',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<TargetType>(
-                value: _selectedTargetType,
-                decoration: const InputDecoration(
-                  labelText: 'Target Type',
-                  border: OutlineInputBorder(),
-                ),
-                items:
-                    [TargetType.none, TargetType.numeric].map((
-                      TargetType type,
-                    ) {
-                      // Simple capitalization for display name
-                      String displayName =
-                          type.name[0].toUpperCase() + type.name.substring(1);
-                      return DropdownMenuItem<TargetType>(
-                        value: type,
-                        child: Text(displayName),
-                      );
-                    }).toList(),
-                onChanged: (TargetType? newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      _selectedTargetType = newValue;
-                      // Optionally clear targetValue and unit when type changes from numeric to none
-                      if (_selectedTargetType == TargetType.none) {
-                        _targetValueController.clear();
-                        _targetUnitController.clear();
-                      }
-                    });
-                  }
-                },
-              ),
-              if (_selectedTargetType == TargetType.numeric) ...[
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _targetValueController,
-                  decoration: const InputDecoration(
-                    labelText: 'Target Value',
-                    hintText: 'e.g., 100, 5.5, 30',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  validator: (value) {
-                    if (_selectedTargetType == TargetType.numeric) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter a target value';
-                      }
-                      final number = double.tryParse(value);
-                      if (number == null) {
-                        return 'Please enter a valid number';
-                      }
-                      if (number <= 0) {
-                        return 'Target must be a positive number';
-                      }
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _targetUnitController,
-                  decoration: const InputDecoration(
-                    labelText: 'Unit (Optional)',
-                    hintText: 'e.g., pages, km, minutes, reps',
-                    border: OutlineInputBorder(),
-                  ),
-                  textCapitalization:
-                      TextCapitalization.none, // Allow units like 'km'
-                ),
-              ],
-              const SizedBox(height: 24),
-              Text(
-                'Select Icon (Optional)',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8.0,
-                runSpacing: 8.0,
-                children:
-                    _predefinedIcons.entries.map((entry) {
-                      final iconName = entry.key;
-                      final iconData = entry.value;
-                      final isSelected = _selectedIconName == iconName;
-                      return InkWell(
-                        onTap: () {
-                          setState(() {
-                            if (isSelected) {
-                              _selectedIconName = null;
-                            } else {
-                              _selectedIconName = iconName;
-                            }
-                          });
-                        },
-                        borderRadius: BorderRadius.circular(8),
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color:
-                                  isSelected
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Colors.grey.shade400,
-                              width: isSelected ? 2.0 : 1.0,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                            color:
-                                isSelected
-                                    ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-                                    : null,
-                          ),
-                          child: Icon(
-                            iconData,
-                            color:
-                                isSelected
-                                    ? Theme.of(context).colorScheme.primary
-                                    : Colors.grey.shade700,
-                            size: 28,
-                          ),
-                        ),
-                      );
-                    }).toList(),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Select Color (Optional)',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 10.0, // Increased spacing for colors
-                runSpacing: 10.0,
-                children:
-                    _predefinedColors.map((color) {
-                      final isSelected = _selectedColorValue == color.value;
-                      return InkWell(
-                        onTap: () {
-                          setState(() {
-                            if (isSelected) {
-                              _selectedColorValue = null;
-                            } else {
-                              _selectedColorValue = color.value;
-                            }
-                          });
-                        },
-                        borderRadius: BorderRadius.circular(22),
-                        child: Container(
-                          width: 44, // Slightly larger tap target
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: color,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color:
-                                  isSelected
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Colors
-                                          .grey
-                                          .shade500, // Darker border for unselected
-                              width: isSelected ? 3.0 : 1.5,
-                            ),
-                            boxShadow: [
-                              // Add subtle shadow for depth
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 2,
-                                offset: const Offset(0, 1),
-                              ),
-                            ],
-                          ),
-                          child:
-                              isSelected
-                                  ? Icon(
-                                    Icons.check,
-                                    color:
-                                        ThemeData.estimateBrightnessForColor(
-                                                  color,
-                                                ) ==
-                                                Brightness.dark
-                                            ? Colors.white
-                                            : Colors.black,
-                                    size: 24,
-                                  )
-                                  : null,
-                        ),
-                      );
-                    }).toList(),
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _submitForm,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    textStyle: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    TextFormField(
+                      controller: _titleController,
+                      decoration: const InputDecoration(
+                        labelText: 'Title',
+                        hintText: 'Enter task title',
+                        border: OutlineInputBorder(),
+                        isDense: true, // Added
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12.0,
+                          vertical: 14.0,
+                        ), // Added/Adjusted
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter a title';
+                        }
+                        return null;
+                      },
+                      textCapitalization: TextCapitalization.sentences,
                     ),
-                  ),
-                  child: const Text('Save Task'),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _descriptionController,
+                      decoration: const InputDecoration(
+                        labelText: 'Description (Optional)',
+                        hintText: 'Enter task description',
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 3,
+                      textCapitalization: TextCapitalization.sentences,
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<Frequency>(
+                      value: _selectedFrequency,
+                      decoration: const InputDecoration(
+                        labelText: 'Frequency',
+                        border: OutlineInputBorder(),
+                      ),
+                      items:
+                          Frequency.values.map((Frequency frequency) {
+                            return DropdownMenuItem<Frequency>(
+                              value: frequency,
+                              child: Text(frequency.toShortString()),
+                            );
+                          }).toList(),
+                      onChanged: (Frequency? newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _selectedFrequency = newValue;
+                          });
+                        }
+                      },
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Please select a frequency';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16), // Ensure appropriate spacing
+                    DropdownButtonFormField<TaskPriority>(
+                      value: _selectedPriority,
+                      decoration: const InputDecoration(
+                        labelText: 'Priority',
+                        border: OutlineInputBorder(),
+                      ),
+                      items:
+                          TaskPriority.values.map((TaskPriority priority) {
+                            return DropdownMenuItem<TaskPriority>(
+                              value: priority,
+                              // Assumes TaskPriorityExtension with displayName is in task_priority.dart
+                              child: Text(priority.displayName),
+                            );
+                          }).toList(),
+                      onChanged: (TaskPriority? newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _selectedPriority = newValue;
+                          });
+                        }
+                      },
+                      // No validator needed as it defaults to TaskPriority.none
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Due Date (Optional)',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12, bottom: 16),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: AlphaFlowTheme.guidedCardBackground,
+                                side: const BorderSide(color: AlphaFlowTheme.guidedCardBorder, width: 1.2),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                              ),
+                              onPressed: _pickDueDate,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Icon(Icons.event, color: AlphaFlowTheme.guidedTextPrimary, size: 20),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    _selectedDueDate == null
+                                        ? 'Set Due Date'
+                                        : DateFormat.yMMMd().format(_selectedDueDate!),
+                                    style: const TextStyle(
+                                      color: AlphaFlowTheme.guidedTextPrimary,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Sora',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          if (_selectedDueDate != null)
+                            IconButton(
+                              icon: const Icon(Icons.close, color: AlphaFlowTheme.guidedTextSecondary),
+                              tooltip: 'Clear Due Date',
+                              onPressed: () {
+                                setState(() {
+                                  _selectedDueDate = null;
+                                });
+                              },
+                            ),
+                        ],
+                      ),
+                    ),
+                    TextFormField(
+                      controller: _notesController,
+                      decoration: const InputDecoration(
+                        labelText: 'Notes (Optional)',
+                        hintText: 'Add any notes for your task...',
+                        border: OutlineInputBorder(),
+                        alignLabelWithHint: true, // Good for multi-line fields
+                      ),
+                      maxLines: 4, // Increased maxLines
+                      textCapitalization: TextCapitalization.sentences,
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Sub-tasks / Checklist',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    if (_currentSubTasks.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          'No sub-tasks yet. Tap "Add Sub-task" to create one.',
+                          style: Theme.of(context).textTheme.bodySmall,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    Column(
+                      children:
+                          _currentSubTasks.asMap().entries.map((entry) {
+                            int idx = entry.key;
+                            SubTask subTask = entry.value;
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 2.0),
+                              child: Row(
+                                children: [
+                                  Checkbox(
+                                    value: subTask.isCompleted,
+                                    onChanged:
+                                        (bool? newValue) =>
+                                            _toggleSubTaskCompletion(idx, newValue),
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                  Expanded(
+                                    child: TextFormField(
+                                      controller: _subTaskTitleControllers[idx],
+                                      decoration: InputDecoration(
+                                        hintText: 'Sub-task ${idx + 1}',
+                                        isDense: true,
+                                        contentPadding: const EdgeInsets.symmetric(
+                                          vertical: 8.0,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.grey,
+                                    ),
+                                    iconSize: 22,
+                                    visualDensity: VisualDensity.compact,
+                                    onPressed: () => _removeSubTask(idx),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                    ),
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton.icon(
+                        icon: const Icon(Icons.add, size: 18),
+                        label: const Text('Add Sub-task'),
+                        onPressed: _addSubTask,
+                      ),
+                    ),
+                    const SizedBox(height: 24), // Spacing from sub-task section
+                    Text(
+                      'Measurable Target (Optional)',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<TargetType>(
+                      value: _selectedTargetType,
+                      decoration: const InputDecoration(
+                        labelText: 'Target Type',
+                        border: OutlineInputBorder(),
+                      ),
+                      items:
+                          [TargetType.none, TargetType.numeric].map((
+                            TargetType type,
+                          ) {
+                            // Simple capitalization for display name
+                            String displayName =
+                                type.name[0].toUpperCase() + type.name.substring(1);
+                            return DropdownMenuItem<TargetType>(
+                              value: type,
+                              child: Text(displayName),
+                            );
+                          }).toList(),
+                      onChanged: (TargetType? newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _selectedTargetType = newValue;
+                            // Optionally clear targetValue and unit when type changes from numeric to none
+                            if (_selectedTargetType == TargetType.none) {
+                              _targetValueController.clear();
+                              _targetUnitController.clear();
+                            }
+                          });
+                        }
+                      },
+                    ),
+                    if (_selectedTargetType == TargetType.numeric) ...[
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _targetValueController,
+                        decoration: const InputDecoration(
+                          labelText: 'Target Value',
+                          hintText: 'e.g., 100, 5.5, 30',
+                          border: OutlineInputBorder(),
+                        ),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        validator: (value) {
+                          if (_selectedTargetType == TargetType.numeric) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Please enter a target value';
+                            }
+                            final number = double.tryParse(value);
+                            if (number == null) {
+                              return 'Please enter a valid number';
+                            }
+                            if (number <= 0) {
+                              return 'Target must be a positive number';
+                            }
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _targetUnitController,
+                        decoration: const InputDecoration(
+                          labelText: 'Unit (Optional)',
+                          hintText: 'e.g., pages, km, minutes, reps',
+                          border: OutlineInputBorder(),
+                        ),
+                        textCapitalization:
+                            TextCapitalization.none, // Allow units like 'km'
+                      ),
+                    ],
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _submitForm,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AlphaFlowTheme.guidedAccentOrange,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          textStyle: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Sora',
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text('Save Task'),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
                 ),
               ),
-              const SizedBox(height: 16),
-            ],
+            ),
           ),
         ),
       ),

@@ -123,21 +123,21 @@ final customTaskStreaksProvider = Provider<Map<String, TaskStreakInfo>>((ref) {
   final allCustomTasks = ref.watch(customTasksProvider);
   final allCompletions = ref.watch(combinedCompletionsProvider); // Use combined provider for immediate updates
 
-  final streaksMap = <String, TaskStreakInfo>{};
+      final streaksMap = <String, TaskStreakInfo>{};
 
-  for (final task in allCustomTasks) {
-    if (task.frequency == Frequency.daily) {
-      streaksMap[task.id] = TaskStreakInfo(
-        streakCount: _calculateDailyStreak(task.id, allCompletions),
-        frequency: Frequency.daily,
-      );
-    } else if (task.frequency == Frequency.weekly) {
-      streaksMap[task.id] = TaskStreakInfo(
-        streakCount: _calculateWeeklyStreak(task.id, allCompletions),
-        frequency: Frequency.weekly,
-      );
-    }
-    // 'oneTime' tasks don't have streaks and are not added to the map
-  }
-  return streaksMap;
+      for (final task in allCustomTasks) {
+        if (task.frequency == Frequency.daily) {
+          streaksMap[task.id] = TaskStreakInfo(
+            streakCount: _calculateDailyStreak(task.id, allCompletions),
+            frequency: Frequency.daily,
+          );
+        } else if (task.frequency == Frequency.weekly) {
+          streaksMap[task.id] = TaskStreakInfo(
+            streakCount: _calculateWeeklyStreak(task.id, allCompletions),
+            frequency: Frequency.weekly,
+          );
+        }
+        // 'oneTime' tasks don't have streaks and are not added to the map
+      }
+      return streaksMap;
 });

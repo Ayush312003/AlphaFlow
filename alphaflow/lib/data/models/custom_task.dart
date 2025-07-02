@@ -16,6 +16,7 @@ class CustomTask {
   final TaskPriority priority;
   final List<SubTask> subTasks;
   final TaskTarget? taskTarget; // Nullable
+  final bool isCompleted; // New field
 
   CustomTask({
     required this.id,
@@ -29,6 +30,7 @@ class CustomTask {
     this.priority = TaskPriority.none,
     this.subTasks = const [], // Added
     this.taskTarget, // Added new optional parameter
+    this.isCompleted = false, // New field default
   });
 
   /// For persistence to JSON
@@ -38,6 +40,7 @@ class CustomTask {
       'title': title,
       'description': description,
       'frequency': frequency.toShortString(),
+      'isCompleted': isCompleted, // New field
     };
     if (iconName != null) {
       json['iconName'] = iconName;
@@ -87,6 +90,7 @@ class CustomTask {
           json['taskTarget'] == null
               ? null
               : TaskTarget.fromJson(json['taskTarget'] as Map<String, dynamic>),
+      isCompleted: json['isCompleted'] as bool? ?? false, // New field
     );
   }
 
@@ -102,6 +106,7 @@ class CustomTask {
     TaskPriority? priority,
     List<SubTask>? subTasks,
     TaskTarget? taskTarget,
+    bool? isCompleted, // New field
     bool clearIconName = false,
     bool clearColorValue = false,
     bool clearDueDate = false,
@@ -120,6 +125,7 @@ class CustomTask {
       priority: priority ?? this.priority,
       subTasks: subTasks ?? this.subTasks,
       taskTarget: clearTaskTarget ? null : taskTarget ?? this.taskTarget,
+      isCompleted: isCompleted ?? this.isCompleted, // New field
     );
   }
 }

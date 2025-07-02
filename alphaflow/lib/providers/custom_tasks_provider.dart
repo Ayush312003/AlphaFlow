@@ -133,3 +133,29 @@ final customTasksProvider =
       final prefsService = ref.watch(preferencesServiceProvider);
       return CustomTaskListNotifier(prefsService);
     });
+
+// New provider for sorted tasks - optimizes performance by moving sorting outside build method
+final sortedCustomTasksProvider = Provider<List<CustomTask>>((ref) {
+  final allTasks = ref.watch(customTasksProvider);
+  
+  // Sort tasks by priority: high > medium > low > none
+  final sortedTasks = List<CustomTask>.from(allTasks);
+  sortedTasks.sort((a, b) {
+    int priorityValue(TaskPriority p) {
+      switch (p) {
+        case TaskPriority.high:
+          return 3;
+        case TaskPriority.medium:
+          return 2;
+        case TaskPriority.low:
+          return 1;
+        case TaskPriority.none:
+        default:
+          return 0;
+      }
+    }
+    return priorityValue(b.priority).compareTo(priorityValue(a.priority));
+  });
+  
+  return sortedTasks;
+});

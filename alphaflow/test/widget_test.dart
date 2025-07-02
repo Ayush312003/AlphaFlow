@@ -31,7 +31,7 @@ void main() {
         overrides: [
           preferencesServiceProvider.overrideWithValue(fakePreferencesService),
         ],
-        child: const MyApp(),
+        child: const AlphaFlowApp(),
       ),
     );
 

@@ -7,26 +7,142 @@ import 'package:alphaflow/data/models/task_completion.dart';
 import 'package:alphaflow/providers/app_mode_provider.dart';
 import 'package:alphaflow/providers/selected_track_provider.dart';
 import 'package:alphaflow/features/guided/providers/guided_tracks_provider.dart';
-import 'package:alphaflow/providers/task_completions_provider.dart'; // Now includes combinedCompletionsProvider
+import 'package:alphaflow/providers/task_completions_provider.dart';
+import 'package:alphaflow/data/local/preferences_service.dart';
+import 'package:alphaflow/providers/guided_level_provider.dart';
 
-final xpProvider = Provider<int>((ref) {
+class XpNotifier extends StateNotifier<int> {
+  final PreferencesService _prefsService;
+  static const int _dailyXpCap = 200; // Daily XP cap
+
+  XpNotifier(this._prefsService) : super(0) {
+    _loadXp();
+  }
+
+  void _loadXp() {
+    state = _prefsService.loadSessionXp();
+  }
+
+  Future<void> _saveXp() async {
+    await _prefsService.saveSessionXp(state);
+  }
+
+  // Get today's date as a string for tracking daily XP
+  String _getTodayKey() {
+    final now = DateTime.now();
+    return "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+  }
+
+  // Get today's earned XP
+  int getTodayEarnedXp() {
+    final todayKey = _getTodayKey();
+    return _prefsService.loadDailyXp(todayKey);
+  }
+
+  // Check if user can earn more XP today
+  bool canEarnXpToday(int xpToEarn) {
+    final todayEarned = getTodayEarnedXp();
+    return (todayEarned + xpToEarn) <= _dailyXpCap;
+  }
+
+  // Get remaining XP that can be earned today
+  int getRemainingXpToday() {
+    final todayEarned = getTodayEarnedXp();
+    return (_dailyXpCap - todayEarned).clamp(0, _dailyXpCap);
+  }
+
+  // Add XP to today's total
+  Future<void> addDailyXp(int xp) async {
+    final todayKey = _getTodayKey();
+    final currentDailyXp = _prefsService.loadDailyXp(todayKey);
+    final newDailyXp = currentDailyXp + xp;
+    
+    // Cap at daily limit
+    final cappedXp = newDailyXp.clamp(0, _dailyXpCap);
+    await _prefsService.saveDailyXp(todayKey, cappedXp);
+  }
+
+  // Reset daily XP (called at midnight or when needed)
+  Future<void> resetDailyXp() async {
+    final todayKey = _getTodayKey();
+    await _prefsService.saveDailyXp(todayKey, 0);
+  }
+
+  // Get the daily XP cap
+  int get dailyXpCap => _dailyXpCap;
+
+  Future<void> addXp(int xp) async {
+    state += xp;
+    await _saveXp();
+  }
+
+  Future<void> resetXp() async {
+    state = 0;
+    await _saveXp();
+  }
+
+  // Calculate total XP from completions
+  Future<void> calculateTotalXpFromCompletions(List<TaskCompletion> completions) async {
+    int totalXp = 0;
+    
+    for (final completion in completions) {
+      // Only count today's completions for session XP
+      final today = DateTime.now();
+      final completionDate = completion.date;
+      
+      if (completionDate.year == today.year &&
+          completionDate.month == today.month &&
+          completionDate.day == today.day) {
+        totalXp += completion.xpAwarded;
+      }
+    }
+    
+    state = totalXp;
+    await _saveXp();
+  }
+}
+
+final xpProvider = StateNotifierProvider<XpNotifier, int>((ref) {
+  final prefsService = ref.watch(preferencesServiceProvider);
+  return XpNotifier(prefsService);
+});
+
+// Provider to get today's earned XP
+final todayEarnedXpProvider = Provider<int>((ref) {
+  final xpNotifier = ref.watch(xpProvider.notifier);
+  return xpNotifier.getTodayEarnedXp();
+});
+
+// Provider to get remaining XP today
+final remainingXpTodayProvider = Provider<int>((ref) {
+  final xpNotifier = ref.watch(xpProvider.notifier);
+  return xpNotifier.getRemainingXpToday();
+});
+
+// Provider to check if user can earn XP
+final canEarnXpProvider = Provider.family<bool, int>((ref, xpToEarn) {
+  final xpNotifier = ref.watch(xpProvider.notifier);
+  return xpNotifier.canEarnXpToday(xpToEarn);
+});
+
+// Provider for current day XP (for guided mode)
+final currentDayXpProvider = Provider<int>((ref) {
   final appMode = ref.watch(localAppModeProvider);
   final selectedTrackId = ref.watch(localSelectedTrackProvider);
-  final completions = ref.watch(combinedCompletionsProvider); // Use combined provider for immediate updates
+  final completions = ref.watch(combinedCompletionsProvider);
   final guidedTracksAsync = ref.watch(guidedTracksProvider);
 
   if (appMode != AppMode.guided || selectedTrackId == null) {
     return 0;
   }
 
-  // Handle async loading of guided tracks
   return guidedTracksAsync.when(
     data: (allGuidedTracks) {
       GuidedTrack? currentTrack;
       try {
         currentTrack = allGuidedTracks.firstWhere((track) => track.id == selectedTrackId);
       } catch (e) {
-        print("Error: Could not find selected track with ID $selectedTrackId in xpProvider. $e");
+        print("Error: Could not find selected track with ID $selectedTrackId in currentDayXpProvider. $e");
         return 0;
       }
 
@@ -42,9 +158,7 @@ final xpProvider = Provider<int>((ref) {
 
       for (final completion in completions) {
         final completionDate = DateTime.utc(completion.date.year, completion.date.month, completion.date.day);
-        // Only count XP for today's completions that belong to the selected guided track
         if (completionDate == today && completion.trackId == selectedTrackId) {
-          // Use the xpAwarded stored at the time of completion for accuracy
           currentDayXp += completion.xpAwarded;
         }
       }
@@ -52,26 +166,22 @@ final xpProvider = Provider<int>((ref) {
     },
     loading: () => 0,
     error: (error, stack) {
-      print("Error loading guided tracks in xpProvider: $error");
+      print("Error loading guided tracks in currentDayXpProvider: $error");
       return 0;
     },
   );
 });
 
-// This is Step 9, but since totalTrackXpProvider is in the same file and needs similar changes,
-// it's being updated here. The plan was to update it to read from Firestore user doc.
-// For now, let's make it also consume combinedCompletionsProvider correctly.
-// The definitive update to read from users/{userID}.trackProgress.totalXP will be in the next dedicated step for totalTrackXpProvider.
+// Provider for total track XP
 final totalTrackXpProvider = Provider<int>((ref) {
   final selectedTrackId = ref.watch(localSelectedTrackProvider);
-  final completions = ref.watch(combinedCompletionsProvider); // Use combined provider for immediate updates
+  final completions = ref.watch(combinedCompletionsProvider);
   final guidedTracksAsync = ref.watch(guidedTracksProvider);
 
   if (selectedTrackId == null) {
     return 0;
   }
 
-  // Handle async loading of guided tracks
   return guidedTracksAsync.when(
     data: (allGuidedTracks) {
       GuidedTrack? currentTrack;
@@ -82,15 +192,20 @@ final totalTrackXpProvider = Provider<int>((ref) {
         return 0;
       }
 
-      int totalAccumulatedXp = 0;
-      for (final completion in completions) {
-        // Only sum XP for completions belonging to the selected guided track
-        if (completion.trackId == selectedTrackId) {
-          totalAccumulatedXp += completion.xpAwarded;
+      final Map<String, GuidedTask> allTasksInCurrentTrackMap = {};
+      for (var level in currentTrack.levels) {
+        for (var task in level.unlockTasks) {
+          allTasksInCurrentTrackMap[task.id] = task;
         }
       }
-      
-      return totalAccumulatedXp;
+
+      int totalXp = 0;
+      for (final completion in completions) {
+        if (completion.trackId == selectedTrackId) {
+          totalXp += completion.xpAwarded;
+        }
+      }
+      return totalXp;
     },
     loading: () => 0,
     error: (error, stack) {
