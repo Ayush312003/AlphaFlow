@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alphaflow/data/models/today_task.dart';
 import 'package:alphaflow/data/models/streak_info.dart';
 import 'package:alphaflow/common/widgets/glassmorphic_components.dart';
 import 'package:alphaflow/core/theme/alphaflow_theme.dart';
+import 'package:alphaflow/core/presentation/widgets/xp_cap_popup.dart';
 
 /// Premium glassmorphic task card with animations
-class PremiumTaskCard extends StatefulWidget {
+class PremiumTaskCard extends ConsumerStatefulWidget {
   final TodayTask task;
   final TaskStreakInfo? streakInfo;
   final bool isEditable;
@@ -22,10 +24,10 @@ class PremiumTaskCard extends StatefulWidget {
   });
 
   @override
-  State<PremiumTaskCard> createState() => _PremiumTaskCardState();
+  ConsumerState<PremiumTaskCard> createState() => _PremiumTaskCardState();
 }
 
-class _PremiumTaskCardState extends State<PremiumTaskCard>
+class _PremiumTaskCardState extends ConsumerState<PremiumTaskCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
@@ -35,16 +37,16 @@ class _PremiumTaskCardState extends State<PremiumTaskCard>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 200),
       vsync: this,
     );
 
     _scaleAnimation = Tween<double>(
-      begin: 0.8,
+      begin: 0.95,
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeOutBack,
+      curve: Curves.easeOut,
     ));
 
     _opacityAnimation = Tween<double>(
@@ -68,14 +70,14 @@ class _PremiumTaskCardState extends State<PremiumTaskCard>
     super.dispose();
   }
 
-  void _handleToggle() {
+  void _handleToggle() async {
     if (!widget.isEditable) return;
 
-    // Animate checkbox
+    // Quick scale animation on tap
     _animationController.forward(from: 0.0);
     
-    // Toggle completion
-    widget.onToggleCompletion(!widget.task.isCompleted);
+    // Call the completion handler, ignore its return value (void or Future<void>)
+    await Future.sync(() => widget.onToggleCompletion(!widget.task.isCompleted));
   }
 
   @override

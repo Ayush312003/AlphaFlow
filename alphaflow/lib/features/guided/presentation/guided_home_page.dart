@@ -16,6 +16,7 @@ import 'package:alphaflow/common/widgets/premium_calendar_strip.dart';
 import 'package:alphaflow/common/widgets/xp_progress_section.dart';
 import 'package:alphaflow/common/widgets/premium_task_card.dart';
 import 'package:alphaflow/core/theme/alphaflow_theme.dart';
+import 'package:alphaflow/core/presentation/widgets/xp_cap_popup.dart';
 import 'package:intl/intl.dart';
 
 class GuidedHomePage extends ConsumerStatefulWidget {
@@ -61,35 +62,11 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
     final List<TodayTask> tasksForDisplay = ref.watch(displayedDateTasksProvider);
     ref.watch(completionsProvider);
     final selectedTrackId = ref.watch(localSelectedTrackProvider);
-    final int currentSessionXp = ref.watch(xpProvider);
     final LevelDefinition? currentLevel = ref.watch(currentGuidedLevelProvider);
     final streakData = ref.watch(guidedTaskStreaksProvider);
-
-    final double totalPossibleXpForSelectedDate = tasksForDisplay.fold(
-      0.0,
-      (sum, task) => sum + task.xp,
-    );
-
-    double xpEarnedForSelectedDate = 0;
-    for (var task in tasksForDisplay) {
-      if (task.isCompleted) {
-        xpEarnedForSelectedDate += task.xp;
-      }
-    }
-
-    double uiXpDisplayValue;
-    double uiTotalPossibleXp;
-    String xpTextLabel;
-
-    if (_isSameDay(selectedDate, _todayNormalized)) {
-      uiXpDisplayValue = currentSessionXp.toDouble();
-      uiTotalPossibleXp = totalPossibleXpForSelectedDate;
-      xpTextLabel = "Today's XP:";
-    } else {
-      uiXpDisplayValue = xpEarnedForSelectedDate;
-      uiTotalPossibleXp = totalPossibleXpForSelectedDate;
-      xpTextLabel = "${DateFormat.yMMMd().format(selectedDate)} XP:";
-    }
+    
+    // Use the new optimized XP calculations provider
+    final xpCalculations = ref.watch(guidedXpCalculationsProvider);
 
     if (selectedTrackId == null) {
       return Container(
@@ -136,9 +113,9 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
             padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
             child: XpProgressSection(
               currentLevel: currentLevel,
-              currentXp: uiXpDisplayValue,
-              totalXp: uiTotalPossibleXp,
-              xpLabel: xpTextLabel,
+              currentXp: xpCalculations.uiXpDisplayValue,
+              totalXp: xpCalculations.uiTotalPossibleXp,
+              xpLabel: xpCalculations.xpTextLabel,
               animateOnLoad: true,
             ),
           ),
@@ -211,16 +188,26 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
                         );
 
                         return PremiumTaskCard(
+                          key: ValueKey(task.id), // Add key for better performance
                           task: task,
                           streakInfo: streakInfo,
                           isEditable: isEditable,
-                          onToggleCompletion: (bool value) {
+                          onToggleCompletion: (bool value) async {
                             final completionsManager = ref.read(completionsManagerProvider);
-                            completionsManager.toggleTaskCompletion(
+                            final success = await completionsManager.toggleTaskCompletion(
                               task.id,
                               selectedDate,
                               trackId: selectedTrackId,
                             );
+                            
+                            // Show XP cap popup if completion failed
+                            if (success == false && mounted) {
+                              showDialog(
+                                context: context,
+                                barrierDismissible: true,
+                                builder: (context) => const XpCapPopup(),
+                              );
+                            }
                           },
                           animateOnLoad: true,
                         );

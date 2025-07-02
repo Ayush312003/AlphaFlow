@@ -14,6 +14,8 @@ class PreferencesService {
   static const _keyCompletions    = 'task_completions';
   static const _keyFirstActiveDate = 'first_active_date';
   static const _keyPendingCompletions = 'pending_completions'; // New: for batch syncing
+  static const _keySessionXp      = 'session_xp';
+  static const _keyDailyXpPrefix  = 'daily_xp_';
   // Generic key for migration flag - can be reused if other migrations are needed.
   // Specific migration flags should use more descriptive keys like _keyMigratedToFirestoreV1
   static const _keyGenericBoolPrefix = 'generic_bool_';
@@ -185,6 +187,39 @@ class PreferencesService {
     
     final jsonString = jsonEncode(serializableCompletions);
     await _prefs.setString(_keyPendingCompletions, jsonString);
+  }
+
+  // Session XP (for current session)
+  Future<void> saveSessionXp(int xp) async {
+    await _prefs.setInt(_keySessionXp, xp);
+  }
+  
+  int loadSessionXp() {
+    return _prefs.getInt(_keySessionXp) ?? 0;
+  }
+
+  // Daily XP tracking
+  Future<void> saveDailyXp(String dateKey, int xp) async {
+    await _prefs.setInt(_keyDailyXpPrefix + dateKey, xp);
+  }
+  
+  int loadDailyXp(String dateKey) {
+    return _prefs.getInt(_keyDailyXpPrefix + dateKey) ?? 0;
+  }
+
+  // Clear daily XP for a specific date
+  Future<void> clearDailyXp(String dateKey) async {
+    await _prefs.remove(_keyDailyXpPrefix + dateKey);
+  }
+
+  // Clear all daily XP data
+  Future<void> clearAllDailyXp() async {
+    final keys = _prefs.getKeys();
+    for (final key in keys) {
+      if (key.startsWith(_keyDailyXpPrefix)) {
+        await _prefs.remove(key);
+      }
+    }
   }
 
   // Helpers / Reset

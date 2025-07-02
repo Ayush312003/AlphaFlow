@@ -16,19 +16,16 @@ class GlassmorphicComponents {
       margin: margin ?? const EdgeInsets.only(bottom: 16),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
-        child: BackdropFilter(
-          filter: AlphaFlowTheme.guidedCardBlurFilter,
-          child: Container(
-            padding: padding ?? const EdgeInsets.all(16),
-            decoration: withShine 
-                ? AlphaFlowTheme.guidedGlassmorphismCardWithShine.copyWith(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                  )
-                : AlphaFlowTheme.guidedGlassmorphismCardDecoration.copyWith(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                  ),
-            child: child,
-          ),
+        child: Container(
+          padding: padding ?? const EdgeInsets.all(16),
+          decoration: withShine 
+              ? AlphaFlowTheme.guidedGlassmorphismCardWithShine.copyWith(
+                  borderRadius: BorderRadius.circular(borderRadius),
+                )
+              : AlphaFlowTheme.guidedGlassmorphismCardDecoration.copyWith(
+                  borderRadius: BorderRadius.circular(borderRadius),
+                ),
+          child: child,
         ),
       ),
     );
@@ -45,15 +42,12 @@ class GlassmorphicComponents {
       margin: margin ?? const EdgeInsets.only(bottom: 16),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
-        child: BackdropFilter(
-          filter: AlphaFlowTheme.guidedCardBlurFilter,
-          child: Container(
-            padding: padding ?? const EdgeInsets.all(16),
-            decoration: AlphaFlowTheme.calendarStrongShine.copyWith(
-              borderRadius: BorderRadius.circular(borderRadius),
-            ),
-            child: child,
+        child: Container(
+          padding: padding ?? const EdgeInsets.all(16),
+          decoration: AlphaFlowTheme.calendarStrongShine.copyWith(
+            borderRadius: BorderRadius.circular(borderRadius),
           ),
+          child: child,
         ),
       ),
     );

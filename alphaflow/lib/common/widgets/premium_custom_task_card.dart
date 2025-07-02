@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:alphaflow/data/models/custom_task.dart';
 import 'package:alphaflow/data/models/task_priority.dart';
-import 'package:alphaflow/data/models/task_target.dart';
 import 'package:alphaflow/core/theme/alphaflow_theme.dart';
 import 'package:intl/intl.dart';
 
@@ -52,7 +51,10 @@ class PremiumCustomTaskCard extends StatelessWidget {
                 // Always show the completion checkbox
                 GestureDetector(
                   onTap: onToggleCompletion != null
-                      ? () => onToggleCompletion!(!isCompleted)
+                      ? () async {
+                          // Call the completion handler, ignore its return value (void or Future<void>)
+                          await Future.sync(() => onToggleCompletion!(!isCompleted));
+                        }
                       : null,
                   child: Container(
                     width: 24,

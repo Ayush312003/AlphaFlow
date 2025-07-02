@@ -33,7 +33,7 @@ class _XpProgressSectionState extends State<XpProgressSection>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
 
@@ -46,7 +46,7 @@ class _XpProgressSectionState extends State<XpProgressSection>
       end: progressValue,
     ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeOutCubic,
+      curve: Curves.easeOut,
     ));
 
     if (widget.animateOnLoad) {
@@ -72,7 +72,7 @@ class _XpProgressSectionState extends State<XpProgressSection>
         end: progressValue,
       ).animate(CurvedAnimation(
         parent: _animationController,
-        curve: Curves.easeOutCubic,
+        curve: Curves.easeOut,
       ));
       
       _animationController.forward(from: 0.0);

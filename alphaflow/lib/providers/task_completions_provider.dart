@@ -7,6 +7,7 @@ import 'package:alphaflow/data/models/guided_task.dart'; // For GuidedTask type
 import 'package:alphaflow/data/models/custom_task.dart'; // For CustomTask type (future use for custom task XP)
 import 'package:alphaflow/providers/custom_tasks_provider.dart'; // For customTasksProvider (future use for custom task XP)
 import 'package:alphaflow/providers/batch_sync_provider.dart'; // For batch sync functionality
+import 'package:alphaflow/providers/xp_provider.dart'; // For XP cap checking
 import 'package:flutter/widgets.dart';
 
 // Provider that streams the list of task completions from Firestore
@@ -141,30 +142,33 @@ class CompletionsManager {
   CompletionsManager(this._userId, this._firestore, this._ref); // Changed _read to _ref
 
   /// Toggles task completion for both guided and custom tasks
-  /// Guided tasks use batch sync, custom tasks are stored locally only
-  Future<void> toggleTaskCompletion(
+  /// Guided tasks use batch sync and are subject to daily XP cap
+  /// Custom tasks are stored locally only and don't have XP cap restrictions
+  /// Returns true if completion was successful, false if XP cap was reached (guided tasks only)
+  Future<bool> toggleTaskCompletion(
     String taskId,
     DateTime date, {
     String? trackId,
   }) async {
     if (_userId == null || _userId!.isEmpty) {
       print("User not logged in. Cannot toggle task completion.");
-      return;
+      return false;
     }
 
     final normalizedDate = DateTime.utc(date.year, date.month, date.day);
 
     if (trackId != null) {
       // Guided task - use immediate local update + background sync
-      await _toggleGuidedTaskCompletion(taskId, trackId, normalizedDate);
+      return await _toggleGuidedTaskCompletion(taskId, trackId, normalizedDate);
     } else {
       // Custom task - store locally only
-      await _toggleCustomTaskCompletion(taskId, normalizedDate);
+      return await _toggleCustomTaskCompletion(taskId, normalizedDate);
     }
   }
 
   /// Handles guided task completion using immediate local update + background sync
-  Future<void> _toggleGuidedTaskCompletion(
+  /// Returns true if completion was successful, false if XP cap was reached
+  Future<bool> _toggleGuidedTaskCompletion(
     String taskId,
     String trackId,
     DateTime normalizedDate,
@@ -198,10 +202,18 @@ class CompletionsManager {
         syncStatusNotifier.setError("Failed to remove completion: $e");
         print("Error removing guided completion: $e");
       }
+      return true;
     } else {
-      // Add completion - immediate local update
+      // Check XP cap before adding completion
       int xpToAward = _getGuidedTaskXP(taskId, trackId);
+      final xpNotifier = _ref.read(xpProvider.notifier);
       
+      if (!xpNotifier.canEarnXpToday(xpToAward)) {
+        // XP cap reached, don't add completion
+        return false;
+      }
+      
+      // Add completion - immediate local update
       final newCompletion = TaskCompletion(
         taskId: taskId,
         date: normalizedDate,
@@ -210,6 +222,9 @@ class CompletionsManager {
       );
       
       localCompletionsNotifier.addCompletion(newCompletion);
+      
+      // Add to daily XP tracking
+      await xpNotifier.addDailyXp(xpToAward);
       
       // Background sync to Firestore
       syncStatusNotifier.setSyncing();
@@ -225,11 +240,14 @@ class CompletionsManager {
         syncStatusNotifier.setError("Failed to add completion: $e");
         print("Error adding guided completion: $e");
       }
+      return true;
     }
   }
 
   /// Handles custom task completion using local storage only
-  Future<void> _toggleCustomTaskCompletion(
+  /// Custom tasks don't have XP cap restrictions since they don't use the XP system
+  /// Returns true if completion was successful
+  Future<bool> _toggleCustomTaskCompletion(
     String taskId,
     DateTime normalizedDate,
   ) async {
@@ -247,17 +265,26 @@ class CompletionsManager {
       // Remove completion
       localCompletionsNotifier.removeCompletion(taskId, null, normalizedDate);
       print("Removed custom task completion: $taskId for ${normalizedDate.toIso8601String()}");
+      return true;
     } else {
+      // Add completion - custom tasks get 1 XP by default but don't count towards daily cap
+      const int customTaskXp = 1;
+      
       // Add completion - custom tasks get 1 XP by default
       final newCompletion = TaskCompletion(
         taskId: taskId,
         date: normalizedDate,
         trackId: null, // Custom tasks have no trackId
-        xpAwarded: 1, // Default XP for custom tasks
+        xpAwarded: customTaskXp, // Default XP for custom tasks
       );
       
       localCompletionsNotifier.addCompletion(newCompletion);
+      
+      // Note: Custom tasks don't count towards daily XP cap since they don't have a proper XP system
+      // They just get a default 1 XP for tracking purposes
+      
       print("Added custom task completion: $taskId for ${normalizedDate.toIso8601String()}");
+      return true;
     }
   }
 

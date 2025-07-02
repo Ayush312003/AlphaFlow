@@ -22,12 +22,88 @@ import 'package:alphaflow/features/guided/providers/guided_tracks_provider.dart'
 import 'package:alphaflow/providers/guided_level_provider.dart';
 import 'package:alphaflow/providers/app_mode_provider.dart';
 import 'package:alphaflow/providers/selected_track_provider.dart';
+import 'package:alphaflow/providers/xp_provider.dart';
 
 // Helper to get the start of the week (Monday UTC) for a given DateTime
 DateTime _startOfWeek(DateTime date) {
   final utcDate = DateTime.utc(date.year, date.month, date.day);
   return utcDate.subtract(Duration(days: utcDate.weekday - 1));
 }
+
+// Helper to check if two dates are the same day
+bool _isSameDay(DateTime date1, DateTime date2) {
+  return date1.year == date2.year &&
+         date1.month == date2.month &&
+         date1.day == date2.day;
+}
+
+// Data class for XP calculations to avoid recalculating
+class GuidedXpCalculations {
+  final double totalPossibleXp;
+  final double xpEarnedForSelectedDate;
+  final double uiXpDisplayValue;
+  final double uiTotalPossibleXp;
+  final String xpTextLabel;
+
+  const GuidedXpCalculations({
+    required this.totalPossibleXp,
+    required this.xpEarnedForSelectedDate,
+    required this.uiXpDisplayValue,
+    required this.uiTotalPossibleXp,
+    required this.xpTextLabel,
+  });
+}
+
+// New optimized provider for XP calculations
+final guidedXpCalculationsProvider = Provider<GuidedXpCalculations>((ref) {
+  final tasksForDisplay = ref.watch(displayedDateTasksProvider);
+  final selectedDate = ref.watch(selectedCalendarDateProvider);
+  final currentSessionXp = ref.watch(xpProvider);
+  
+  // Calculate total possible XP for selected date
+  final totalPossibleXpForSelectedDate = tasksForDisplay.fold(
+    0.0,
+    (sum, task) => sum + task.xp,
+  );
+
+  // Calculate XP earned for selected date
+  double xpEarnedForSelectedDate = 0;
+  for (var task in tasksForDisplay) {
+    if (task.isCompleted) {
+      xpEarnedForSelectedDate += task.xp;
+    }
+  }
+
+  // Get today's normalized date for comparison
+  final todayNormalized = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
+  // Determine UI display values based on whether selected date is today
+  double uiXpDisplayValue;
+  double uiTotalPossibleXp;
+  String xpTextLabel;
+
+  if (_isSameDay(selectedDate, todayNormalized)) {
+    uiXpDisplayValue = currentSessionXp.toDouble();
+    uiTotalPossibleXp = totalPossibleXpForSelectedDate;
+    xpTextLabel = "Today's XP:";
+  } else {
+    uiXpDisplayValue = xpEarnedForSelectedDate;
+    uiTotalPossibleXp = totalPossibleXpForSelectedDate;
+    xpTextLabel = "${selectedDate.month}/${selectedDate.day}/${selectedDate.year} XP:";
+  }
+
+  return GuidedXpCalculations(
+    totalPossibleXp: totalPossibleXpForSelectedDate,
+    xpEarnedForSelectedDate: xpEarnedForSelectedDate,
+    uiXpDisplayValue: uiXpDisplayValue,
+    uiTotalPossibleXp: uiTotalPossibleXp,
+    xpTextLabel: xpTextLabel,
+  );
+});
 
 final displayedDateTasksProvider = Provider<List<TodayTask>>((ref) {
   final DateTime currentDisplayDate = ref.watch(selectedCalendarDateProvider);
