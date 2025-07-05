@@ -15,6 +15,7 @@ import 'package:alphaflow/common/widgets/track_card.dart';
 import 'package:alphaflow/core/constants/spacing.dart';
 import 'package:alphaflow/core/theme/alphaflow_theme.dart';
 import 'package:alphaflow/common/widgets/glassmorphism_card.dart';
+import 'package:alphaflow/features/guided/presentation/analytics_page.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -198,6 +199,19 @@ class HomePage extends ConsumerWidget {
               ),
               backgroundColor: Colors.transparent,
               elevation: 0,
+              actions: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.analytics_outlined,
+                    color: AlphaFlowTheme.textPrimary,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const AnalyticsPage()),
+                    );
+                  },
+                ),
+              ],
             ),
             drawer: drawerWidget,
             body: currentPageBody,

@@ -18,6 +18,7 @@ import 'package:alphaflow/common/widgets/premium_task_card.dart';
 import 'package:alphaflow/core/theme/alphaflow_theme.dart';
 import 'package:alphaflow/core/presentation/widgets/xp_cap_popup.dart';
 import 'package:intl/intl.dart';
+import 'package:alphaflow/features/guided/presentation/analytics_page.dart';
 
 class GuidedHomePage extends ConsumerStatefulWidget {
   const GuidedHomePage({super.key});
@@ -85,7 +86,16 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
       );
     }
 
-    return Container(
+    return GestureDetector(
+      onHorizontalDragEnd: (details) {
+        if (details.primaryVelocity != null && details.primaryVelocity! < -200) {
+          // Right-to-left swipe detected
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const AnalyticsPage()),
+          );
+        }
+      },
+      child: Container(
       color: AlphaFlowTheme.guidedBackground,
       child: Column(
         children: [
@@ -216,6 +226,7 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
             ),
           ),
         ],
+        ),
       ),
     );
   }

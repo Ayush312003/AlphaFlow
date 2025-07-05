@@ -19,6 +19,7 @@ class PreferencesService {
   // Generic key for migration flag - can be reused if other migrations are needed.
   // Specific migration flags should use more descriptive keys like _keyMigratedToFirestoreV1
   static const _keyGenericBoolPrefix = 'generic_bool_';
+  static const _keySkillXpPrefix = 'skill_xp_';
 
 
   final SharedPreferences _prefs;
@@ -220,6 +221,29 @@ class PreferencesService {
         await _prefs.remove(key);
       }
     }
+  }
+
+  // --- Skill XP Persistence ---
+  Future<void> saveSkillXp(String skill, int xp) async {
+    await _prefs.setInt(_keySkillXpPrefix + skill, xp);
+  }
+
+  int loadSkillXp(String skill) {
+    return _prefs.getInt(_keySkillXpPrefix + skill) ?? 0;
+  }
+
+  Future<void> saveAllSkillXp(Map<String, int> skillXpMap) async {
+    for (final entry in skillXpMap.entries) {
+      await _prefs.setInt(_keySkillXpPrefix + entry.key, entry.value);
+    }
+  }
+
+  Map<String, int> loadAllSkillXp(List<String> skills) {
+    final Map<String, int> result = {};
+    for (final skill in skills) {
+      result[skill] = _prefs.getInt(_keySkillXpPrefix + skill) ?? 0;
+    }
+    return result;
   }
 
   // Helpers / Reset

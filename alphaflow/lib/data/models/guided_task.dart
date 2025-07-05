@@ -8,8 +8,8 @@ class GuidedTask {
   final Frequency frequency; // daily, weekly, or oneTime
   final int xp; // xp gained when completed
   final int requiredLevel; // minimum LevelDefinition.levelNumber to unlock
-  final int?
-  dayOfWeek; // 1 for Monday, ..., 7 for Sunday. Null if not day-specific.
+  final int? dayOfWeek; // 1 for Monday, ..., 7 for Sunday. Null if not day-specific.
+  final String tag; // skill tag (e.g., Spiritual, Mental, etc.)
 
   GuidedTask({
     required this.id,
@@ -19,5 +19,6 @@ class GuidedTask {
     required this.xp,
     required this.requiredLevel,
     this.dayOfWeek, // Added new optional parameter
+    required this.tag, // Added required tag parameter
   });
 }
