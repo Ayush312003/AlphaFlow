@@ -1,7 +1,7 @@
 # Skill-wise XP Persistence & Analytics Plan for AlphaFlow
 
 ## Motivation
-To enable skill-based analytics (e.g., radar/spider charts for Physical, Mental, Spiritual, Social, Creative skills), we need to track and persist XP earned for each skill, not just the overall total XP. This will allow users to visualize their growth in each area and unlock richer analytics features.
+To enable skill-based analytics (e.g., radar/spider charts for Spiritual, Mental, Physical, Lifestyle, Learning skills), we need to track and persist XP earned for each skill, not just the overall total XP. This will allow users to visualize their growth in each area and unlock richer analytics features.
 
 ---
 
@@ -9,7 +9,7 @@ To enable skill-based analytics (e.g., radar/spider charts for Physical, Mental,
 - **Overall/session XP** is persisted in SharedPreferences via `PreferencesService` (`_keySessionXp`).
 - **Daily XP** is tracked with a date-prefixed key.
 - **XP is awarded** when guided tasks are completed, but not split by skill.
-- **Guided tasks** will have a `tag` field indicating their skill (Physical, Mental, Spiritual, Social, Creative).
+- **Guided tasks** will have a `tag` field indicating their skill (Spiritual, Mental, Physical, Lifestyle, Learning).
 
 ---
 
@@ -67,7 +67,6 @@ int loadSkillXp(String skill) {
 
 ## Notes
 - **Backward compatibility:** Existing users will have 0 XP for each skill until they complete a new task (or a migration script is run).
-- **Multiple tags:** If a task can have multiple skill tags, decide whether to split XP or award full XP to each skill.
 - **Reset/clear:** Consider adding methods to reset all skill XPs if needed.
 
 ---

@@ -19,7 +19,8 @@
               "description": "Avoid all social media platforms today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Lifestyle"
             },
             {
               "id": "monk_workout",
@@ -27,7 +28,8 @@
               "description": "Complete a physical workout session.",
               "frequency": "daily",
               "xp": 15,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Physical"
             },
             {
               "id": "monk_meditate",
@@ -35,7 +37,8 @@
               "description": "Practice mindfulness meditation for at least 10 minutes.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Spiritual"
             },
             {
               "id": "monk_deep_work",
@@ -43,7 +46,8 @@
               "description": "One hour of focused, undistracted work.",
               "frequency": "daily",
               "xp": 15,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Mental"
             },
             {
               "id": "monk_no_tv",
@@ -51,7 +55,8 @@
               "description": "Avoid watching TV or streaming videos today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Lifestyle"
             },
             {
               "id": "monk_evening_journal",
@@ -59,7 +64,8 @@
               "description": "Write a short reflection on your day and what you learned.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Mental"
             }
           ]
         },
@@ -75,7 +81,8 @@
               "description": "Take a cold shower to build mental resilience.",
               "frequency": "daily",
               "xp": 20,
-              "requiredLevel": 2
+              "requiredLevel": 2,
+              "tag": "Physical"
             },
             {
               "id": "monk_read_30min",
@@ -83,7 +90,8 @@
               "description": "Read a book for at least 30 minutes.",
               "frequency": "daily",
               "xp": 15,
-              "requiredLevel": 2
+              "requiredLevel": 2,
+              "tag": "Learning"
             },
             {
               "id": "monk_no_sugar",
@@ -91,7 +99,8 @@
               "description": "Avoid all added sugars and sweeteners today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 2
+              "requiredLevel": 2,
+              "tag": "Lifestyle"
             },
             {
               "id": "monk_early_bed",
@@ -99,7 +108,8 @@
               "description": "Go to bed by 10 PM for better sleep quality.",
               "frequency": "daily",
               "xp": 15,
-              "requiredLevel": 2
+              "requiredLevel": 2,
+              "tag": "Lifestyle"
             },
             {
               "id": "monk_no_complaints",
@@ -107,7 +117,8 @@
               "description": "Go the entire day without complaining about anything.",
               "frequency": "daily",
               "xp": 15,
-              "requiredLevel": 2
+              "requiredLevel": 2,
+              "tag": "Mental"
             },
             {
               "id": "monk_help_someone",
@@ -115,7 +126,8 @@
               "description": "Perform a kind act or help someone without expecting anything in return.",
               "frequency": "daily",
               "xp": 15,
-              "requiredLevel": 2
+              "requiredLevel": 2,
+              "tag": "Mental"
             }
           ]
         },
@@ -131,7 +143,8 @@
               "description": "Two hours of focused, undistracted work.",
               "frequency": "daily",
               "xp": 25,
-              "requiredLevel": 3
+              "requiredLevel": 3,
+              "tag": "Mental"
             },
             {
               "id": "monk_meditate_20min",
@@ -139,7 +152,8 @@
               "description": "Practice mindfulness meditation for at least 20 minutes.",
               "frequency": "daily",
               "xp": 20,
-              "requiredLevel": 3
+              "requiredLevel": 3,
+              "tag": "Spiritual"
             },
             {
               "id": "monk_no_phone_bedroom",
@@ -147,7 +161,8 @@
               "description": "Keep your phone out of the bedroom for the entire day.",
               "frequency": "daily",
               "xp": 15,
-              "requiredLevel": 3
+              "requiredLevel": 3,
+              "tag": "Lifestyle"
             },
             {
               "id": "monk_practice_gratitude",
@@ -155,7 +170,8 @@
               "description": "Write down 5 things you're grateful for today.",
               "frequency": "daily",
               "xp": 15,
-              "requiredLevel": 3
+              "requiredLevel": 3,
+              "tag": "Mental"
             },
             {
               "id": "monk_learn_something",
@@ -163,7 +179,8 @@
               "description": "Spend 30 minutes learning a new skill or concept.",
               "frequency": "daily",
               "xp": 20,
-              "requiredLevel": 3
+              "requiredLevel": 3,
+              "tag": "Learning"
             },
             {
               "id": "monk_no_multitasking",
@@ -171,7 +188,8 @@
               "description": "Focus on one task at a time, avoid switching between tasks.",
               "frequency": "daily",
               "xp": 15,
-              "requiredLevel": 3
+              "requiredLevel": 3,
+              "tag": "Mental"
             }
           ]
         },
@@ -187,7 +205,8 @@
               "description": "Fast for 16 hours, eat within 8-hour window.",
               "frequency": "daily",
               "xp": 30,
-              "requiredLevel": 4
+              "requiredLevel": 4,
+              "tag": "Lifestyle"
             },
             {
               "id": "monk_3h_deep_work",
@@ -195,7 +214,8 @@
               "description": "Three hours of focused, undistracted work.",
               "frequency": "daily",
               "xp": 35,
-              "requiredLevel": 4
+              "requiredLevel": 4,
+              "tag": "Mental"
             },
             {
               "id": "monk_learn_skill",
@@ -203,7 +223,8 @@
               "description": "Spend time learning a new skill or language.",
               "frequency": "daily",
               "xp": 20,
-              "requiredLevel": 4
+              "requiredLevel": 4,
+              "tag": "Learning"
             },
             {
               "id": "monk_practice_patience",
@@ -211,7 +232,8 @@
               "description": "Intentionally wait in line or for something without getting frustrated.",
               "frequency": "daily",
               "xp": 20,
-              "requiredLevel": 4
+              "requiredLevel": 4,
+              "tag": "Mental"
             },
             {
               "id": "monk_teach_skill",
@@ -219,7 +241,8 @@
               "description": "Share knowledge or teach someone a skill you know.",
               "frequency": "daily",
               "xp": 25,
-              "requiredLevel": 4
+              "requiredLevel": 4,
+              "tag": "Mental"
             },
             {
               "id": "monk_create_something",
@@ -227,7 +250,8 @@
               "description": "Create something meaningful (art, writing, code, etc.).",
               "frequency": "daily",
               "xp": 25,
-              "requiredLevel": 4
+              "requiredLevel": 4,
+              "tag": "Mental"
             }
           ]
         },
@@ -243,7 +267,8 @@
               "description": "Four hours of focused, undistracted work.",
               "frequency": "daily",
               "xp": 40,
-              "requiredLevel": 5
+              "requiredLevel": 5,
+              "tag": "Mental"
             },
             {
               "id": "monk_meditate_30min",
@@ -251,7 +276,8 @@
               "description": "Practice mindfulness meditation for at least 30 minutes.",
               "frequency": "daily",
               "xp": 25,
-              "requiredLevel": 5
+              "requiredLevel": 5,
+              "tag": "Spiritual"
             },
             {
               "id": "monk_digital_detox",
@@ -259,7 +285,8 @@
               "description": "Use phone/computer only for essential tasks.",
               "frequency": "daily",
               "xp": 30,
-              "requiredLevel": 5
+              "requiredLevel": 5,
+              "tag": "Lifestyle"
             },
             {
               "id": "monk_practice_mindfulness",
@@ -267,7 +294,8 @@
               "description": "Stay present and mindful throughout the day.",
               "frequency": "daily",
               "xp": 25,
-              "requiredLevel": 5
+              "requiredLevel": 5,
+              "tag": "Spiritual"
             },
             {
               "id": "monk_help_community",
@@ -275,7 +303,8 @@
               "description": "Perform a service or help for your community.",
               "frequency": "daily",
               "xp": 30,
-              "requiredLevel": 5
+              "requiredLevel": 5,
+              "tag": "Mental"
             },
             {
               "id": "monk_master_discipline",
@@ -283,7 +312,8 @@
               "description": "Complete all daily tasks without any excuses.",
               "frequency": "daily",
               "xp": 35,
-              "requiredLevel": 5
+              "requiredLevel": 5,
+              "tag": "Mental"
             }
           ]
         },
@@ -299,7 +329,8 @@
               "description": "Five hours of focused, undistracted work.",
               "frequency": "daily",
               "xp": 50,
-              "requiredLevel": 6
+              "requiredLevel": 6,
+              "tag": "Mental"
             },
             {
               "id": "monk_teach_others",
@@ -307,7 +338,8 @@
               "description": "Share knowledge or mentor someone today.",
               "frequency": "daily",
               "xp": 35,
-              "requiredLevel": 6
+              "requiredLevel": 6,
+              "tag": "Mental"
             },
             {
               "id": "monk_create_content",
@@ -315,7 +347,8 @@
               "description": "Create something valuable (write, code, art, etc.).",
               "frequency": "daily",
               "xp": 30,
-              "requiredLevel": 6
+              "requiredLevel": 6,
+              "tag": "Mental"
             },
             {
               "id": "monk_mentor_others",
@@ -323,7 +356,8 @@
               "description": "Provide guidance or mentorship to someone seeking help.",
               "frequency": "daily",
               "xp": 35,
-              "requiredLevel": 6
+              "requiredLevel": 6,
+              "tag": "Mental"
             },
             {
               "id": "monk_practice_wisdom",
@@ -331,7 +365,8 @@
               "description": "Make decisions based on long-term thinking, not short-term gratification.",
               "frequency": "daily",
               "xp": 30,
-              "requiredLevel": 6
+              "requiredLevel": 6,
+              "tag": "Mental"
             },
             {
               "id": "monk_build_legacy",
@@ -339,7 +374,8 @@
               "description": "Work on something that will benefit future generations.",
               "frequency": "daily",
               "xp": 40,
-              "requiredLevel": 6
+              "requiredLevel": 6,
+              "tag": "Mental"
             }
           ]
         },
@@ -355,7 +391,8 @@
               "description": "Six hours of focused, undistracted work.",
               "frequency": "daily",
               "xp": 60,
-              "requiredLevel": 7
+              "requiredLevel": 7,
+              "tag": "Mental"
             },
             {
               "id": "monk_meditate_45min",
@@ -363,7 +400,8 @@
               "description": "Practice mindfulness meditation for at least 45 minutes.",
               "frequency": "daily",
               "xp": 35,
-              "requiredLevel": 7
+              "requiredLevel": 7,
+              "tag": "Spiritual"
             },
             {
               "id": "monk_help_others",
@@ -371,7 +409,8 @@
               "description": "Perform an act of kindness or service for others.",
               "frequency": "daily",
               "xp": 25,
-              "requiredLevel": 7
+              "requiredLevel": 7,
+              "tag": "Mental"
             }
           ]
         },
@@ -387,7 +426,8 @@
               "description": "Eight hours of focused, undistracted work.",
               "frequency": "daily",
               "xp": 80,
-              "requiredLevel": 8
+              "requiredLevel": 8,
+              "tag": "Mental"
             },
             {
               "id": "monk_meditate_60min",
@@ -395,7 +435,8 @@
               "description": "Practice mindfulness meditation for at least 60 minutes.",
               "frequency": "daily",
               "xp": 50,
-              "requiredLevel": 8
+              "requiredLevel": 8,
+              "tag": "Spiritual"
             },
             {
               "id": "monk_master_skill",
@@ -403,7 +444,8 @@
               "description": "Work on mastering a specific skill or craft.",
               "frequency": "daily",
               "xp": 40,
-              "requiredLevel": 8
+              "requiredLevel": 8,
+              "tag": "Mental"
             }
           ]
         },
@@ -419,7 +461,8 @@
               "description": "Ten hours of focused, undistracted work.",
               "frequency": "daily",
               "xp": 100,
-              "requiredLevel": 9
+              "requiredLevel": 9,
+              "tag": "Mental"
             },
             {
               "id": "monk_meditate_90min",
@@ -427,7 +470,8 @@
               "description": "Practice mindfulness meditation for at least 90 minutes.",
               "frequency": "daily",
               "xp": 60,
-              "requiredLevel": 9
+              "requiredLevel": 9,
+              "tag": "Spiritual"
             },
             {
               "id": "monk_inspire_others",
@@ -435,7 +479,8 @@
               "description": "Motivate or inspire someone to improve themselves.",
               "frequency": "daily",
               "xp": 50,
-              "requiredLevel": 9
+              "requiredLevel": 9,
+              "tag": "Mental"
             }
           ]
         },
@@ -451,7 +496,8 @@
               "description": "Twelve hours of focused, undistracted work.",
               "frequency": "daily",
               "xp": 120,
-              "requiredLevel": 10
+              "requiredLevel": 10,
+              "tag": "Mental"
             },
             {
               "id": "monk_meditate_120min",
@@ -459,7 +505,8 @@
               "description": "Practice mindfulness meditation for at least 120 minutes.",
               "frequency": "daily",
               "xp": 80,
-              "requiredLevel": 10
+              "requiredLevel": 10,
+              "tag": "Spiritual"
             },
             {
               "id": "monk_legacy",
@@ -467,7 +514,8 @@
               "description": "Work on something that will outlast you.",
               "frequency": "daily",
               "xp": 100,
-              "requiredLevel": 10
+              "requiredLevel": 10,
+              "tag": "Mental"
             }
           ]
         }
@@ -492,7 +540,8 @@
               "description": "Avoid processed and junk foods today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Lifestyle"
             },
             {
               "id": "dopamine_no_social",
@@ -500,7 +549,8 @@
               "description": "Skip all social media platforms.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Lifestyle"
             },
             {
               "id": "dopamine_no_games",
@@ -508,7 +558,8 @@
               "description": "Avoid video games and gaming content.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Lifestyle"
             },
             {
               "id": "dopamine_read",
@@ -516,7 +567,8 @@
               "description": "Read at least 10 pages of a book.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Mental"
             },
             {
               "id": "dopamine_no_news_consumption",
@@ -524,7 +576,8 @@
               "description": "Avoid consuming news today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Lifestyle"
             },
             {
               "id": "dopamine_mindful_breathing_breaks",
@@ -532,7 +585,8 @@
               "description": "Take 5-minute mindful breathing breaks throughout the day.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Mental"
             }
           ]
         },
@@ -548,7 +602,8 @@
               "description": "Avoid YouTube and video streaming platforms.",
               "frequency": "daily",
               "xp": 15,
-              "requiredLevel": 2
+              "requiredLevel": 2,
+              "tag": "Lifestyle"
             },
             {
               "id": "dopamine_walk",
@@ -556,7 +611,8 @@
               "description": "Take a 30-minute walk without music or podcasts.",
               "frequency": "daily",
               "xp": 15,
-              "requiredLevel": 2
+              "requiredLevel": 2,
+              "tag": "Physical"
             },
             {
               "id": "dopamine_journal",
@@ -564,7 +620,8 @@
               "description": "Write in your journal for at least 10 minutes.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 2
+              "requiredLevel": 2,
+              "tag": "Mental"
             },
             {
               "id": "dopamine_no_messaging_apps_4h",
@@ -572,7 +629,8 @@
               "description": "Avoid using messaging apps for 4 consecutive hours.",
               "frequency": "daily",
               "xp": 15,
-              "requiredLevel": 2
+              "requiredLevel": 2,
+              "tag": "Lifestyle"
             },
             {
               "id": "dopamine_declutter_digital_space",
@@ -580,7 +638,8 @@
               "description": "Clean up and declutter your digital devices.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 2
+              "requiredLevel": 2,
+              "tag": "Lifestyle"
             }
           ]
         },
@@ -596,7 +655,8 @@
               "description": "Avoid all streaming services and TV shows.",
               "frequency": "daily",
               "xp": 20,
-              "requiredLevel": 3
+              "requiredLevel": 3,
+              "tag": "Lifestyle"
             },
             {
               "id": "dopamine_read_30min",
@@ -604,7 +664,8 @@
               "description": "Read a book for at least 30 minutes.",
               "frequency": "daily",
               "xp": 15,
-              "requiredLevel": 3
+              "requiredLevel": 3,
+              "tag": "Mental"
             },
             {
               "id": "dopamine_meditate",
@@ -612,7 +673,8 @@
               "description": "Practice mindfulness meditation for 15 minutes.",
               "frequency": "daily",
               "xp": 15,
-              "requiredLevel": 3
+              "requiredLevel": 3,
+              "tag": "Spiritual"
             },
             {
               "id": "dopamine_no_caffeine",
@@ -620,7 +682,8 @@
               "description": "Avoid caffeine today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 3
+              "requiredLevel": 3,
+              "tag": "Lifestyle"
             },
             {
               "id": "dopamine_practice_silence_30min",
@@ -628,7 +691,8 @@
               "description": "Practice silence for at least 30 minutes.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 3
+              "requiredLevel": 3,
+              "tag": "Mental"
             }
           ]
         },
@@ -644,7 +708,8 @@
               "description": "Avoid listening to music while working or studying.",
               "frequency": "daily",
               "xp": 25,
-              "requiredLevel": 4
+              "requiredLevel": 4,
+              "tag": "Lifestyle"
             },
             {
               "id": "dopamine_nature_time",
@@ -652,7 +717,8 @@
               "description": "Spend time in nature without any digital devices.",
               "frequency": "daily",
               "xp": 20,
-              "requiredLevel": 4
+              "requiredLevel": 4,
+              "tag": "Physical"
             },
             {
               "id": "dopamine_read_60min",
@@ -660,7 +726,26 @@
               "description": "Read a book for at least 60 minutes.",
               "frequency": "daily",
               "xp": 25,
-              "requiredLevel": 4
+              "requiredLevel": 4,
+              "tag": "Mental"
+            },
+            {
+              "id": "dopamine_summarize_insight",
+              "title": "Summarize a Key Insight",
+              "description": "Summarize a key insight from a book or article.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 4,
+              "tag": "Learning"
+            },
+            {
+              "id": "dopamine_annotate_notes",
+              "title": "Annotate Old Notes",
+              "description": "Annotate old notes or highlights from a book or article.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 4,
+              "tag": "Learning"
             }
           ]
         },
@@ -676,7 +761,8 @@
               "description": "Keep your phone away for 4 consecutive hours.",
               "frequency": "daily",
               "xp": 30,
-              "requiredLevel": 5
+              "requiredLevel": 5,
+              "tag": "Lifestyle"
             },
             {
               "id": "dopamine_meditate_30min",
@@ -684,7 +770,8 @@
               "description": "Practice mindfulness meditation for 30 minutes.",
               "frequency": "daily",
               "xp": 25,
-              "requiredLevel": 5
+              "requiredLevel": 5,
+              "tag": "Spiritual"
             },
             {
               "id": "dopamine_create",
@@ -692,7 +779,17 @@
               "description": "Create something without using digital tools.",
               "frequency": "daily",
               "xp": 20,
-              "requiredLevel": 5
+              "requiredLevel": 5,
+              "tag": "Mental"
+            },
+            {
+              "id": "dopamine_teach_back",
+              "title": "Teach Back",
+              "description": "Teach someone a skill or concept you've learned.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 5,
+              "tag": "Learning"
             }
           ]
         },
@@ -708,7 +805,8 @@
               "description": "Keep your phone away for 8 consecutive hours.",
               "frequency": "daily",
               "xp": 40,
-              "requiredLevel": 6
+              "requiredLevel": 6,
+              "tag": "Lifestyle"
             },
             {
               "id": "dopamine_read_90min",
@@ -716,7 +814,8 @@
               "description": "Read a book for at least 90 minutes.",
               "frequency": "daily",
               "xp": 35,
-              "requiredLevel": 6
+              "requiredLevel": 6,
+              "tag": "Mental"
             },
             {
               "id": "dopamine_learn_skill",
@@ -724,7 +823,17 @@
               "description": "Learn a new skill without using digital resources.",
               "frequency": "daily",
               "xp": 30,
-              "requiredLevel": 6
+              "requiredLevel": 6,
+              "tag": "Mental"
+            },
+            {
+              "id": "dopamine_journal_learning",
+              "title": "Journal: What Did I Learn?",
+              "description": "Reflect on what you learned today and write about it.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 6,
+              "tag": "Learning"
             }
           ]
         },
@@ -740,7 +849,8 @@
               "description": "Keep your phone away for 12 consecutive hours.",
               "frequency": "daily",
               "xp": 50,
-              "requiredLevel": 7
+              "requiredLevel": 7,
+              "tag": "Lifestyle"
             },
             {
               "id": "dopamine_meditate_45min",
@@ -748,7 +858,8 @@
               "description": "Practice mindfulness meditation for 45 minutes.",
               "frequency": "daily",
               "xp": 35,
-              "requiredLevel": 7
+              "requiredLevel": 7,
+              "tag": "Spiritual"
             },
             {
               "id": "dopamine_teach",
@@ -756,7 +867,17 @@
               "description": "Teach someone a skill without using digital tools.",
               "frequency": "daily",
               "xp": 30,
-              "requiredLevel": 7
+              "requiredLevel": 7,
+              "tag": "Mental"
+            },
+            {
+              "id": "dopamine_mind_map",
+              "title": "Create a Mind Map",
+              "description": "Create a mind map to organize your thoughts and ideas.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 7,
+              "tag": "Learning"
             }
           ]
         },
@@ -772,7 +893,8 @@
               "description": "Keep your phone away for 16 consecutive hours.",
               "frequency": "daily",
               "xp": 60,
-              "requiredLevel": 8
+              "requiredLevel": 8,
+              "tag": "Lifestyle"
             },
             {
               "id": "dopamine_read_120min",
@@ -780,7 +902,8 @@
               "description": "Read a book for at least 120 minutes.",
               "frequency": "daily",
               "xp": 45,
-              "requiredLevel": 8
+              "requiredLevel": 8,
+              "tag": "Mental"
             },
             {
               "id": "dopamine_master_skill",
@@ -788,7 +911,17 @@
               "description": "Work on mastering a skill without digital assistance.",
               "frequency": "daily",
               "xp": 40,
-              "requiredLevel": 8
+              "requiredLevel": 8,
+              "tag": "Mental"
+            },
+            {
+              "id": "dopamine_explore_topic",
+              "title": "Explore a New Topic",
+              "description": "Explore a new topic or subject of interest.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 8,
+              "tag": "Learning"
             }
           ]
         },
@@ -804,7 +937,8 @@
               "description": "Keep your phone away for 20 consecutive hours.",
               "frequency": "daily",
               "xp": 70,
-              "requiredLevel": 9
+              "requiredLevel": 9,
+              "tag": "Lifestyle"
             },
             {
               "id": "dopamine_meditate_60min",
@@ -812,7 +946,8 @@
               "description": "Practice mindfulness meditation for 60 minutes.",
               "frequency": "daily",
               "xp": 50,
-              "requiredLevel": 9
+              "requiredLevel": 9,
+              "tag": "Spiritual"
             },
             {
               "id": "dopamine_inspire",
@@ -820,7 +955,17 @@
               "description": "Inspire someone to reduce their digital consumption.",
               "frequency": "daily",
               "xp": 40,
-              "requiredLevel": 9
+              "requiredLevel": 9,
+              "tag": "Mental"
+            },
+            {
+              "id": "dopamine_revisit_material",
+              "title": "Revisit & Revise",
+              "description": "Revisit and revise old material or projects.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 9,
+              "tag": "Learning"
             }
           ]
         },
@@ -836,7 +981,8 @@
               "description": "Keep your phone away for 24 consecutive hours.",
               "frequency": "daily",
               "xp": 100,
-              "requiredLevel": 10
+              "requiredLevel": 10,
+              "tag": "Lifestyle"
             },
             {
               "id": "dopamine_read_180min",
@@ -844,7 +990,8 @@
               "description": "Read a book for at least 180 minutes.",
               "frequency": "daily",
               "xp": 60,
-              "requiredLevel": 10
+              "requiredLevel": 10,
+              "tag": "Mental"
             },
             {
               "id": "dopamine_legacy",
@@ -852,7 +999,26 @@
               "description": "Help others create a healthier relationship with technology.",
               "frequency": "daily",
               "xp": 80,
-              "requiredLevel": 10
+              "requiredLevel": 10,
+              "tag": "Mental"
+            },
+            {
+              "id": "dopamine_letter_to_self",
+              "title": "Letter to Future Self",
+              "description": "Write a letter to your future self about your goals and aspirations.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 10,
+              "tag": "Mental"
+            },
+            {
+              "id": "dopamine_simple_explanation",
+              "title": "Explain Simply",
+              "description": "Explain a complex concept or idea in simple terms.",
+              "frequency": "daily",
+              "xp": 10,
+              "requiredLevel": 10,
+              "tag": "Learning"
             }
           ]
         }
@@ -877,7 +1043,8 @@
               "description": "Do at least 20 minutes of light exercise (walk, yoga, or similar).",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Physical"
             },
             {
               "id": "75_water_2l",
@@ -885,7 +1052,8 @@
               "description": "Drink at least 2 liters of water today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Physical"
             },
             {
               "id": "75_veggies_1",
@@ -893,7 +1061,8 @@
               "description": "Eat at least 1 serving of vegetables.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Lifestyle"
             },
             {
               "id": "75_read_5pages",
@@ -901,7 +1070,8 @@
               "description": "Read at least 5 pages of a book.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Mental"
             },
             {
               "id": "75_no_sugary_drinks",
@@ -909,7 +1079,8 @@
               "description": "Avoid all sugary drinks today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Lifestyle"
             },
             {
               "id": "75_progress_photo",
@@ -917,7 +1088,8 @@
               "description": "Take a progress photo to track your journey.",
               "frequency": "daily",
               "xp": 5,
-              "requiredLevel": 1
+              "requiredLevel": 1,
+              "tag": "Physical"
             }
           ]
         },
@@ -933,7 +1105,8 @@
               "description": "Do at least 30 minutes of moderate exercise (your choice).",
               "frequency": "daily",
               "xp": 15,
-              "requiredLevel": 2
+              "requiredLevel": 2,
+              "tag": "Physical"
             },
             {
               "id": "75_water_2l",
@@ -941,7 +1114,8 @@
               "description": "Drink at least 2 liters of water today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 2
+              "requiredLevel": 2,
+              "tag": "Physical"
             },
             {
               "id": "75_veggies_2",
@@ -949,7 +1123,8 @@
               "description": "Eat at least 2 servings of vegetables.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 2
+              "requiredLevel": 2,
+              "tag": "Lifestyle"
             },
             {
               "id": "75_read_10pages",
@@ -957,7 +1132,8 @@
               "description": "Read at least 10 pages of a book.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 2
+              "requiredLevel": 2,
+              "tag": "Mental"
             },
             {
               "id": "75_no_junk_food",
@@ -965,7 +1141,8 @@
               "description": "Avoid all junk food today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 2
+              "requiredLevel": 2,
+              "tag": "Lifestyle"
             },
             {
               "id": "75_gratitude_1",
@@ -973,7 +1150,8 @@
               "description": "Write down one thing you are grateful for.",
               "frequency": "daily",
               "xp": 5,
-              "requiredLevel": 2
+              "requiredLevel": 2,
+              "tag": "Mental"
             }
           ]
         },
@@ -989,7 +1167,8 @@
               "description": "Do at least 40 minutes of exercise (can split into two sessions).",
               "frequency": "daily",
               "xp": 20,
-              "requiredLevel": 3
+              "requiredLevel": 3,
+              "tag": "Physical"
             },
             {
               "id": "75_water_2l",
@@ -997,7 +1176,8 @@
               "description": "Drink at least 2 liters of water today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 3
+              "requiredLevel": 3,
+              "tag": "Physical"
             },
             {
               "id": "75_veggies_3",
@@ -1005,7 +1185,8 @@
               "description": "Eat at least 3 servings of vegetables.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 3
+              "requiredLevel": 3,
+              "tag": "Lifestyle"
             },
             {
               "id": "75_read_15pages",
@@ -1013,7 +1194,8 @@
               "description": "Read at least 15 pages of a book.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 3
+              "requiredLevel": 3,
+              "tag": "Mental"
             },
             {
               "id": "75_no_processed_snacks",
@@ -1021,7 +1203,8 @@
               "description": "Avoid all processed snacks today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 3
+              "requiredLevel": 3,
+              "tag": "Lifestyle"
             },
             {
               "id": "75_meditate_5min",
@@ -1029,7 +1212,8 @@
               "description": "Practice meditation for at least 5 minutes.",
               "frequency": "daily",
               "xp": 5,
-              "requiredLevel": 3
+              "requiredLevel": 3,
+              "tag": "Spiritual"
             }
           ]
         },
@@ -1045,7 +1229,8 @@
               "description": "Do at least 60 minutes of exercise (can split into two sessions).",
               "frequency": "daily",
               "xp": 25,
-              "requiredLevel": 4
+              "requiredLevel": 4,
+              "tag": "Physical"
             },
             {
               "id": "75_water_2_5l",
@@ -1053,7 +1238,8 @@
               "description": "Drink at least 2.5 liters of water today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 4
+              "requiredLevel": 4,
+              "tag": "Physical"
             },
             {
               "id": "75_veggies_4",
@@ -1061,7 +1247,8 @@
               "description": "Eat at least 4 servings of vegetables.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 4
+              "requiredLevel": 4,
+              "tag": "Lifestyle"
             },
             {
               "id": "75_read_20pages",
@@ -1069,7 +1256,8 @@
               "description": "Read at least 20 pages of a book.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 4
+              "requiredLevel": 4,
+              "tag": "Mental"
             },
             {
               "id": "75_no_fast_food",
@@ -1077,7 +1265,8 @@
               "description": "Avoid all fast food today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 4
+              "requiredLevel": 4,
+              "tag": "Lifestyle"
             },
             {
               "id": "75_meditate_10min",
@@ -1085,7 +1274,8 @@
               "description": "Practice meditation for at least 10 minutes.",
               "frequency": "daily",
               "xp": 5,
-              "requiredLevel": 4
+              "requiredLevel": 4,
+              "tag": "Spiritual"
             }
           ]
         },
@@ -1101,7 +1291,8 @@
               "description": "Do at least 90 minutes of exercise (can split into two sessions).",
               "frequency": "daily",
               "xp": 30,
-              "requiredLevel": 5
+              "requiredLevel": 5,
+              "tag": "Physical"
             },
             {
               "id": "75_water_3l",
@@ -1109,7 +1300,8 @@
               "description": "Drink at least 3 liters of water today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 5
+              "requiredLevel": 5,
+              "tag": "Physical"
             },
             {
               "id": "75_veggies_5",
@@ -1117,7 +1309,8 @@
               "description": "Eat at least 5 servings of vegetables.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 5
+              "requiredLevel": 5,
+              "tag": "Lifestyle"
             },
             {
               "id": "75_read_30pages",
@@ -1125,7 +1318,8 @@
               "description": "Read at least 30 pages of a book.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 5
+              "requiredLevel": 5,
+              "tag": "Mental"
             },
             {
               "id": "75_no_sugary_drinks",
@@ -1133,7 +1327,8 @@
               "description": "Avoid all sugary drinks today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 5
+              "requiredLevel": 5,
+              "tag": "Lifestyle"
             },
             {
               "id": "75_meditate_15min",
@@ -1141,7 +1336,8 @@
               "description": "Practice meditation for at least 15 minutes.",
               "frequency": "daily",
               "xp": 5,
-              "requiredLevel": 5
+              "requiredLevel": 5,
+              "tag": "Spiritual"
             }
           ]
         },
@@ -1157,7 +1353,8 @@
               "description": "Do at least 2 hours of exercise (can split into sessions).",
               "frequency": "daily",
               "xp": 35,
-              "requiredLevel": 6
+              "requiredLevel": 6,
+              "tag": "Physical"
             },
             {
               "id": "75_water_3_5l",
@@ -1165,7 +1362,8 @@
               "description": "Drink at least 3.5 liters of water today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 6
+              "requiredLevel": 6,
+              "tag": "Physical"
             },
             {
               "id": "75_veggies_6",
@@ -1173,7 +1371,8 @@
               "description": "Eat at least 6 servings of vegetables.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 6
+              "requiredLevel": 6,
+              "tag": "Lifestyle"
             },
             {
               "id": "75_read_50pages",
@@ -1181,7 +1380,8 @@
               "description": "Read at least 50 pages of a book.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 6
+              "requiredLevel": 6,
+              "tag": "Mental"
             },
             {
               "id": "75_cold_shower",
@@ -1189,7 +1389,8 @@
               "description": "Take a cold shower today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 6
+              "requiredLevel": 6,
+              "tag": "Physical"
             },
             {
               "id": "75_meditate_20min",
@@ -1197,7 +1398,8 @@
               "description": "Practice meditation for at least 20 minutes.",
               "frequency": "daily",
               "xp": 5,
-              "requiredLevel": 6
+              "requiredLevel": 6,
+              "tag": "Spiritual"
             }
           ]
         },
@@ -1213,7 +1415,8 @@
               "description": "Do at least 2.5 hours of exercise (can split into sessions).",
               "frequency": "daily",
               "xp": 40,
-              "requiredLevel": 7
+              "requiredLevel": 7,
+              "tag": "Physical"
             },
             {
               "id": "75_water_3_5l",
@@ -1221,7 +1424,8 @@
               "description": "Drink at least 3.5 liters of water today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 7
+              "requiredLevel": 7,
+              "tag": "Physical"
             },
             {
               "id": "75_veggies_7",
@@ -1229,7 +1433,8 @@
               "description": "Eat at least 7 servings of vegetables.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 7
+              "requiredLevel": 7,
+              "tag": "Lifestyle"
             },
             {
               "id": "75_read_75pages",
@@ -1237,7 +1442,8 @@
               "description": "Read at least 75 pages of a book.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 7
+              "requiredLevel": 7,
+              "tag": "Mental"
             },
             {
               "id": "75_cold_shower",
@@ -1245,7 +1451,8 @@
               "description": "Take a cold shower today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 7
+              "requiredLevel": 7,
+              "tag": "Physical"
             },
             {
               "id": "75_meditate_30min",
@@ -1253,7 +1460,8 @@
               "description": "Practice meditation for at least 30 minutes.",
               "frequency": "daily",
               "xp": 5,
-              "requiredLevel": 7
+              "requiredLevel": 7,
+              "tag": "Spiritual"
             }
           ]
         },
@@ -1269,7 +1477,8 @@
               "description": "Do at least 3 hours of exercise (can split into sessions).",
               "frequency": "daily",
               "xp": 45,
-              "requiredLevel": 8
+              "requiredLevel": 8,
+              "tag": "Physical"
             },
             {
               "id": "75_water_4l",
@@ -1277,7 +1486,8 @@
               "description": "Drink at least 4 liters of water today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 8
+              "requiredLevel": 8,
+              "tag": "Physical"
             },
             {
               "id": "75_veggies_8",
@@ -1285,7 +1495,8 @@
               "description": "Eat at least 8 servings of vegetables.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 8
+              "requiredLevel": 8,
+              "tag": "Lifestyle"
             },
             {
               "id": "75_read_100pages",
@@ -1293,7 +1504,8 @@
               "description": "Read at least 100 pages of a book.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 8
+              "requiredLevel": 8,
+              "tag": "Mental"
             },
             {
               "id": "75_cold_shower",
@@ -1301,7 +1513,8 @@
               "description": "Take a cold shower today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 8
+              "requiredLevel": 8,
+              "tag": "Physical"
             },
             {
               "id": "75_meditate_40min",
@@ -1309,7 +1522,8 @@
               "description": "Practice meditation for at least 40 minutes.",
               "frequency": "daily",
               "xp": 5,
-              "requiredLevel": 8
+              "requiredLevel": 8,
+              "tag": "Spiritual"
             }
           ]
         },
@@ -1325,7 +1539,8 @@
               "description": "Do at least 3.5 hours of exercise (can split into sessions).",
               "frequency": "daily",
               "xp": 50,
-              "requiredLevel": 9
+              "requiredLevel": 9,
+              "tag": "Physical"
             },
             {
               "id": "75_water_4l",
@@ -1333,7 +1548,8 @@
               "description": "Drink at least 4 liters of water today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 9
+              "requiredLevel": 9,
+              "tag": "Physical"
             },
             {
               "id": "75_veggies_9",
@@ -1341,7 +1557,8 @@
               "description": "Eat at least 9 servings of vegetables.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 9
+              "requiredLevel": 9,
+              "tag": "Lifestyle"
             },
             {
               "id": "75_read_100pages",
@@ -1349,7 +1566,8 @@
               "description": "Read at least 100 pages of a book.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 9
+              "requiredLevel": 9,
+              "tag": "Mental"
             },
             {
               "id": "75_cold_shower",
@@ -1357,7 +1575,8 @@
               "description": "Take a cold shower today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 9
+              "requiredLevel": 9,
+              "tag": "Physical"
             },
             {
               "id": "75_meditate_45min",
@@ -1365,7 +1584,8 @@
               "description": "Practice meditation for at least 45 minutes.",
               "frequency": "daily",
               "xp": 5,
-              "requiredLevel": 9
+              "requiredLevel": 9,
+              "tag": "Spiritual"
             }
           ]
         },
@@ -1381,7 +1601,8 @@
               "description": "Do at least 4 hours of exercise (can split into sessions).",
               "frequency": "daily",
               "xp": 60,
-              "requiredLevel": 10
+              "requiredLevel": 10,
+              "tag": "Physical"
             },
             {
               "id": "75_water_4l",
@@ -1389,7 +1610,8 @@
               "description": "Drink at least 4 liters of water today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 10
+              "requiredLevel": 10,
+              "tag": "Physical"
             },
             {
               "id": "75_veggies_10",
@@ -1397,7 +1619,8 @@
               "description": "Eat at least 10 servings of vegetables.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 10
+              "requiredLevel": 10,
+              "tag": "Lifestyle"
             },
             {
               "id": "75_read_100pages",
@@ -1405,7 +1628,8 @@
               "description": "Read at least 100 pages of a book.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 10
+              "requiredLevel": 10,
+              "tag": "Mental"
             },
             {
               "id": "75_cold_shower",
@@ -1413,7 +1637,8 @@
               "description": "Take a cold shower today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 10
+              "requiredLevel": 10,
+              "tag": "Physical"
             },
             {
               "id": "75_digital_detox",
@@ -1421,7 +1646,8 @@
               "description": "No social media and no screens 2 hours before bed.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 10
+              "requiredLevel": 10,
+              "tag": "Lifestyle"
             },
             {
               "id": "75_journal_reflect",
@@ -1429,7 +1655,8 @@
               "description": "Reflect and journal your progress today.",
               "frequency": "daily",
               "xp": 10,
-              "requiredLevel": 10
+              "requiredLevel": 10,
+              "tag": "Mental"
             }
           ]
         }
@@ -1448,11 +1675,11 @@
           "icon": "🐦",
           "xpThreshold": 0,
           "unlockTasks": [
-            { "id": "miracle_wake_6am", "title": "Wake Up at 6:00 AM", "description": "Wake up at 6:00 AM sharp, no snoozing allowed.", "frequency": "daily", "xp": 15, "requiredLevel": 1 },
-            { "id": "miracle_water", "title": "Drink Water First", "description": "Drink 16 oz of water immediately upon waking.", "frequency": "daily", "xp": 10, "requiredLevel": 1 },
-            { "id": "miracle_make_bed", "title": "Make Your Bed", "description": "Make your bed perfectly to start the day with a win.", "frequency": "daily", "xp": 5, "requiredLevel": 1 },
-            { "id": "miracle_stretch_5min", "title": "5-Minute Stretch", "description": "Do a 5-minute stretch to wake up your body.", "frequency": "daily", "xp": 5, "requiredLevel": 1 },
-            { "id": "miracle_gratitude_1", "title": "Gratitude Note", "description": "Write down one thing you're grateful for.", "frequency": "daily", "xp": 5, "requiredLevel": 1 }
+            { "id": "miracle_wake_6am", "title": "Wake Up at 6:00 AM", "description": "Wake up at 6:00 AM sharp, no snoozing allowed.", "frequency": "daily", "xp": 15, "requiredLevel": 1, "tag": "Physical" },
+            { "id": "miracle_water", "title": "Drink Water First", "description": "Drink 16 oz of water immediately upon waking.", "frequency": "daily", "xp": 10, "requiredLevel": 1, "tag": "Physical" },
+            { "id": "miracle_make_bed", "title": "Make Your Bed", "description": "Make your bed perfectly to start the day with a win.", "frequency": "daily", "xp": 5, "requiredLevel": 1, "tag": "Physical" },
+            { "id": "miracle_stretch_5min", "title": "5-Minute Stretch", "description": "Do a 5-minute stretch to wake up your body.", "frequency": "daily", "xp": 5, "requiredLevel": 1, "tag": "Physical" },
+            { "id": "miracle_gratitude_1", "title": "Gratitude Note", "description": "Write down one thing you're grateful for.", "frequency": "daily", "xp": 5, "requiredLevel": 1, "tag": "Mental" }
           ]
         },
         {
@@ -1461,11 +1688,11 @@
           "icon": "⭐",
           "xpThreshold": 100,
           "unlockTasks": [
-            { "id": "miracle_wake_5_30am", "title": "Wake Up at 5:30 AM", "description": "Wake up at 5:30 AM to gain an extra 30 minutes.", "frequency": "daily", "xp": 20, "requiredLevel": 2 },
-            { "id": "miracle_water", "title": "Drink Water First", "description": "Drink 16 oz of water immediately upon waking.", "frequency": "daily", "xp": 10, "requiredLevel": 2 },
-            { "id": "miracle_exercise_10min", "title": "10-Minute Exercise", "description": "Do 10 minutes of light exercise (walk, yoga, or similar).", "frequency": "daily", "xp": 10, "requiredLevel": 2 },
-            { "id": "miracle_affirmations", "title": "Daily Affirmations", "description": "Recite positive affirmations for 5 minutes.", "frequency": "daily", "xp": 10, "requiredLevel": 2 },
-            { "id": "miracle_journal_3min", "title": "3-Minute Journal", "description": "Write a short journal entry about your intentions for the day.", "frequency": "daily", "xp": 5, "requiredLevel": 2 }
+            { "id": "miracle_wake_5_30am", "title": "Wake Up at 5:30 AM", "description": "Wake up at 5:30 AM to gain an extra 30 minutes.", "frequency": "daily", "xp": 20, "requiredLevel": 2, "tag": "Physical" },
+            { "id": "miracle_water", "title": "Drink Water First", "description": "Drink 16 oz of water immediately upon waking.", "frequency": "daily", "xp": 10, "requiredLevel": 2, "tag": "Physical" },
+            { "id": "miracle_exercise_10min", "title": "10-Minute Exercise", "description": "Do 10 minutes of light exercise (walk, yoga, or similar).", "frequency": "daily", "xp": 10, "requiredLevel": 2, "tag": "Physical" },
+            { "id": "miracle_affirmations", "title": "Daily Affirmations", "description": "Recite positive affirmations for 5 minutes.", "frequency": "daily", "xp": 10, "requiredLevel": 2, "tag": "Mental" },
+            { "id": "miracle_journal_3min", "title": "3-Minute Journal", "description": "Write a short journal entry about your intentions for the day.", "frequency": "daily", "xp": 5, "requiredLevel": 2, "tag": "Mental" }
           ]
         },
         {
@@ -1474,12 +1701,12 @@
           "icon": "⚔️",
           "xpThreshold": 250,
           "unlockTasks": [
-            { "id": "miracle_wake_5am", "title": "Wake Up at 5:00 AM", "description": "Wake up at 5:00 AM for a head start.", "frequency": "daily", "xp": 25, "requiredLevel": 3 },
-            { "id": "miracle_water", "title": "Drink Water First", "description": "Drink 16 oz of water immediately upon waking.", "frequency": "daily", "xp": 10, "requiredLevel": 3 },
-            { "id": "miracle_exercise_15min", "title": "15-Minute Exercise", "description": "Do 15 minutes of exercise (walk, yoga, or similar).", "frequency": "daily", "xp": 10, "requiredLevel": 3 },
-            { "id": "miracle_meditate_5min", "title": "5-Minute Meditation", "description": "Practice 5 minutes of morning meditation.", "frequency": "daily", "xp": 10, "requiredLevel": 3 },
-            { "id": "miracle_journal_5min", "title": "5-Minute Journal", "description": "Write a journal entry about your goals for the day.", "frequency": "daily", "xp": 5, "requiredLevel": 3 },
-            { "id": "miracle_read_5pages", "title": "Read 5 Pages", "description": "Read at least 5 pages of a book.", "frequency": "daily", "xp": 5, "requiredLevel": 3 }
+            { "id": "miracle_wake_5am", "title": "Wake Up at 5:00 AM", "description": "Wake up at 5:00 AM for a head start.", "frequency": "daily", "xp": 25, "requiredLevel": 3, "tag": "Physical" },
+            { "id": "miracle_water", "title": "Drink Water First", "description": "Drink 16 oz of water immediately upon waking.", "frequency": "daily", "xp": 10, "requiredLevel": 3, "tag": "Physical" },
+            { "id": "miracle_exercise_15min", "title": "15-Minute Exercise", "description": "Do 15 minutes of exercise (walk, yoga, or similar).", "frequency": "daily", "xp": 10, "requiredLevel": 3, "tag": "Physical" },
+            { "id": "miracle_meditate_5min", "title": "5-Minute Meditation", "description": "Practice 5 minutes of morning meditation.", "frequency": "daily", "xp": 10, "requiredLevel": 3, "tag": "Spiritual" },
+            { "id": "miracle_journal_5min", "title": "5-Minute Journal", "description": "Write a journal entry about your goals for the day.", "frequency": "daily", "xp": 5, "requiredLevel": 3, "tag": "Mental" },
+            { "id": "miracle_read_5pages", "title": "Read 5 Pages", "description": "Read at least 5 pages of a book.", "frequency": "daily", "xp": 5, "requiredLevel": 3, "tag": "Mental" }
           ]
         },
         {
@@ -1488,12 +1715,12 @@
           "icon": "🌞",
           "xpThreshold": 450,
           "unlockTasks": [
-            { "id": "miracle_wake_4_30am", "title": "Wake Up at 4:30 AM", "description": "Wake up at 4:30 AM for elite-level productivity.", "frequency": "daily", "xp": 30, "requiredLevel": 4 },
-            { "id": "miracle_water", "title": "Drink Water First", "description": "Drink 16 oz of water immediately upon waking.", "frequency": "daily", "xp": 10, "requiredLevel": 4 },
-            { "id": "miracle_exercise_20min", "title": "20-Minute Exercise", "description": "Do 20 minutes of exercise (walk, yoga, or similar).", "frequency": "daily", "xp": 15, "requiredLevel": 4 },
-            { "id": "miracle_meditate_10min", "title": "10-Minute Meditation", "description": "Practice 10 minutes of morning meditation.", "frequency": "daily", "xp": 10, "requiredLevel": 4 },
-            { "id": "miracle_journal_10min", "title": "10-Minute Journal", "description": "Write a journal entry about your progress and gratitude.", "frequency": "daily", "xp": 5, "requiredLevel": 4 },
-            { "id": "miracle_read_10pages", "title": "Read 10 Pages", "description": "Read at least 10 pages of a book.", "frequency": "daily", "xp": 5, "requiredLevel": 4 }
+            { "id": "miracle_wake_4_30am", "title": "Wake Up at 4:30 AM", "description": "Wake up at 4:30 AM for elite-level productivity.", "frequency": "daily", "xp": 30, "requiredLevel": 4, "tag": "Physical" },
+            { "id": "miracle_water", "title": "Drink Water First", "description": "Drink 16 oz of water immediately upon waking.", "frequency": "daily", "xp": 10, "requiredLevel": 4, "tag": "Physical" },
+            { "id": "miracle_exercise_20min", "title": "20-Minute Exercise", "description": "Do 20 minutes of exercise (walk, yoga, or similar).", "frequency": "daily", "xp": 15, "requiredLevel": 4, "tag": "Physical" },
+            { "id": "miracle_meditate_10min", "title": "10-Minute Meditation", "description": "Practice 10 minutes of morning meditation.", "frequency": "daily", "xp": 10, "requiredLevel": 4, "tag": "Spiritual" },
+            { "id": "miracle_journal_10min", "title": "10-Minute Journal", "description": "Write a journal entry about your progress and gratitude.", "frequency": "daily", "xp": 5, "requiredLevel": 4, "tag": "Mental" },
+            { "id": "miracle_read_10pages", "title": "Read 10 Pages", "description": "Read at least 10 pages of a book.", "frequency": "daily", "xp": 5, "requiredLevel": 4, "tag": "Mental" }
           ]
         },
         {
@@ -1502,12 +1729,12 @@
           "icon": "🌅",
           "xpThreshold": 700,
           "unlockTasks": [
-            { "id": "miracle_wake_4am", "title": "Wake Up at 4:00 AM", "description": "Wake up at 4:00 AM for maximum productivity.", "frequency": "daily", "xp": 35, "requiredLevel": 5 },
-            { "id": "miracle_water", "title": "Drink Water First", "description": "Drink 16 oz of water immediately upon waking.", "frequency": "daily", "xp": 10, "requiredLevel": 5 },
-            { "id": "miracle_exercise_25min", "title": "25-Minute Exercise", "description": "Do 25 minutes of exercise (walk, yoga, or similar).", "frequency": "daily", "xp": 15, "requiredLevel": 5 },
-            { "id": "miracle_meditate_15min", "title": "15-Minute Meditation", "description": "Practice 15 minutes of morning meditation.", "frequency": "daily", "xp": 10, "requiredLevel": 5 },
-            { "id": "miracle_journal_10min", "title": "10-Minute Journal", "description": "Write a journal entry about your progress and gratitude.", "frequency": "daily", "xp": 5, "requiredLevel": 5 },
-            { "id": "miracle_read_15pages", "title": "Read 15 Pages", "description": "Read at least 15 pages of a book.", "frequency": "daily", "xp": 5, "requiredLevel": 5 }
+            { "id": "miracle_wake_4am", "title": "Wake Up at 4:00 AM", "description": "Wake up at 4:00 AM for maximum productivity.", "frequency": "daily", "xp": 35, "requiredLevel": 5, "tag": "Physical" },
+            { "id": "miracle_water", "title": "Drink Water First", "description": "Drink 16 oz of water immediately upon waking.", "frequency": "daily", "xp": 10, "requiredLevel": 5, "tag": "Physical" },
+            { "id": "miracle_exercise_25min", "title": "25-Minute Exercise", "description": "Do 25 minutes of exercise (walk, yoga, or similar).", "frequency": "daily", "xp": 15, "requiredLevel": 5, "tag": "Physical" },
+            { "id": "miracle_meditate_15min", "title": "15-Minute Meditation", "description": "Practice 15 minutes of morning meditation.", "frequency": "daily", "xp": 10, "requiredLevel": 5, "tag": "Spiritual" },
+            { "id": "miracle_journal_10min", "title": "10-Minute Journal", "description": "Write a journal entry about your progress and gratitude.", "frequency": "daily", "xp": 5, "requiredLevel": 5, "tag": "Mental" },
+            { "id": "miracle_read_15pages", "title": "Read 15 Pages", "description": "Read at least 15 pages of a book.", "frequency": "daily", "xp": 5, "requiredLevel": 5, "tag": "Mental" }
           ]
         },
         {
@@ -1516,13 +1743,13 @@
           "icon": "🌄",
           "xpThreshold": 1000,
           "unlockTasks": [
-            { "id": "miracle_wake_3_45am", "title": "Wake Up at 3:45 AM", "description": "Wake up at 3:45 AM for a head start on the day.", "frequency": "daily", "xp": 40, "requiredLevel": 6 },
-            { "id": "miracle_water", "title": "Drink Water First", "description": "Drink 16 oz of water immediately upon waking.", "frequency": "daily", "xp": 10, "requiredLevel": 6 },
-            { "id": "miracle_exercise_30min", "title": "30-Minute Exercise", "description": "Do 30 minutes of exercise (walk, yoga, or similar).", "frequency": "daily", "xp": 20, "requiredLevel": 6 },
-            { "id": "miracle_meditate_20min", "title": "20-Minute Meditation", "description": "Practice 20 minutes of morning meditation.", "frequency": "daily", "xp": 10, "requiredLevel": 6 },
-            { "id": "miracle_journal_15min", "title": "15-Minute Journal", "description": "Write a journal entry about your progress and gratitude.", "frequency": "daily", "xp": 5, "requiredLevel": 6 },
-            { "id": "miracle_read_20pages", "title": "Read 20 Pages", "description": "Read at least 20 pages of a book.", "frequency": "daily", "xp": 5, "requiredLevel": 6 },
-            { "id": "miracle_sunlight_5min", "title": "Sunlight Exposure", "description": "Spend 5 minutes in sunlight after waking.", "frequency": "daily", "xp": 5, "requiredLevel": 6 }
+            { "id": "miracle_wake_3_45am", "title": "Wake Up at 3:45 AM", "description": "Wake up at 3:45 AM for a head start on the day.", "frequency": "daily", "xp": 40, "requiredLevel": 6, "tag": "Physical" },
+            { "id": "miracle_water", "title": "Drink Water First", "description": "Drink 16 oz of water immediately upon waking.", "frequency": "daily", "xp": 10, "requiredLevel": 6, "tag": "Physical" },
+            { "id": "miracle_exercise_30min", "title": "30-Minute Exercise", "description": "Do 30 minutes of exercise (walk, yoga, or similar).", "frequency": "daily", "xp": 20, "requiredLevel": 6, "tag": "Physical" },
+            { "id": "miracle_meditate_20min", "title": "20-Minute Meditation", "description": "Practice 20 minutes of morning meditation.", "frequency": "daily", "xp": 10, "requiredLevel": 6, "tag": "Spiritual" },
+            { "id": "miracle_journal_15min", "title": "15-Minute Journal", "description": "Write a journal entry about your progress and gratitude.", "frequency": "daily", "xp": 5, "requiredLevel": 6, "tag": "Mental" },
+            { "id": "miracle_read_20pages", "title": "Read 20 Pages", "description": "Read at least 20 pages of a book.", "frequency": "daily", "xp": 5, "requiredLevel": 6, "tag": "Mental" },
+            { "id": "miracle_sunlight_5min", "title": "Sunlight Exposure", "description": "Spend 5 minutes in sunlight after waking.", "frequency": "daily", "xp": 5, "requiredLevel": 6, "tag": "Physical" }
           ]
         },
         {
@@ -1531,13 +1758,13 @@
           "icon": "🌟",
           "xpThreshold": 1350,
           "unlockTasks": [
-            { "id": "miracle_wake_3_30am", "title": "Wake Up at 3:30 AM", "description": "Wake up at 3:30 AM for ultimate mastery.", "frequency": "daily", "xp": 45, "requiredLevel": 7 },
-            { "id": "miracle_water", "title": "Drink Water First", "description": "Drink 16 oz of water immediately upon waking.", "frequency": "daily", "xp": 10, "requiredLevel": 7 },
-            { "id": "miracle_exercise_40min", "title": "40-Minute Exercise", "description": "Do 40 minutes of exercise (walk, yoga, or similar).", "frequency": "daily", "xp": 25, "requiredLevel": 7 },
-            { "id": "miracle_meditate_30min", "title": "30-Minute Meditation", "description": "Practice 30 minutes of morning meditation.", "frequency": "daily", "xp": 15, "requiredLevel": 7 },
-            { "id": "miracle_journal_20min", "title": "20-Minute Journal", "description": "Write a journal entry about your progress and gratitude.", "frequency": "daily", "xp": 5, "requiredLevel": 7 },
-            { "id": "miracle_read_30pages", "title": "Read 30 Pages", "description": "Read at least 30 pages of a book.", "frequency": "daily", "xp": 5, "requiredLevel": 7 },
-            { "id": "miracle_sunlight_10min", "title": "Sunlight Exposure", "description": "Spend 10 minutes in sunlight after waking.", "frequency": "daily", "xp": 5, "requiredLevel": 7 }
+            { "id": "miracle_wake_3_30am", "title": "Wake Up at 3:30 AM", "description": "Wake up at 3:30 AM for ultimate mastery.", "frequency": "daily", "xp": 45, "requiredLevel": 7, "tag": "Physical" },
+            { "id": "miracle_water", "title": "Drink Water First", "description": "Drink 16 oz of water immediately upon waking.", "frequency": "daily", "xp": 10, "requiredLevel": 7, "tag": "Physical" },
+            { "id": "miracle_exercise_40min", "title": "40-Minute Exercise", "description": "Do 40 minutes of exercise (walk, yoga, or similar).", "frequency": "daily", "xp": 25, "requiredLevel": 7, "tag": "Physical" },
+            { "id": "miracle_meditate_30min", "title": "30-Minute Meditation", "description": "Practice 30 minutes of morning meditation.", "frequency": "daily", "xp": 15, "requiredLevel": 7, "tag": "Spiritual" },
+            { "id": "miracle_journal_20min", "title": "20-Minute Journal", "description": "Write a journal entry about your progress and gratitude.", "frequency": "daily", "xp": 5, "requiredLevel": 7, "tag": "Mental" },
+            { "id": "miracle_read_30pages", "title": "Read 30 Pages", "description": "Read at least 30 pages of a book.", "frequency": "daily", "xp": 5, "requiredLevel": 7, "tag": "Mental" },
+            { "id": "miracle_sunlight_10min", "title": "Sunlight Exposure", "description": "Spend 10 minutes in sunlight after waking.", "frequency": "daily", "xp": 5, "requiredLevel": 7, "tag": "Physical" }
           ]
         },
         {
@@ -1546,13 +1773,13 @@
           "icon": "✨",
           "xpThreshold": 1750,
           "unlockTasks": [
-            { "id": "miracle_wake_3_30am", "title": "Wake Up at 3:30 AM", "description": "Wake up at 3:30 AM for ultimate mastery.", "frequency": "daily", "xp": 50, "requiredLevel": 8 },
-            { "id": "miracle_water", "title": "Drink Water First", "description": "Drink 16 oz of water immediately upon waking.", "frequency": "daily", "xp": 10, "requiredLevel": 8 },
-            { "id": "miracle_exercise_60min", "title": "60-Minute Exercise", "description": "Do 60 minutes of exercise (walk, yoga, or similar).", "frequency": "daily", "xp": 30, "requiredLevel": 8 },
-            { "id": "miracle_meditate_40min", "title": "40-Minute Meditation", "description": "Practice 40 minutes of morning meditation.", "frequency": "daily", "xp": 20, "requiredLevel": 8 },
-            { "id": "miracle_journal_30min", "title": "30-Minute Journal", "description": "Write a journal entry about your progress and gratitude.", "frequency": "daily", "xp": 10, "requiredLevel": 8 },
-            { "id": "miracle_read_40pages", "title": "Read 40 Pages", "description": "Read at least 40 pages of a book.", "frequency": "daily", "xp": 10, "requiredLevel": 8 },
-            { "id": "miracle_sunlight_15min", "title": "Sunlight Exposure", "description": "Spend 15 minutes in sunlight after waking.", "frequency": "daily", "xp": 10, "requiredLevel": 8 }
+            { "id": "miracle_wake_3_30am", "title": "Wake Up at 3:30 AM", "description": "Wake up at 3:30 AM for ultimate mastery.", "frequency": "daily", "xp": 50, "requiredLevel": 8, "tag": "Physical" },
+            { "id": "miracle_water", "title": "Drink Water First", "description": "Drink 16 oz of water immediately upon waking.", "frequency": "daily", "xp": 10, "requiredLevel": 8, "tag": "Physical" },
+            { "id": "miracle_exercise_60min", "title": "60-Minute Exercise", "description": "Do 60 minutes of exercise (walk, yoga, or similar).", "frequency": "daily", "xp": 30, "requiredLevel": 8, "tag": "Physical" },
+            { "id": "miracle_meditate_40min", "title": "40-Minute Meditation", "description": "Practice 40 minutes of morning meditation.", "frequency": "daily", "xp": 20, "requiredLevel": 8, "tag": "Spiritual" },
+            { "id": "miracle_journal_30min", "title": "30-Minute Journal", "description": "Write a journal entry about your progress and gratitude.", "frequency": "daily", "xp": 10, "requiredLevel": 8, "tag": "Mental" },
+            { "id": "miracle_read_40pages", "title": "Read 40 Pages", "description": "Read at least 40 pages of a book.", "frequency": "daily", "xp": 10, "requiredLevel": 8, "tag": "Mental" },
+            { "id": "miracle_sunlight_15min", "title": "Sunlight Exposure", "description": "Spend 15 minutes in sunlight after waking.", "frequency": "daily", "xp": 10, "requiredLevel": 8, "tag": "Physical" }
           ]
         }
       ]

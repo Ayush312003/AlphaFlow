@@ -9,6 +9,7 @@ import 'package:alphaflow/providers/custom_tasks_provider.dart'; // For customTa
 import 'package:alphaflow/providers/batch_sync_provider.dart'; // For batch sync functionality
 import 'package:alphaflow/providers/xp_provider.dart'; // For XP cap checking
 import 'package:flutter/widgets.dart';
+import 'package:alphaflow/providers/app_mode_provider.dart'; // For preferencesServiceProvider
 
 // Provider that streams the list of task completions from Firestore
 // This now only includes guided task completions, as custom tasks are stored locally
@@ -225,6 +226,36 @@ class CompletionsManager {
       
       // Add to daily XP tracking
       await xpNotifier.addDailyXp(xpToAward);
+      
+      // --- Skill XP Persistence ---
+      // Find the GuidedTask to get its tag
+      final guidedTracksAsync = _ref.read(guidedTracksProvider);
+      final prefsService = _ref.read(preferencesServiceProvider);
+      
+      // Handle skill XP persistence synchronously
+      guidedTracksAsync.when(
+        data: (allGuidedTracks) {
+          for (var track in allGuidedTracks) {
+            if (track.id == trackId) {
+              for (var level in track.levels) {
+                try {
+                  final task = level.unlockTasks.firstWhere((t) => t.id == taskId);
+                  final skillTag = task.tag;
+                  final prevSkillXp = prefsService.loadSkillXp(skillTag);
+                  // Use unawaited to avoid blocking the UI
+                  prefsService.saveSkillXp(skillTag, prevSkillXp + xpToAward);
+                  break;
+                } catch (e) {
+                  // Task not found in this level
+                }
+              }
+            }
+          }
+        },
+        loading: () {},
+        error: (error, stack) {},
+      );
+      // --- End Skill XP Persistence ---
       
       // Background sync to Firestore
       syncStatusNotifier.setSyncing();

@@ -100,6 +100,11 @@ class XpNotifier extends StateNotifier<int> {
     state = totalXp;
     await _saveXp();
   }
+
+  // Sync session XP with actual completions (for app startup or when needed)
+  Future<void> syncSessionXpWithCompletions(List<TaskCompletion> completions) async {
+    await calculateTotalXpFromCompletions(completions);
+  }
 }
 
 final xpProvider = StateNotifierProvider<XpNotifier, int>((ref) {
@@ -125,36 +130,19 @@ final canEarnXpProvider = Provider.family<bool, int>((ref, xpToEarn) {
   return xpNotifier.canEarnXpToday(xpToEarn);
 });
 
-// Provider for current day XP (for guided mode)
+// Provider for current day XP (for guided mode) - Based on actual completions
 final currentDayXpProvider = Provider<int>((ref) {
   final appMode = ref.watch(localAppModeProvider);
   final selectedTrackId = ref.watch(localSelectedTrackProvider);
   final completions = ref.watch(combinedCompletionsProvider);
-  final guidedTracksAsync = ref.watch(guidedTracksProvider);
 
   if (appMode != AppMode.guided || selectedTrackId == null) {
     return 0;
   }
 
-  return guidedTracksAsync.when(
-    data: (allGuidedTracks) {
-      GuidedTrack? currentTrack;
-      try {
-        currentTrack = allGuidedTracks.firstWhere((track) => track.id == selectedTrackId);
-      } catch (e) {
-        print("Error: Could not find selected track with ID $selectedTrackId in currentDayXpProvider. $e");
-        return 0;
-      }
-
-      final Map<String, GuidedTask> allTasksInCurrentTrackMap = {};
-      for (var level in currentTrack.levels) {
-        for (var task in level.unlockTasks) {
-          allTasksInCurrentTrackMap[task.id] = task;
-        }
-      }
-
+  // Calculate XP from actual completions for today
+  final today = DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day);
       int currentDayXp = 0;
-      final DateTime today = DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
       for (final completion in completions) {
         final completionDate = DateTime.utc(completion.date.year, completion.date.month, completion.date.day);
@@ -162,14 +150,14 @@ final currentDayXpProvider = Provider<int>((ref) {
           currentDayXp += completion.xpAwarded;
         }
       }
+  
       return currentDayXp;
-    },
-    loading: () => 0,
-    error: (error, stack) {
-      print("Error loading guided tracks in currentDayXpProvider: $error");
-      return 0;
-    },
-  );
+});
+
+// Provider to sync session XP with completions when needed
+final syncSessionXpProvider = Provider.family<Future<void>, List<TaskCompletion>>((ref, completions) async {
+  final xpNotifier = ref.read(xpProvider.notifier);
+  await xpNotifier.syncSessionXpWithCompletions(completions);
 });
 
 // Provider for total track XP
@@ -213,4 +201,16 @@ final totalTrackXpProvider = Provider<int>((ref) {
       return 0;
     },
   );
+});
+
+// Provider to get XP for a specific skill
+final skillXpProvider = Provider.family<int, String>((ref, skillTag) {
+  final prefsService = ref.watch(preferencesServiceProvider);
+  return prefsService.loadSkillXp(skillTag);
+});
+
+// Provider to get all skill XPs as a map
+final allSkillXpProvider = Provider.family<Map<String, int>, List<String>>((ref, skillTags) {
+  final prefsService = ref.watch(preferencesServiceProvider);
+  return prefsService.loadAllSkillXp(skillTags);
 });

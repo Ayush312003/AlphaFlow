@@ -22,7 +22,6 @@ import 'package:alphaflow/features/guided/providers/guided_tracks_provider.dart'
 import 'package:alphaflow/providers/guided_level_provider.dart';
 import 'package:alphaflow/providers/app_mode_provider.dart';
 import 'package:alphaflow/providers/selected_track_provider.dart';
-import 'package:alphaflow/providers/xp_provider.dart';
 
 // Helper to get the start of the week (Monday UTC) for a given DateTime
 DateTime _startOfWeek(DateTime date) {
@@ -58,7 +57,6 @@ class GuidedXpCalculations {
 final guidedXpCalculationsProvider = Provider<GuidedXpCalculations>((ref) {
   final tasksForDisplay = ref.watch(displayedDateTasksProvider);
   final selectedDate = ref.watch(selectedCalendarDateProvider);
-  final currentSessionXp = ref.watch(xpProvider);
   
   // Calculate total possible XP for selected date
   final totalPossibleXpForSelectedDate = tasksForDisplay.fold(
@@ -66,7 +64,7 @@ final guidedXpCalculationsProvider = Provider<GuidedXpCalculations>((ref) {
     (sum, task) => sum + task.xp,
   );
 
-  // Calculate XP earned for selected date
+  // Calculate XP earned for selected date based on actual completions
   double xpEarnedForSelectedDate = 0;
   for (var task in tasksForDisplay) {
     if (task.isCompleted) {
@@ -87,10 +85,12 @@ final guidedXpCalculationsProvider = Provider<GuidedXpCalculations>((ref) {
   String xpTextLabel;
 
   if (_isSameDay(selectedDate, todayNormalized)) {
-    uiXpDisplayValue = currentSessionXp.toDouble();
+    // For today, use the actual XP earned from completions (not session XP)
+    uiXpDisplayValue = xpEarnedForSelectedDate;
     uiTotalPossibleXp = totalPossibleXpForSelectedDate;
     xpTextLabel = "Today's XP:";
   } else {
+    // For other dates, use the XP earned for that specific date
     uiXpDisplayValue = xpEarnedForSelectedDate;
     uiTotalPossibleXp = totalPossibleXpForSelectedDate;
     xpTextLabel = "${selectedDate.month}/${selectedDate.day}/${selectedDate.year} XP:";

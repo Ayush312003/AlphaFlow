@@ -63,6 +63,7 @@ class GuidedTracksService {
       frequency: _parseFrequency(taskJson['frequency'] as String),
       xp: taskJson['xp'] as int,
       requiredLevel: taskJson['requiredLevel'] as int,
+      tag: taskJson['tag'] as String,
     );
   }
   
