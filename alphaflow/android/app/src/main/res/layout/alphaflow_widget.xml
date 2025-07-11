@@ -50,4 +50,16 @@
         android:padding="2dp"
         android:background="#1C1C1E" />
 
+    <TextView
+        android:id="@+id/empty_state_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No tasks planned for today"
+        android:textSize="14sp"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:padding="16dp"
+        android:fontFamily="@font/sora_regular"
+        android:visibility="gone" />
+
 </LinearLayout> 

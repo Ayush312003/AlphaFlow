@@ -6,6 +6,7 @@ import io.flutter.plugin.common.MethodChannel
 import android.content.Intent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
+import android.util.Log
 
 class MainActivity : FlutterActivity() {
     private val CHANNEL = "com.blackmere.alphaflow.widget"
@@ -32,10 +33,13 @@ class MainActivity : FlutterActivity() {
     }
     
     private fun updateWidget() {
+        Log.d("MainActivity", "updateWidget called from Flutter")
         val appWidgetManager = AppWidgetManager.getInstance(this)
         val appWidgetIds = appWidgetManager.getAppWidgetIds(
             ComponentName(this, AlphaflowWidgetProvider::class.java)
         )
+        
+        Log.d("MainActivity", "Found ${appWidgetIds.size} widget instances")
         
         if (appWidgetIds.isNotEmpty()) {
             val intent = Intent(this, AlphaflowWidgetProvider::class.java).apply {
@@ -43,6 +47,9 @@ class MainActivity : FlutterActivity() {
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds)
             }
             sendBroadcast(intent)
+            Log.d("MainActivity", "Sent widget update broadcast")
+        } else {
+            Log.d("MainActivity", "No widget instances found")
         }
     }
     

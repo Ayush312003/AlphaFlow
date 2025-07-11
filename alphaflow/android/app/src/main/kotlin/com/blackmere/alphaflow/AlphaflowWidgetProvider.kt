@@ -56,85 +56,86 @@ class AlphaflowWidgetProvider : AppWidgetProvider() {
             val tasksArray = JSONArray(customTasksJson)
             Log.d(TAG, "Found ${tasksArray.length()} tasks")
             
-            // Sort tasks by priority: high -> medium -> low -> none
-            val sortedTasks = mutableListOf<JSONObject>()
-            for (i in 0 until tasksArray.length()) {
-                sortedTasks.add(tasksArray.getJSONObject(i))
-            }
-            
-            sortedTasks.sortWith(compareBy<JSONObject> { task ->
-                when (task.optString("priority", "none")) {
-                    "high" -> 0
-                    "medium" -> 1
-                    "low" -> 2
-                    else -> 3
-                }
-            })
-            
-            // Clear existing task views
+            // Always clear existing task views first
             views.removeAllViews(R.id.tasks_container)
             
-            for (i in sortedTasks.indices) {
-                val task = sortedTasks[i]
-                val title = task.optString("title", "Unknown Task")
-                val taskId = task.optString("id", "")
-                val hasSubTasks = task.has("subTasks") && task.getJSONArray("subTasks").length() > 0
-                
-                // Determine completion status based on task type
-                val isCompleted = if (hasSubTasks) {
-                    // For tasks with subtasks, check if all subtasks are completed
-                    areAllSubTasksCompleted(task)
-                } else {
-                    // For simple tasks, use direct isCompleted field
-                    task.optBoolean("isCompleted", false)
-                }
-                
-                // Create individual task view
-                val taskViews = RemoteViews(context.packageName, R.layout.task_item)
-                // Set checkbox image based on completion status
-                val checkboxRes = if (isCompleted) R.drawable.ic_checkbox_checked else R.drawable.ic_checkbox_unchecked
-                taskViews.setImageViewResource(R.id.task_checkbox, checkboxRes)
-                taskViews.setTextViewText(R.id.task_title, title)
-                // Set strikethrough if completed
-                if (isCompleted) {
-                    taskViews.setInt(R.id.task_title, "setPaintFlags", Paint.STRIKE_THRU_TEXT_FLAG or Paint.ANTI_ALIAS_FLAG)
-                } else {
-                    taskViews.setInt(R.id.task_title, "setPaintFlags", Paint.ANTI_ALIAS_FLAG)
-                }
-                
-                // Create click intent for this specific task
-                // Note: We need to find the original index in the unsorted array for proper toggling
-                val originalIndex = findOriginalTaskIndex(tasksArray, taskId)
-                val toggleIntent = Intent(context, AlphaflowWidgetProvider::class.java).apply {
-                    action = ACTION_TOGGLE_TASK
-                    putExtra(EXTRA_TASK_INDEX, originalIndex)
-                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                }
-                val togglePendingIntent = PendingIntent.getBroadcast(
-                    context, i, toggleIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                )
-                
-                // Set click handler for this task item
-                taskViews.setOnClickPendingIntent(R.id.task_item_layout, togglePendingIntent)
-                
-                // Add task view to container
-                views.addView(R.id.tasks_container, taskViews)
-                
-                // Add separator after each task except the last one
-                if (i < sortedTasks.size - 1) {
-                    val separator = RemoteViews(context.packageName, R.layout.task_separator)
-                    views.addView(R.id.tasks_container, separator)
-                }
-                
-                Log.d(TAG, "Task: $title, Completed: $isCompleted, HasSubTasks: $hasSubTasks, Priority: ${task.optString("priority", "none")}")
-            }
-            
+            // Check if there are no tasks first
             if (tasksArray.length() == 0) {
-                val emptyViews = RemoteViews(context.packageName, R.layout.task_item)
-                emptyViews.setTextViewText(R.id.task_title, "No tasks yet")
-                emptyViews.setTextViewText(R.id.task_checkbox, "")
-                views.addView(R.id.tasks_container, emptyViews)
+                Log.d(TAG, "No tasks found, showing empty state")
+                views.setInt(R.id.empty_state_text, "setVisibility", android.view.View.VISIBLE)
+            } else {
+                Log.d(TAG, "Found ${tasksArray.length()} tasks, processing them")
+                views.setInt(R.id.empty_state_text, "setVisibility", android.view.View.GONE)
+                // Sort tasks by priority: high -> medium -> low -> none
+                val sortedTasks = mutableListOf<JSONObject>()
+                for (i in 0 until tasksArray.length()) {
+                    sortedTasks.add(tasksArray.getJSONObject(i))
+                }
+                
+                sortedTasks.sortWith(compareBy<JSONObject> { task ->
+                    when (task.optString("priority", "none")) {
+                        "high" -> 0
+                        "medium" -> 1
+                        "low" -> 2
+                        else -> 3
+                    }
+                })
+                
+                for (i in sortedTasks.indices) {
+                    val task = sortedTasks[i]
+                    val title = task.optString("title", "Unknown Task")
+                    val taskId = task.optString("id", "")
+                    val hasSubTasks = task.has("subTasks") && task.getJSONArray("subTasks").length() > 0
+                    
+                    // Determine completion status based on task type
+                    val isCompleted = if (hasSubTasks) {
+                        // For tasks with subtasks, check if all subtasks are completed
+                        areAllSubTasksCompleted(task)
+                    } else {
+                        // For simple tasks, use direct isCompleted field
+                        task.optBoolean("isCompleted", false)
+                    }
+                    
+                    // Create individual task view
+                    val taskViews = RemoteViews(context.packageName, R.layout.task_item)
+                    // Set checkbox image based on completion status
+                    val checkboxRes = if (isCompleted) R.drawable.ic_checkbox_checked else R.drawable.ic_checkbox_unchecked
+                    taskViews.setImageViewResource(R.id.task_checkbox, checkboxRes)
+                    taskViews.setTextViewText(R.id.task_title, title)
+                    // Set strikethrough if completed
+                    if (isCompleted) {
+                        taskViews.setInt(R.id.task_title, "setPaintFlags", Paint.STRIKE_THRU_TEXT_FLAG or Paint.ANTI_ALIAS_FLAG)
+                    } else {
+                        taskViews.setInt(R.id.task_title, "setPaintFlags", Paint.ANTI_ALIAS_FLAG)
+                    }
+                    
+                    // Create click intent for this specific task
+                    // Note: We need to find the original index in the unsorted array for proper toggling
+                    val originalIndex = findOriginalTaskIndex(tasksArray, taskId)
+                    val toggleIntent = Intent(context, AlphaflowWidgetProvider::class.java).apply {
+                        action = ACTION_TOGGLE_TASK
+                        putExtra(EXTRA_TASK_INDEX, originalIndex)
+                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                    }
+                    val togglePendingIntent = PendingIntent.getBroadcast(
+                        context, i, toggleIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    )
+                    
+                    // Set click handler for this task item
+                    taskViews.setOnClickPendingIntent(R.id.task_item_layout, togglePendingIntent)
+                    
+                    // Add task view to container
+                    views.addView(R.id.tasks_container, taskViews)
+                    
+                    // Add separator after each task except the last one
+                    if (i < sortedTasks.size - 1) {
+                        val separator = RemoteViews(context.packageName, R.layout.task_separator)
+                        views.addView(R.id.tasks_container, separator)
+                    }
+                    
+                    Log.d(TAG, "Task: $title, Completed: $isCompleted, HasSubTasks: $hasSubTasks, Priority: ${task.optString("priority", "none")}")
+                }
             }
             
         } catch (e: Exception) {
