@@ -5,6 +5,7 @@ import 'package:alphaflow/data/models/task_priority.dart';
 import 'package:alphaflow/data/models/sub_task.dart';
 import 'package:alphaflow/data/models/task_target.dart'; // Added import
 import 'package:alphaflow/providers/app_mode_provider.dart';
+import 'package:alphaflow/data/services/widget_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -48,6 +49,7 @@ class CustomTaskListNotifier extends StateNotifier<List<CustomTask>> {
     );
     state = [...state, newTask];
     await _prefsService.saveCustomTasks(state);
+    await WidgetService.updateWidget(); // Notify widget to update
   }
 
   Future<void> updateTask(CustomTask updatedTask) async {
@@ -56,11 +58,13 @@ class CustomTaskListNotifier extends StateNotifier<List<CustomTask>> {
         if (task.id == updatedTask.id) updatedTask else task,
     ];
     await _prefsService.saveCustomTasks(state);
+    await WidgetService.updateWidget(); // Notify widget to update
   }
 
   Future<void> deleteTask(String taskId) async {
     state = state.where((task) => task.id != taskId).toList();
     await _prefsService.saveCustomTasks(state);
+    await WidgetService.updateWidget(); // Notify widget to update
   }
 
   Future<void> toggleSubTaskCompletion(
@@ -85,6 +89,7 @@ class CustomTaskListNotifier extends StateNotifier<List<CustomTask>> {
           return task;
         }).toList();
     await _prefsService.saveCustomTasks(state);
+    await WidgetService.updateWidget(); // Notify widget to update
   }
 
   Future<void> updateTaskTargetProgress(
@@ -115,6 +120,7 @@ class CustomTaskListNotifier extends StateNotifier<List<CustomTask>> {
           return task;
         }).toList();
     await _prefsService.saveCustomTasks(state);
+    await WidgetService.updateWidget(); // Notify widget to update
   }
 
   // Optional: Method to reorder tasks if needed in the future
