@@ -246,6 +246,16 @@ class PreferencesService {
     return result;
   }
 
+  // Clear all skill XP data
+  Future<void> clearAllSkillXp() async {
+    final keys = _prefs.getKeys();
+    for (final key in keys) {
+      if (key.startsWith(_keySkillXpPrefix)) {
+        await _prefs.remove(key);
+      }
+    }
+  }
+
   // Helpers / Reset
   Future<void> clearAppMode() async { await _prefs.remove(_keyAppMode); }
   Future<void> clearAll() async {
@@ -255,6 +265,7 @@ class PreferencesService {
     await _prefs.remove(_keyCompletions);
     await _prefs.remove(_keyFirstActiveDate);
     await clearPendingCompletions(); // Clear pending completions too
+    await clearAllSkillXp(); // Clear skill XP data too
     // Also clear any migration flags if doing a full reset for testing
     // Example: await _prefs.remove(_keyGenericBoolPrefix + 'hasMigratedUserDataToFirestore_v1');
   }
