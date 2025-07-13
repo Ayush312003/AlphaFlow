@@ -159,7 +159,7 @@ class _CustomHomePageState extends ConsumerState<CustomHomePage> {
                   margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+                    children: [
                       // Tasks Header
                       Padding(
                         padding: const EdgeInsets.fromLTRB(4, 0, 4, 12),
@@ -186,27 +186,27 @@ class _CustomHomePageState extends ConsumerState<CustomHomePage> {
                       ),
                       
                       // Tasks List
-          Expanded(
+                      Expanded(
                         child: tasksForSelectedDay.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
                                       Icons.task_alt_outlined,
                                       size: 48,
                                       color: AlphaFlowTheme.guidedTextSecondary.withOpacity(0.5),
                                     ),
                                     const SizedBox(height: 16),
-                            Text(
+                                    Text(
                                       'No tasks yet',
                                       style: AlphaFlowTheme.guidedTextStyle.copyWith(
                                         fontSize: 16,
                                         color: AlphaFlowTheme.guidedTextSecondary,
                                       ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
                                       'Tap + to add a new task',
                                       style: AlphaFlowTheme.guidedTextStyle.copyWith(
                                         fontSize: 14,
@@ -214,53 +214,55 @@ class _CustomHomePageState extends ConsumerState<CustomHomePage> {
                                       ),
                                     ),
                                   ],
-                      ),
-                    )
-                    : ListView.builder(
-                                physics: const BouncingScrollPhysics(),
-                                itemCount: tasksForSelectedDay.length,
-                      itemBuilder: (context, index) {
-                                  final task = tasksForSelectedDay[index];
-                                  return Padding(
-                                    padding: const EdgeInsets.only(bottom: 8),
-                                    child: PremiumCustomTaskCard(
-                                      task: task,
-                                      onEditTap: () => _editTask(context, task),
-                                      onDeleteTap: () => _deleteTask(context, task),
-                                      onToggleCompletion: (completed) {
-                                        final now = DateTime.now();
-                                        if (task.subTasks.isNotEmpty) {
-                                          // Mark all subtasks as completed/incomplete
-                                          final isOverdue = task.dueDate != null && task.dueDate!.isBefore(DateTime(now.year, now.month, now.day));
-                                          final updated = task.copyWith(
-                                            subTasks: task.subTasks
-                                                .map((st) => st.copyWith(isCompleted: completed))
-                                                .toList(),
-                                            dueDate: (completed && isOverdue) ? null : task.dueDate,
-                                          );
-                                          ref.read(customTasksProvider.notifier).updateTask(updated);
-                                        } else {
-                                          // Toggle isCompleted for tasks without subtasks
-                                          final isOverdue = task.dueDate != null && task.dueDate!.isBefore(DateTime(now.year, now.month, now.day));
-                                          final updated = task.copyWith(
-                                            isCompleted: completed,
-                                            dueDate: (completed && isOverdue) ? null : task.dueDate,
-                                          );
-                                          ref.read(customTasksProvider.notifier).updateTask(updated);
-                                        }
-                                      },
-                                      onNotesTap: task.notes != null && task.notes!.isNotEmpty
-                                          ? () => _showNotesDialog(context, task.title, task.notes!)
-                                          : null,
-                                      onSubTasksTap: task.subTasks.isNotEmpty
-                                          ? () => _showSubTasksDialog(context, task.id, task.title, task.subTasks)
-                                          : null,
-                                      onTargetTap: task.taskTarget != null
-                                          ? () => _showTargetDialog(context, task)
-                                          : null,
-                                    ),
-                                  );
-                                },
+                                ),
+                              )
+                            : Container(
+                                child: ListView.builder(
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: tasksForSelectedDay.length,
+                                  itemBuilder: (context, index) {
+                                    final task = tasksForSelectedDay[index];
+                                    return Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: PremiumCustomTaskCard(
+                                        task: task,
+                                        onEditTap: () => _editTask(context, task),
+                                        onDeleteTap: () => _deleteTask(context, task),
+                                        onToggleCompletion: (completed) {
+                                          final now = DateTime.now();
+                                          if (task.subTasks.isNotEmpty) {
+                                            // Mark all subtasks as completed/incomplete
+                                            final isOverdue = task.dueDate != null && task.dueDate!.isBefore(DateTime(now.year, now.month, now.day));
+                                            final updated = task.copyWith(
+                                              subTasks: task.subTasks
+                                                  .map((st) => st.copyWith(isCompleted: completed))
+                                                  .toList(),
+                                              dueDate: (completed && isOverdue) ? null : task.dueDate,
+                                            );
+                                            ref.read(customTasksProvider.notifier).updateTask(updated);
+                                          } else {
+                                            // Toggle isCompleted for tasks without subtasks
+                                            final isOverdue = task.dueDate != null && task.dueDate!.isBefore(DateTime(now.year, now.month, now.day));
+                                            final updated = task.copyWith(
+                                              isCompleted: completed,
+                                              dueDate: (completed && isOverdue) ? null : task.dueDate,
+                                            );
+                                            ref.read(customTasksProvider.notifier).updateTask(updated);
+                                          }
+                                        },
+                                        onNotesTap: task.notes != null && task.notes!.isNotEmpty
+                                            ? () => _showNotesDialog(context, task.title, task.notes!)
+                                            : null,
+                                        onSubTasksTap: task.subTasks.isNotEmpty
+                                            ? () => _showSubTasksDialog(context, task.id, task.title, task.subTasks)
+                                            : null,
+                                        onTargetTap: task.taskTarget != null
+                                            ? () => _showTargetDialog(context, task)
+                                            : null,
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                       ),
                     ],
