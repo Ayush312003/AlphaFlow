@@ -4,15 +4,11 @@ import 'package:alphaflow/data/models/app_mode.dart';
 import 'package:alphaflow/features/guided/presentation/guided_home_page.dart';
 import 'package:alphaflow/features/custom/presentation/custom_home_page.dart';
 import 'package:alphaflow/features/onboarding/presentation/select_mode_page.dart';
-import 'package:alphaflow/features/guided/presentation/select_track_page.dart';
 import 'package:alphaflow/widgets/navigation_drawer_widget.dart';
 import 'package:alphaflow/features/guided/providers/guided_tracks_provider.dart';
 import 'package:alphaflow/providers/app_mode_provider.dart';
 import 'package:alphaflow/providers/selected_track_provider.dart';
-import 'package:alphaflow/widgets/sync_status_indicator.dart';
-import 'package:alphaflow/common/widgets/layout_templates.dart';
 import 'package:alphaflow/common/widgets/track_card.dart';
-import 'package:alphaflow/core/constants/spacing.dart';
 import 'package:alphaflow/core/theme/alphaflow_theme.dart';
 import 'package:alphaflow/common/widgets/glassmorphism_card.dart';
 import 'package:alphaflow/features/guided/presentation/analytics_page.dart';
@@ -45,17 +41,19 @@ class HomePage extends ConsumerWidget {
     const Widget drawerWidget = NavigationDrawerWidget();
 
     return Scaffold(
-      backgroundColor: AlphaFlowTheme.background,
+      backgroundColor: const Color(0xFF0D0D0D),
       appBar: AppBar(
         title: const Text(
           "Choose Your Track",
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: AlphaFlowTheme.textPrimary,
+            color: Colors.white,
+            fontFamily: 'Sora',
           ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       drawer: drawerWidget,
       body: _buildTrackSelectionBody(context, ref),
@@ -71,75 +69,34 @@ class HomePage extends ConsumerWidget {
           return const TrackSelectionEmptyState();
         }
 
-        return CustomScrollView(
-          slivers: [
-            // Premium header
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  AlphaFlowTheme.screenPadding, 
-                  AlphaFlowTheme.screenPadding, 
-                  AlphaFlowTheme.screenPadding, 
-                  AlphaFlowTheme.screenPadding * 2
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Choose Your Path',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontSize: AlphaFlowTheme.screenTitleSize,
-                        fontWeight: FontWeight.bold,
-                        color: AlphaFlowTheme.textPrimary,
-                        fontFamily: 'Sora',
-                      ),
-                    ),
-                    SizedBox(height: AlphaFlowTheme.titleToSubtitle),
-                    Text(
-                      'Discover tracks designed to help you grow',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AlphaFlowTheme.textSecondary,
-                        fontFamily: 'Sora',
-                      ),
-                    ),
-                  ],
-                ),
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: tracks.length,
+          itemBuilder: (context, index) {
+            final track = tracks[index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: PremiumTrackCard(
+                trackId: track.id,
+                title: track.title,
+                subtitle: track.description,
+                levelCount: track.levels.length,
+                onTap: () {
+                  ref.read(selectedTrackNotifierProvider.notifier).setSelectedTrack(track.id);
+                },
               ),
-            ),
-
-            // Premium track cards
-            SliverPadding(
-              padding: EdgeInsets.symmetric(horizontal: AlphaFlowTheme.screenPadding),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final track = tracks[index];
-                    return PremiumTrackCard(
-                      trackId: track.id,
-                      title: track.title,
-                      subtitle: track.description,
-                      levelCount: track.levels.length,
-                      onTap: () {
-                        ref.read(selectedTrackNotifierProvider.notifier).setSelectedTrack(track.id);
-                      },
-                    );
-                  },
-                  childCount: tracks.length,
-                ),
-              ),
-            ),
-
-            // Bottom spacing
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 32),
-            ),
-          ],
+            );
+          },
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(
+        child: CircularProgressIndicator(
+          color: Color(0xFFFFA500),
+        ),
+      ),
       error: (error, stack) => Center(
         child: Padding(
-          padding: EdgeInsets.all(AlphaFlowTheme.screenPadding),
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -148,22 +105,33 @@ class HomePage extends ConsumerWidget {
                 size: 64,
                 color: Colors.red.withOpacity(0.5),
               ),
-              SizedBox(height: AlphaFlowTheme.betweenCards),
+              const SizedBox(height: 16),
               Text(
                 "Something went wrong",
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: AlphaFlowTheme.textPrimary,
-                  fontFamily: 'Sora',
+                  color: Colors.white,
+                  fontSize: 18,
                 ),
+                textAlign: TextAlign.center,
               ),
-              SizedBox(height: AlphaFlowTheme.titleToSubtitle),
+              const SizedBox(height: 8),
               Text(
                 "Please try again later",
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AlphaFlowTheme.textSecondary,
-                  fontFamily: 'Sora',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 14,
                 ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                "Error: $error",
+                style: TextStyle(
+                  color: Colors.red.withOpacity(0.7),
+                  fontSize: 12,
+                ),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
