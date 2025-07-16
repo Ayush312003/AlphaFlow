@@ -100,7 +100,9 @@ class SelectTrackPage extends ConsumerWidget {
           );
         },
         loading: () => const Center(
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(
+            color: Color(0xFFFFA500), // Orange
+          ),
         ),
         error: (error, stack) => Center(
           child: Padding(

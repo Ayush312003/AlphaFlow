@@ -15,7 +15,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alphaflow/data/local/preferences_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:alphaflow/widgets/loading_screen.dart';
+import 'package:alphaflow/widgets/branded_splash_screen.dart';
 import 'package:alphaflow/widgets/app_lifecycle_handler.dart'; // For batch sync lifecycle handling
 import 'package:alphaflow/features/user_profile/application/user_data_providers.dart';
 import 'package:alphaflow/features/auth/application/auth_providers.dart';
@@ -42,6 +42,52 @@ void main() async {
       child: const AlphaFlowApp(),
     ),
   );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'AlphaFlow',
+      theme: ThemeData.dark(),
+      home: const SplashToHome(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class SplashToHome extends StatefulWidget {
+  const SplashToHome({super.key});
+
+  @override
+  State<SplashToHome> createState() => _SplashToHomeState();
+}
+
+class _SplashToHomeState extends State<SplashToHome> {
+  bool _showSplash = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() {
+          _showSplash = false;
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_showSplash) {
+      return const BrandedSplashScreen();
+    } else {
+      return const HomePage();
+    }
+  }
 }
 
 class AlphaFlowApp extends ConsumerStatefulWidget {
@@ -99,17 +145,14 @@ class _AlphaFlowAppState extends ConsumerState<AlphaFlowApp> {
             home: authState.when(
               data: (user) {
                 if (user == null) {
-                  return const LoadingScreen();
+                  return const BrandedSplashScreen();
                 }
 
                 // Always start with HomePage and let it handle navigation
                 return const HomePage();
               },
-              loading: () => const LoadingScreen(),
-              error: (error, stack) {
-                print('Auth error: $error');
-                return const LoadingScreen();
-              },
+              loading: () => const BrandedSplashScreen(),
+              error: (error, stack) => const BrandedSplashScreen(),
             ),
           routes: {
               '/home': (context) {
