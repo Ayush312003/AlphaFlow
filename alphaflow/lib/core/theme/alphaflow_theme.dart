@@ -10,7 +10,7 @@ class AlphaFlowTheme {
   static const Color textPrimary = Color(0xFFFFFFFF);
   static const Color textSecondary = Color(0xFFB0B0B0);
   static const Color cardOverlay = Color(0x66000000); // rgba(0,0,0,0.4)
-  static const Color highlight = Color(0xFF1E90FF);
+  static const Color highlight = Color(0x33FFA500); // subtle orange with low opacity
   static const Color shadow = Color(0x55000000); // #00000055
 
   // Guided Mode Specific Colors

@@ -150,6 +150,9 @@ class _ModeCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(radius),
         onTap: onTap,
+        focusColor: Colors.white.withOpacity(0.10),
+        hoverColor: Colors.white.withOpacity(0.08),
+        splashColor: Colors.white.withOpacity(0.12),
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
