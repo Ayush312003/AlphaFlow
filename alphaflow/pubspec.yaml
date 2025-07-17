@@ -54,9 +54,18 @@ dev_dependencies:
   freezed: ^2.4.2
   json_serializable: ^6.7.1
   flutter_lints: ^4.0.0 # Added flutter_lints
+  flutter_launcher_icons: ^0.13.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/alphaFlowIcon.png"
+  macos:
+    generate: true
+    image_path: "assets/alphaFlowIcon.png"
 
 # The following section is specific to Flutter packages.
 flutter:
