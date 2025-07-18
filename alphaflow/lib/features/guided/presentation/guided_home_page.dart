@@ -147,6 +147,7 @@ class _GuidedHomePageState extends ConsumerState<GuidedHomePage> {
           // Tasks List
           Expanded(
             child: RefreshIndicator(
+              color: Color(0xFFFFA500), // Orange
               onRefresh: () async {
                 await ref.read(completionsManagerProvider).syncPendingCompletions();
               },

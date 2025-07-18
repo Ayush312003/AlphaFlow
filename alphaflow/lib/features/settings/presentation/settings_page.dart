@@ -51,6 +51,10 @@ class SettingsPage extends ConsumerWidget {
                 await ref.read(selectedTrackNotifierProvider.notifier).resetSelectedTrack(); // Changed to use reset method
                 await ref.read(appModeNotifierProvider.notifier).resetAppMode(); // Changed to use reset method
                 
+                // Clear skill XP data for analytics
+                final prefsService = ref.read(preferencesServiceProvider);
+                await prefsService.clearAllSkillXp();
+                
                 // Invalidate all related providers
                 ref.invalidate(xpProvider);
                 ref.invalidate(totalTrackXpProvider);

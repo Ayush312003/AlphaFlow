@@ -12,12 +12,20 @@ class GuidedTracksService {
   /// Loads guided tracks from the bundled JSON asset
   static Future<List<GuidedTrack>> loadGuidedTracks() async {
     try {
+      print('Loading guided tracks from asset: $_assetPath');
       final String jsonString = await rootBundle.loadString(_assetPath);
+      print('JSON string loaded, length: ${jsonString.length}');
+      
       final Map<String, dynamic> jsonData = json.decode(jsonString);
+      print('JSON decoded successfully');
       
       final List<dynamic> tracksJson = jsonData['tracks'] as List<dynamic>;
+      print('Found ${tracksJson.length} tracks in JSON');
       
-      return tracksJson.map((trackJson) => _parseGuidedTrack(trackJson)).toList();
+      final List<GuidedTrack> tracks = tracksJson.map((trackJson) => _parseGuidedTrack(trackJson)).toList();
+      print('Successfully parsed ${tracks.length} tracks');
+      
+      return tracks;
     } catch (e) {
       print('Error loading guided tracks from JSON: $e');
       // Return empty list if loading fails
