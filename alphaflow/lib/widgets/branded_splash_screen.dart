@@ -11,15 +11,15 @@ class BrandedSplashScreen extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+        children: [
             Text(
-              'Alpha Flow',
+                'Alpha Flow',
               style: GoogleFonts.sora(
-                color: Colors.white,
+                  color: Colors.white,
                 fontSize: 36,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
-              ),
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 4),
@@ -32,8 +32,8 @@ class BrandedSplashScreen extends StatelessWidget {
                 letterSpacing: 1.1,
               ),
               textAlign: TextAlign.center,
-            ),
-          ],
+          ),
+        ],
         ),
       ),
     );

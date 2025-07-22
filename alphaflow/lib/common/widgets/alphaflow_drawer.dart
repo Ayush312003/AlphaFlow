@@ -6,6 +6,8 @@ import 'package:alphaflow/providers/app_mode_provider.dart';
 import 'package:alphaflow/providers/selected_track_provider.dart';
 import 'package:alphaflow/features/guided/providers/guided_tracks_provider.dart';
 import 'package:alphaflow/data/models/app_mode.dart';
+import 'package:alphaflow/features/analytics/presentation/premium_analytics_page.dart';
+import 'package:alphaflow/providers/premium_analytics_provider.dart';
 
 /// Premium AlphaFlow drawer with dark theme and glassmorphism design
 class AlphaFlowDrawer extends ConsumerWidget {
@@ -118,6 +120,65 @@ class AlphaFlowDrawer extends ConsumerWidget {
                         ),
                       ),
                     ),
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  // Premium Analytics (Enhanced)
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final analytics = ref.watch(premiumAnalyticsProvider);
+                      final previewMetric = analytics?.totalXp != null ? '${analytics!.totalXp} XP' : '';
+                      return ListTile(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const PremiumAnalyticsPage(),
+                            ),
+                          );
+                        },
+                        leading: const Icon(Icons.analytics_outlined, color: Color(0xFFFFA500)),
+                        title: const Text(
+                          'Advanced Analytics',
+                          style: TextStyle(
+                            color: AlphaFlowTheme.textPrimary,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Sora',
+                          ),
+                        ),
+                        subtitle: Text(
+                          'Advanced insights & trends',
+                          style: TextStyle(
+                            color: AlphaFlowTheme.textSecondary.withOpacity(0.8),
+                            fontSize: 12,
+                            fontFamily: 'Sora',
+                          ),
+                        ),
+                        trailing: previewMetric.isNotEmpty
+                            ? Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFA500).withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  previewMetric,
+                                  style: const TextStyle(
+                                    color: Color(0xFFFFA500),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              )
+                            : null,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        tileColor: Colors.white.withOpacity(0.01),
+                        hoverColor: Colors.white.withOpacity(0.04),
+                      );
+                    },
                   ),
                 ],
               ),
