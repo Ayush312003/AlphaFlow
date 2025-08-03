@@ -9,6 +9,7 @@ enum TodayTaskType { guided, custom }
 class TodayTask {
   final String id;
   final String title;
+  final String description;
   final TodayTaskType type;
   final Frequency frequency; // Common field
   final bool isCompleted; // Calculated field for UI
@@ -27,6 +28,7 @@ class TodayTask {
   TodayTask({
     required this.id,
     required this.title,
+    required this.description,
     required this.type,
     required this.frequency,
     required this.isCompleted,
@@ -55,6 +57,7 @@ class TodayTask {
     return TodayTask(
       id: task.id,
       title: task.title,
+      description: task.description,
       type: TodayTaskType.guided,
       frequency: task.frequency,
       isCompleted: isCompleted,
@@ -73,6 +76,7 @@ class TodayTask {
     return TodayTask(
       id: task.id,
       title: task.title,
+      description: "",
       type: TodayTaskType.custom,
       frequency: task.frequency,
       isCompleted: isCompleted,
