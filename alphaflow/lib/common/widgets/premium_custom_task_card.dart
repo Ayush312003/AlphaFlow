@@ -90,15 +90,17 @@ class PremiumCustomTaskCard extends StatelessWidget {
                       Expanded(
                         child: Row(
                           children: [
-                            Text(
-                              task.title,
-                              style: AlphaFlowTheme.guidedTextStyle.copyWith(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                decoration: isCompleted ? TextDecoration.lineThrough : null,
-                                color: isCompleted
-                                    ? AlphaFlowTheme.guidedTextSecondary
-                                    : AlphaFlowTheme.guidedTextPrimary,
+                            Expanded(
+                              child: Text(
+                                task.title,
+                                style: AlphaFlowTheme.guidedTextStyle.copyWith(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  decoration: isCompleted ? TextDecoration.lineThrough : null,
+                                  color: isCompleted
+                                      ? AlphaFlowTheme.guidedTextSecondary
+                                      : AlphaFlowTheme.guidedTextPrimary,
+                                ),
                               ),
                             ),
                             if (streakCount != null && streakCount! > 0) ...[
