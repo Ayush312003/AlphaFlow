@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alphaflow/core/theme/alphaflow_theme.dart';
 import 'package:alphaflow/providers/xp_provider.dart';
 import 'package:flutter_radar_chart/flutter_radar_chart.dart';
+import 'package:alphaflow/features/analytics/presentation/premium_analytics_page.dart';
 
 class AnalyticsPage extends ConsumerWidget {
   const AnalyticsPage({Key? key}) : super(key: key);
@@ -23,41 +24,95 @@ class AnalyticsPage extends ConsumerWidget {
     // Calculate total skill XP
     final totalSkillXp = skillXpMap.values.fold(0, (sum, xp) => sum + xp);
 
-    return Scaffold(
-      backgroundColor: AlphaFlowTheme.guidedBackground,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AlphaFlowTheme.textPrimary),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text(
-          'Skill Analytics',
-          style: TextStyle(
-            color: AlphaFlowTheme.textPrimary,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Sora',
+    return GestureDetector(
+      onHorizontalDragEnd: (details) {
+        if (details.primaryVelocity != null && details.primaryVelocity! > 200) {
+          // Left-to-right swipe detected
+          Navigator.of(context).maybePop();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AlphaFlowTheme.guidedBackground,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AlphaFlowTheme.textPrimary),
+            onPressed: () => Navigator.of(context).pop(),
           ),
+          title: const Text(
+            'Skill Analytics',
+            style: TextStyle(
+              color: AlphaFlowTheme.textPrimary,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Sora',
+            ),
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Total XP Summary Card
-            _buildSummaryCard(context, totalTrackXp, totalSkillXp),
-            const SizedBox(height: 24),
-            
-            // Radar Chart Section
-            _buildRadarChartSection(context, skillTags, normalizedData, skillXpMap),
-            const SizedBox(height: 24),
-            
-            // Skill Breakdown Section
-            _buildSkillBreakdownSection(context, skillTags, skillXpMap, maxXp),
-          ],
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Total XP Summary Card
+              _buildSummaryCard(context, totalTrackXp, totalSkillXp),
+              const SizedBox(height: 24),
+              
+              // Radar Chart Section
+              _buildRadarChartSection(context, skillTags, normalizedData, skillXpMap),
+              const SizedBox(height: 24),
+              
+              // Skill Breakdown Section
+              _buildSkillBreakdownSection(context, skillTags, skillXpMap, maxXp),
+              // Section Divider and Advanced Analytics Button
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 32),
+                child: Column(
+                  children: [
+                    Divider(thickness: 1, color: Colors.white.withOpacity(0.08)),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Want deeper insights?',
+                      style: TextStyle(
+                        color: AlphaFlowTheme.textSecondary,
+                        fontSize: 14,
+                        fontFamily: 'Sora',
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFFA500),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          textStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Sora',
+                            fontSize: 16,
+                          ),
+                        ),
+                        icon: const Icon(Icons.analytics_outlined),
+                        label: const Text('View Advanced Analytics'),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const PremiumAnalyticsPage(),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
