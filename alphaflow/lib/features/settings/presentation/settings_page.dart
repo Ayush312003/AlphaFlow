@@ -8,7 +8,6 @@ import 'package:alphaflow/providers/task_completions_provider.dart';
 import 'package:alphaflow/providers/xp_provider.dart';
 import 'package:alphaflow/providers/guided_level_provider.dart';
 import 'package:alphaflow/providers/today_tasks_provider.dart';
-import 'package:alphaflow/providers/custom_task_streaks_provider.dart';
 import 'package:alphaflow/providers/guided_task_streaks_provider.dart';
 import 'package:alphaflow/widgets/batch_sync_test_widget.dart'; // For development testing
 import 'package:alphaflow/core/theme/alphaflow_theme.dart'; // Import the correct theme

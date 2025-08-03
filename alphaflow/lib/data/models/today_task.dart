@@ -78,7 +78,7 @@ class TodayTask {
       title: task.title,
       description: "",
       type: TodayTaskType.custom,
-      frequency: task.frequency,
+      frequency: Frequency.oneTime,
       isCompleted: isCompleted,
       guidedTask: null,
       customTask: task,
