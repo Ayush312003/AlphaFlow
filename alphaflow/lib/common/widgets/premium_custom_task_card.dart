@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 /// Premium glassmorphic task card for custom tasks with flexible content
 class PremiumCustomTaskCard extends StatelessWidget {
   final CustomTask task;
-  final int? streakCount;
   final ValueChanged<bool>? onToggleCompletion;
   final VoidCallback? onNotesTap;
   final VoidCallback? onSubTasksTap;
@@ -18,7 +17,6 @@ class PremiumCustomTaskCard extends StatelessWidget {
   const PremiumCustomTaskCard({
     super.key,
     required this.task,
-    this.streakCount,
     this.onToggleCompletion,
     this.onNotesTap,
     this.onSubTasksTap,
@@ -103,18 +101,6 @@ class PremiumCustomTaskCard extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            if (streakCount != null && streakCount! > 0) ...[
-                              const SizedBox(width: 8),
-                              Icon(Icons.whatshot, color: Colors.orange, size: 16),
-                              const SizedBox(width: 4),
-                              Text(
-                                '$streakCount',
-                                style: AlphaFlowTheme.guidedTextStyle.copyWith(
-                                  color: Colors.orange,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
                           ],
                         ),
                       ),

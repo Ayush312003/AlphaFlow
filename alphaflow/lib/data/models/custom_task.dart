@@ -7,7 +7,6 @@ import 'task_target.dart';
 class CustomTask {
   final String id;
   final String title;
-  final Frequency frequency; // daily, weekly, or oneTime
   final String? iconName; // New field
   final int? colorValue; // New field
   final DateTime? dueDate;
@@ -20,7 +19,6 @@ class CustomTask {
   CustomTask({
     required this.id,
     required this.title,
-    required this.frequency,
     this.iconName, // Optional in constructor
     this.colorValue, // Optional in constructor
     this.dueDate,
@@ -36,7 +34,6 @@ class CustomTask {
     final json = <String, dynamic>{
       'id': id,
       'title': title,
-      'frequency': frequency.toShortString(),
       'isCompleted': isCompleted, // New field
     };
     if (iconName != null) {
@@ -66,7 +63,6 @@ class CustomTask {
     return CustomTask(
       id: json['id'] as String,
       title: json['title'] as String,
-      frequency: Frequency.fromString(json['frequency'] as String),
       iconName: json['iconName'] as String?,
       colorValue: json['colorValue'] as int?,
       dueDate:
@@ -93,7 +89,6 @@ class CustomTask {
   CustomTask copyWith({
     String? id,
     String? title,
-    Frequency? frequency,
     String? iconName,
     int? colorValue,
     DateTime? dueDate,
@@ -111,7 +106,6 @@ class CustomTask {
     return CustomTask(
       id: id ?? this.id,
       title: title ?? this.title,
-      frequency: frequency ?? this.frequency,
       iconName: clearIconName ? null : iconName ?? this.iconName,
       colorValue: clearColorValue ? null : colorValue ?? this.colorValue,
       dueDate: clearDueDate ? null : dueDate ?? this.dueDate,

@@ -56,7 +56,6 @@ class TaskEditorPage extends ConsumerStatefulWidget {
 class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
-  Frequency _selectedFrequency = Frequency.daily;
   int? _selectedColorValue;
   DateTime? _selectedDueDate;
   late TextEditingController _notesController;
@@ -77,7 +76,6 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
 
     if (widget.taskToEdit != null) {
       _titleController.text = widget.taskToEdit!.title;
-      _selectedFrequency = widget.taskToEdit!.frequency;
       _selectedColorValue = widget.taskToEdit!.colorValue;
       _selectedDueDate = widget.taskToEdit!.dueDate;
       _notesController.text = widget.taskToEdit!.notes ?? '';
@@ -237,7 +235,6 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
       if (widget.taskToEdit == null) {
         customTasksNotifier.addTask(
           title: title,
-          frequency: _selectedFrequency,
           iconName: null,
           colorValue: _selectedColorValue,
           dueDate: _selectedDueDate,
@@ -253,7 +250,6 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
         final updatedTask = widget.taskToEdit!.copyWith(
           // Use copyWith for easier updates
           title: title,
-          frequency: _selectedFrequency,
           iconName: null,
           colorValue: _selectedColorValue,
           dueDate: _selectedDueDate,
@@ -349,34 +345,6 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
                       textCapitalization: TextCapitalization.sentences,
                     ),
                     const SizedBox(height: 16),
-                    DropdownButtonFormField<Frequency>(
-                      value: _selectedFrequency,
-                      decoration: const InputDecoration(
-                        labelText: 'Frequency',
-                        border: OutlineInputBorder(),
-                      ),
-                      items:
-                          Frequency.values.map((Frequency frequency) {
-                            return DropdownMenuItem<Frequency>(
-                              value: frequency,
-                              child: Text(frequency.toShortString()),
-                            );
-                          }).toList(),
-                      onChanged: (Frequency? newValue) {
-                        if (newValue != null) {
-                          setState(() {
-                            _selectedFrequency = newValue;
-                          });
-                        }
-                      },
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please select a frequency';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16), // Ensure appropriate spacing
                     DropdownButtonFormField<TaskPriority>(
                       value: _selectedPriority,
                       decoration: const InputDecoration(
