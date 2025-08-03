@@ -4,6 +4,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:alphaflow/data/models/custom_task.dart';
 import 'package:alphaflow/providers/custom_tasks_provider.dart';
+import 'package:alphaflow/providers/custom_task_streaks_provider.dart';
 import '../../../common/widgets/alphaflow_drawer.dart';
 import '../../../core/theme/alphaflow_theme.dart';
 import '../../../common/widgets/premium_custom_task_card.dart';
@@ -54,6 +55,7 @@ class _CustomHomePageState extends ConsumerState<CustomHomePage> {
         builder: (context, ref, child) {
           final allTasks = ref.watch(customTasksProvider);
           final tasksForSelectedDay = ref.watch(sortedCustomTasksProvider);
+          final streaks = ref.watch(customTaskStreaksProvider);
           
           return Column(
             children: [
@@ -225,6 +227,7 @@ class _CustomHomePageState extends ConsumerState<CustomHomePage> {
                                     padding: const EdgeInsets.only(bottom: 8),
                                     child: PremiumCustomTaskCard(
                                       task: task,
+                                      streakCount: streaks[task.id]?.streakCount,
                                       onEditTap: () => _editTask(context, task),
                                       onDeleteTap: () => _deleteTask(context, task),
                                       onToggleCompletion: (completed) {

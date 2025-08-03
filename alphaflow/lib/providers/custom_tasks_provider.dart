@@ -24,7 +24,6 @@ class CustomTaskListNotifier extends StateNotifier<List<CustomTask>> {
 
   Future<void> addTask({
     required String title,
-    required String description,
     required Frequency frequency,
     String? iconName,
     int? colorValue,
@@ -37,7 +36,6 @@ class CustomTaskListNotifier extends StateNotifier<List<CustomTask>> {
     final newTask = CustomTask(
       id: _uuid.v4(), // Generate a unique ID
       title: title,
-      description: description,
       frequency: frequency,
       iconName: iconName,
       colorValue: colorValue,
