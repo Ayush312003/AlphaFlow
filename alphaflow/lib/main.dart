@@ -5,10 +5,12 @@ import 'package:alphaflow/features/guided/presentation/select_track_page.dart';
 import 'package:alphaflow/features/home/presentation/home_page.dart';
 import 'package:alphaflow/features/onboarding/presentation/select_mode_page.dart';
 import 'package:alphaflow/features/settings/presentation/settings_page.dart';
+import 'package:alphaflow/providers/app_mode_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:alphaflow/data/local/preferences_service.dart';
 import 'package:alphaflow/widgets/branded_splash_screen.dart';
 import 'package:alphaflow/widgets/app_lifecycle_handler.dart'; // For batch sync lifecycle handling
 import 'package:alphaflow/features/auth/application/auth_providers.dart';
@@ -20,9 +22,14 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  final prefsService = await PreferencesService.init();
+
   runApp(
-    const ProviderScope(
-      child: AlphaFlowApp(),
+    ProviderScope(
+      overrides: [
+        preferencesServiceProvider.overrideWithValue(prefsService),
+      ],
+      child: const AlphaFlowApp(),
     ),
   );
 }
