@@ -1,5 +1,5 @@
 import 'package:alphaflow/data/models/custom_task.dart';
-import 'package:alphaflow/features/auth/presentation/login_page.dart';
+import 'package:alphaflow/features/auth/presentation/onboarding_page.dart';
 import 'package:alphaflow/features/custom/presentation/task_editor_page.dart';
 import 'package:alphaflow/features/guided/presentation/select_track_page.dart';
 import 'package:alphaflow/features/home/presentation/home_page.dart';
@@ -49,7 +49,7 @@ class AlphaFlowApp extends ConsumerWidget {
         home: authState.when(
           data: (user) {
             if (user == null) {
-              return const LoginPage();
+              return const OnboardingPage();
             }
             return const HomePage();
           },
