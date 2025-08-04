@@ -194,16 +194,9 @@ final displayedDateTasksProvider = Provider<List<TodayTask>>((ref) {
       bool shouldDisplay = false;
       bool isCompleted = false;
 
-      if (customTask.frequency == Frequency.daily) {
-        shouldDisplay = true;
-        isCompleted = isTaskCompletedOnSelectedDate(customTask.id);
-      } else if (customTask.frequency == Frequency.weekly) {
-        shouldDisplay = true;
-        isCompleted = isTaskCompletedThisWeek(customTask.id);
-      } else if (customTask.frequency == Frequency.oneTime) {
-        final firstCompletionDate = completions
-            .where((c) => c.taskId == customTask.id)
-            .map((c) => c.date)
+      final firstCompletionDate = completions
+          .where((c) => c.taskId == customTask.id)
+          .map((c) => c.date)
             .fold<DateTime?>(
               null,
               (prev, current) =>
@@ -217,7 +210,6 @@ final displayedDateTasksProvider = Provider<List<TodayTask>>((ref) {
           isCompleted = false;
           shouldDisplay = true; // Display if not completed by this date
         }
-      }
 
       if (shouldDisplay) {
         tasksForDisplay.add(TodayTask.fromCustomTask(customTask, isCompleted));

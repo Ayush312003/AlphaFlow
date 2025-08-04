@@ -86,16 +86,22 @@ class PremiumCustomTaskCard extends StatelessWidget {
                   child: Row(
                     children: [
                       Expanded(
-                        child: Text(
-                          task.title,
-                          style: AlphaFlowTheme.guidedTextStyle.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            decoration: isCompleted ? TextDecoration.lineThrough : null,
-                            color: isCompleted
-                                ? AlphaFlowTheme.guidedTextSecondary
-                                : AlphaFlowTheme.guidedTextPrimary,
-                          ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                task.title,
+                                style: AlphaFlowTheme.guidedTextStyle.copyWith(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  decoration: isCompleted ? TextDecoration.lineThrough : null,
+                                  color: isCompleted
+                                      ? AlphaFlowTheme.guidedTextSecondary
+                                      : AlphaFlowTheme.guidedTextPrimary,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       ..._buildTrailingIcons(),

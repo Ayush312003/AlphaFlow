@@ -56,8 +56,6 @@ class TaskEditorPage extends ConsumerStatefulWidget {
 class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
-  late TextEditingController _descriptionController;
-  Frequency _selectedFrequency = Frequency.daily;
   int? _selectedColorValue;
   DateTime? _selectedDueDate;
   late TextEditingController _notesController;
@@ -72,15 +70,12 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
   void initState() {
     super.initState();
     _titleController = TextEditingController();
-    _descriptionController = TextEditingController();
     _notesController = TextEditingController();
     _targetValueController = TextEditingController(); // Initialize here
     _targetUnitController = TextEditingController(); // Initialize here
 
     if (widget.taskToEdit != null) {
       _titleController.text = widget.taskToEdit!.title;
-      _descriptionController.text = widget.taskToEdit!.description;
-      _selectedFrequency = widget.taskToEdit!.frequency;
       _selectedColorValue = widget.taskToEdit!.colorValue;
       _selectedDueDate = widget.taskToEdit!.dueDate;
       _notesController.text = widget.taskToEdit!.notes ?? '';
@@ -172,7 +167,6 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
   @override
   void dispose() {
     _titleController.dispose();
-    _descriptionController.dispose();
     _notesController.dispose();
     for (var controller in _subTaskTitleControllers) {
       controller.dispose();
@@ -187,7 +181,6 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
       _formKey.currentState!.save();
 
       final title = _titleController.text.trim();
-      final description = _descriptionController.text.trim();
 
       TaskTarget? finalTaskTarget;
       if (_selectedTargetType == TargetType.numeric) {
@@ -242,8 +235,6 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
       if (widget.taskToEdit == null) {
         customTasksNotifier.addTask(
           title: title,
-          description: description,
-          frequency: _selectedFrequency,
           iconName: null,
           colorValue: _selectedColorValue,
           dueDate: _selectedDueDate,
@@ -259,8 +250,6 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
         final updatedTask = widget.taskToEdit!.copyWith(
           // Use copyWith for easier updates
           title: title,
-          description: description,
-          frequency: _selectedFrequency,
           iconName: null,
           colorValue: _selectedColorValue,
           dueDate: _selectedDueDate,
@@ -356,45 +345,6 @@ class _TaskEditorPageState extends ConsumerState<TaskEditorPage> {
                       textCapitalization: TextCapitalization.sentences,
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _descriptionController,
-                      decoration: const InputDecoration(
-                        labelText: 'Description (Optional)',
-                        hintText: 'Enter task description',
-                        border: OutlineInputBorder(),
-                      ),
-                      maxLines: 3,
-                      textCapitalization: TextCapitalization.sentences,
-                    ),
-                    const SizedBox(height: 16),
-                    DropdownButtonFormField<Frequency>(
-                      value: _selectedFrequency,
-                      decoration: const InputDecoration(
-                        labelText: 'Frequency',
-                        border: OutlineInputBorder(),
-                      ),
-                      items:
-                          Frequency.values.map((Frequency frequency) {
-                            return DropdownMenuItem<Frequency>(
-                              value: frequency,
-                              child: Text(frequency.toShortString()),
-                            );
-                          }).toList(),
-                      onChanged: (Frequency? newValue) {
-                        if (newValue != null) {
-                          setState(() {
-                            _selectedFrequency = newValue;
-                          });
-                        }
-                      },
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please select a frequency';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16), // Ensure appropriate spacing
                     DropdownButtonFormField<TaskPriority>(
                       value: _selectedPriority,
                       decoration: const InputDecoration(

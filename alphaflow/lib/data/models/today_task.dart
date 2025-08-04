@@ -76,9 +76,9 @@ class TodayTask {
     return TodayTask(
       id: task.id,
       title: task.title,
-      description: task.description,
+      description: "",
       type: TodayTaskType.custom,
-      frequency: task.frequency,
+      frequency: Frequency.oneTime,
       isCompleted: isCompleted,
       guidedTask: null,
       customTask: task,

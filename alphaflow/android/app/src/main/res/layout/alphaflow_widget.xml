@@ -61,4 +61,4 @@
         android:fontFamily="@font/sora_regular"
         android:visibility="gone" />
 
-</LinearLayout> 
+</LinearLayout>
