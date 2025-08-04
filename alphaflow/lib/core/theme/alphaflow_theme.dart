@@ -72,7 +72,7 @@ class AlphaFlowTheme {
       ),
       
       // Card theme
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: Colors.transparent,
         elevation: 0,
         shape: RoundedRectangleBorder(
