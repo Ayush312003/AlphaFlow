@@ -16,20 +16,14 @@ This document outlines the planned approach for monetizing the AlphaFlow app, in
 - The app may offer both options, allowing users to choose.
 
 ## 3. Premium Features (Unlocked with Payment)
-- **Advanced Analytics:**
-  - All features described in `Analytics_Premium_Features.md` (personalized feedback, advanced visualizations, time-based analytics, etc.)
 - **Ad-Free Experience:**
   - No ads shown anywhere in the app.
 
 ## 4. Non-Premium Experience (If User Does Not Pay)
-- **Basic Analytics Only:**
-  - Users retain access to the current/basic analytics page (XP summary, radar chart, skill breakdown).
 - **All Core Features Unlocked:**
   - Users can continue using all main app features (task management, routines, etc.) without restriction.
 - **Ads Displayed:**
   - Ads will be shown in the app (placement and frequency to be determined).
-- **Advanced Analytics Disabled:**
-  - Premium analytics features are locked and clearly marked as premium.
 
 ## 5. Flexibility for Future
 - Pricing, ad models, and feature gating can be adjusted based on user feedback and business needs.
