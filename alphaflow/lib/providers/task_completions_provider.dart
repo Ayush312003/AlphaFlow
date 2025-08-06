@@ -11,12 +11,18 @@ import 'package:alphaflow/providers/xp_provider.dart'; // For XP cap checking
 import 'package:flutter/widgets.dart';
 import 'package:alphaflow/providers/app_mode_provider.dart'; // For preferencesServiceProvider
 
-// Provider that streams the list of task completions from Firestore
-// This now only includes guided task completions, as custom tasks are stored locally
-final completionsProvider = StreamProvider<List<TaskCompletion>>((ref) {
+final completionsProvider = StreamProvider<List<TaskCompletion>>((ref) async* {
   final userId = ref.watch(currentUserIdProvider);
   if (userId == null || userId.isEmpty) {
-    return Stream.value([]); // Return an empty stream if no user is logged in
+    yield []; // Return an empty stream if no user is logged in
+    return;
+  }
+
+  final prefsService = ref.read(preferencesServiceProvider);
+  final cachedCompletions = prefsService.loadTaskCompletions();
+
+  if (cachedCompletions != null) {
+    yield cachedCompletions;
   }
 
   final firestore = FirebaseFirestore.instance;
@@ -25,19 +31,21 @@ final completionsProvider = StreamProvider<List<TaskCompletion>>((ref) {
       .doc(userId)
       .collection('taskCompletions');
 
-  return collectionRef.snapshots().map((snapshot) {
+  final stream = collectionRef.snapshots().map((snapshot) {
     try {
-      return snapshot.docs
+      final completions = snapshot.docs
           .map((doc) => TaskCompletion.fromJson(doc.data()))
           .toList();
+      prefsService.saveTaskCompletions(completions);
+      return completions;
     } catch (e, stackTrace) {
       print('Error parsing completions snapshot: $e');
       print(stackTrace);
-      // Depending on how strict you want to be, you could return an empty list
-      // or rethrow to indicate a critical error to an error handler provider.
-      return [];
+      return cachedCompletions ?? [];
     }
   });
+
+  yield* stream;
 });
 
 // Provider for local completions state (for immediate UI updates)

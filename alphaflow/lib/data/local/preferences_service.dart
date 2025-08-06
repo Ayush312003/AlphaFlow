@@ -83,6 +83,7 @@ class PreferencesService {
     final jsonString = jsonEncode(jsonList);
     await _prefs.setString(_keyCompletions, jsonString);
   }
+
   List<TaskCompletion> loadCompletions() { // Returns list of old TaskCompletion model
     final jsonString = _prefs.getString(_keyCompletions);
     if (jsonString == null || jsonString.isEmpty) return [];
@@ -92,6 +93,25 @@ class PreferencesService {
           .map((e) => TaskCompletion.fromJson(Map<String, dynamic>.from(e))) // Uses old TaskCompletion.fromJson
           .toList();
     } catch (e) { return []; }
+  }
+
+  Future<void> saveTaskCompletions(List<TaskCompletion> completions) async {
+    final jsonList = completions.map((c) => c.toJson()).toList();
+    final jsonString = jsonEncode(jsonList);
+    await _prefs.setString('task_completions_cache', jsonString);
+  }
+
+  List<TaskCompletion>? loadTaskCompletions() {
+    final jsonString = _prefs.getString('task_completions_cache');
+    if (jsonString == null || jsonString.isEmpty) return null;
+    try {
+      final List decoded = jsonDecode(jsonString);
+      return decoded
+          .map((e) => TaskCompletion.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
+    } catch (e) {
+      return null;
+    }
   }
 
   // First Active Date (Old SharedPreferences version)
