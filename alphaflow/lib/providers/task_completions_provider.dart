@@ -235,35 +235,6 @@ class CompletionsManager {
       // Add to daily XP tracking
       await xpNotifier.addDailyXp(xpToAward);
       
-      // --- Skill XP Persistence ---
-      // Find the GuidedTask to get its tag
-      final guidedTracksAsync = _ref.read(guidedTracksProvider);
-      final prefsService = _ref.read(preferencesServiceProvider);
-      
-      // Handle skill XP persistence synchronously
-      guidedTracksAsync.when(
-        data: (allGuidedTracks) {
-          for (var track in allGuidedTracks) {
-            if (track.id == trackId) {
-              for (var level in track.levels) {
-                try {
-                  final task = level.unlockTasks.firstWhere((t) => t.id == taskId);
-                  final skillTag = task.tag;
-                  final prevSkillXp = prefsService.loadSkillXp(skillTag);
-                  // Use unawaited to avoid blocking the UI
-                  prefsService.saveSkillXp(skillTag, prevSkillXp + xpToAward);
-                  break;
-                } catch (e) {
-                  // Task not found in this level
-                }
-              }
-            }
-          }
-        },
-        loading: () {},
-        error: (error, stack) {},
-      );
-      // --- End Skill XP Persistence ---
       
       // Background sync to Firestore
       syncStatusNotifier.setSyncing();

@@ -203,14 +203,41 @@ final totalTrackXpProvider = Provider<int>((ref) {
   );
 });
 
-// Provider to get XP for a specific skill
-final skillXpProvider = Provider.family<int, String>((ref, skillTag) {
-  final prefsService = ref.watch(preferencesServiceProvider);
-  return prefsService.loadSkillXp(skillTag);
-});
-
 // Provider to get all skill XPs as a map
 final allSkillXpProvider = Provider.family<Map<String, int>, List<String>>((ref, skillTags) {
-  final prefsService = ref.watch(preferencesServiceProvider);
-  return prefsService.loadAllSkillXp(skillTags);
+  final completions = ref.watch(completionsProvider);
+  final guidedTracks = ref.watch(guidedTracksProvider);
+
+  return guidedTracks.when(
+    data: (tracks) {
+      final taskIdToTag = <String, String>{};
+      for (final track in tracks) {
+        for (final level in track.levels) {
+          for (final task in level.unlockTasks) {
+            taskIdToTag[task.id] = task.tag;
+          }
+        }
+      }
+
+      return completions.when(
+        data: (completions) {
+          final skillXpMap = <String, int>{};
+          for (final tag in skillTags) {
+            skillXpMap[tag] = 0;
+          }
+          for (final completion in completions) {
+            final tag = taskIdToTag[completion.taskId];
+            if (tag != null) {
+              skillXpMap[tag] = (skillXpMap[tag] ?? 0) + completion.xpAwarded;
+            }
+          }
+          return skillXpMap;
+        },
+        loading: () => {for (final tag in skillTags) tag: 0},
+        error: (error, stack) => {for (final tag in skillTags) tag: 0},
+      );
+    },
+    loading: () => {for (final tag in skillTags) tag: 0},
+    error: (error, stack) => {for (final tag in skillTags) tag: 0},
+  );
 });
